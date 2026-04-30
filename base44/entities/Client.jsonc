@@ -1,0 +1,111 @@
+{
+  "name": "Client",
+  "type": "object",
+  "properties": {
+    "full_name": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "role": {
+      "type": "string"
+    },
+    "company": {
+      "type": "string"
+    },
+    "department": {
+      "type": "string"
+    },
+    "base44_user_id": {
+      "type": "string"
+    },
+    "coach_id": {
+      "type": "string",
+      "description": "Profile ID of the coach"
+    },
+    "coaching_status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "paused",
+        "completed",
+        "onboarding",
+        "invited"
+      ],
+      "default": "active"
+    },
+    "coaching_start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "anchor_text": {
+      "type": "string"
+    },
+    "anchor_direction": {
+      "type": "string"
+    },
+    "anchor_target_level": {
+      "type": "number"
+    },
+    "anchor_counter_level": {
+      "type": "number"
+    },
+    "anchor_start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "anchor_review_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "required_l1_pct": {
+      "type": "number",
+      "default": 0
+    },
+    "required_l2_pct": {
+      "type": "number",
+      "default": 0
+    },
+    "required_l3_pct": {
+      "type": "number",
+      "default": 0
+    },
+    "required_l4_pct": {
+      "type": "number",
+      "default": 0
+    },
+    "required_l5_pct": {
+      "type": "number",
+      "default": 0
+    },
+    "nexus_results_pdf": {
+      "type": "string"
+    },
+    "nexus_level_summary_page": {
+      "type": "string"
+    },
+    "thought_action_alignment": {
+      "type": "string"
+    },
+    "role_alignment": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "invited",
+        "onboarding",
+        "inactive"
+      ],
+      "default": "active"
+    }
+  },
+  "required": [
+    "full_name"
+  ]
+}

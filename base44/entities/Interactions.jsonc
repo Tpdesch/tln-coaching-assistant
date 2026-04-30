@@ -1,0 +1,87 @@
+{
+  "name": "Interactions",
+  "type": "object",
+  "properties": {
+    "client_profile_id": {
+      "type": "string"
+    },
+    "client_id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "weekly_checkin",
+        "note",
+        "session"
+      ],
+      "default": "weekly_checkin"
+    },
+    "free_text": {
+      "type": "string"
+    },
+    "reflection_text": {
+      "type": "string"
+    },
+    "commitment_text": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "alignment_rating": {
+      "type": "number"
+    },
+    "stress_rating": {
+      "type": "number"
+    },
+    "share_with_coach": {
+      "type": "boolean",
+      "default": false
+    },
+    "action_l1": {
+      "type": "number"
+    },
+    "action_l2": {
+      "type": "number"
+    },
+    "action_l3": {
+      "type": "number"
+    },
+    "action_l4": {
+      "type": "number"
+    },
+    "action_l5": {
+      "type": "number"
+    },
+    "thought_l1": {
+      "type": "number"
+    },
+    "thought_l2": {
+      "type": "number"
+    },
+    "thought_l3": {
+      "type": "number"
+    },
+    "thought_l4": {
+      "type": "number"
+    },
+    "thought_l5": {
+      "type": "number"
+    },
+    "week_ending_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "coach_reflection_text": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "client_profile_id",
+    "type"
+  ]
+}

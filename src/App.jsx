@@ -5,12 +5,22 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
-// Add page imports here
+import Layout from './components/Layout';
+
+import Landing from './pages/Landing';
+import SignIn from './pages/SignIn';
+import CoachDashboard from './pages/CoachDashboard';
+import Clients from './pages/Clients';
+import CheckIns from './pages/CheckIns';
+import ClientHome from './pages/ClientHome';
+import ClientCheckIn from './pages/ClientCheckIn';
+import ClientOnboarding from './pages/ClientOnboarding';
+import MyCheckIns from './pages/MyCheckIns';
+import ParticipantWelcome from './pages/ParticipantWelcome';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
-  // Show loading spinner while checking app public settings or auth
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
@@ -19,29 +29,42 @@ const AuthenticatedApp = () => {
     );
   }
 
-  // Handle authentication errors
   if (authError) {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
       navigateToLogin();
       return null;
     }
   }
 
-  // Render the main app
   return (
     <Routes>
-      {/* Add your page Route elements here */}
+      <Route path="/" element={<Landing />} />
+      <Route path="/SignIn" element={<SignIn />} />
+      <Route path="/ClientOnboarding" element={<ClientOnboarding />} />
+      <Route path="/participant-welcome" element={<ParticipantWelcome />} />
+
+      {/* Coach pages with layout */}
+      <Route element={<Layout />}>
+        <Route path="/Dashboard" element={<CoachDashboard />} />
+        <Route path="/Clients" element={<Clients />} />
+        <Route path="/CheckIns" element={<CheckIns />} />
+      </Route>
+
+      {/* Client pages with layout */}
+      <Route element={<Layout />}>
+        <Route path="/ClientHome" element={<ClientHome />} />
+        <Route path="/ClientCheckIn" element={<ClientCheckIn />} />
+        <Route path="/MyCheckIns" element={<MyCheckIns />} />
+      </Route>
+
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 };
 
-
 function App() {
-
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>

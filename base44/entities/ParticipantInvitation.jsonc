@@ -1,0 +1,38 @@
+{
+  "name": "ParticipantInvitation",
+  "type": "object",
+  "properties": {
+    "client_id": {
+      "type": "string"
+    },
+    "coach_profile_id": {
+      "type": "string"
+    },
+    "invitation_token": {
+      "type": "string"
+    },
+    "participant_email": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "accepted",
+        "expired"
+      ],
+      "default": "pending"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "invitation_url": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "invitation_token",
+    "participant_email"
+  ]
+}

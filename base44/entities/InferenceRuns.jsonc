@@ -1,0 +1,51 @@
+{
+  "name": "InferenceRuns",
+  "type": "object",
+  "properties": {
+    "client_profile_id": {
+      "type": "string"
+    },
+    "interaction_id": {
+      "type": "string"
+    },
+    "aci": {
+      "type": "number"
+    },
+    "aci_delta": {
+      "type": "number"
+    },
+    "top_action_level_1": {
+      "type": "number"
+    },
+    "top_action_level_2": {
+      "type": "number"
+    },
+    "coach_reflection_text": {
+      "type": "string"
+    },
+    "action_pct": {
+      "type": "object"
+    },
+    "thought_pct": {
+      "type": "object"
+    },
+    "primary_level": {
+      "type": "number"
+    },
+    "drift_patterns": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "gap_analysis": {
+      "type": "object"
+    },
+    "gap_companion": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "client_profile_id"
+  ]
+}

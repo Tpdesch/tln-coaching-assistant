@@ -1,0 +1,63 @@
+{
+  "name": "Profiles",
+  "type": "object",
+  "properties": {
+    "base44_user_id": {
+      "type": "string"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "COACH",
+        "CLIENT"
+      ],
+      "default": "CLIENT"
+    },
+    "display_name": {
+      "type": "string"
+    },
+    "required_l1_pct": {
+      "type": "number",
+      "default": 0
+    },
+    "required_l2_pct": {
+      "type": "number",
+      "default": 0
+    },
+    "required_l3_pct": {
+      "type": "number",
+      "default": 0
+    },
+    "required_l4_pct": {
+      "type": "number",
+      "default": 0
+    },
+    "required_l5_pct": {
+      "type": "number",
+      "default": 0
+    },
+    "anchor_text": {
+      "type": "string"
+    },
+    "anchor_direction": {
+      "type": "string"
+    },
+    "anchor_target_level": {
+      "type": "number"
+    },
+    "anchor_counter_level": {
+      "type": "number"
+    },
+    "anchor_start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "anchor_review_date": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "base44_user_id"
+  ]
+}
