@@ -75,7 +75,9 @@ Deno.serve(async (req) => {
     try { appBaseUrl = new URL(reqOrigin).origin; } catch (_) {}
   }
   const envBase = Deno.env.get('APP_BASE_URL');
-  if (envBase) appBaseUrl = envBase;
+  if (envBase) {
+    try { appBaseUrl = new URL(envBase).origin; } catch (_) { appBaseUrl = envBase.replace(/\/+$/, ''); }
+  }
   const invitation_url = `${appBaseUrl}/participant-welcome?token=${token}`;
 
   // Create the ParticipantInvitation record
