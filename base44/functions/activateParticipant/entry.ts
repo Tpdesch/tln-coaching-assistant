@@ -34,10 +34,24 @@ Deno.serve(async (req) => {
     return Response.json({ success: false, error: 'Invitation has expired' }, { status: 400 });
   }
 
-  // Get the Client record
-  const client = await base44.entities.Client.get(invitation.client_id);
+  // Get or recreate the Client record
+  let client = null;
+  try {
+    client = await base44.entities.Client.get(invitation.client_id);
+  } catch (_) {}
   if (!client) {
-    return Response.json({ success: false, error: 'Client record not found' }, { status: 404 });
+    // Client was deleted — recreate it
+    client = await base44.asServiceRole.entities.Client.create({
+      full_name: invitation.participant_email.split('@')[0],
+      email: invitation.participant_email,
+      coach_id: invitation.coach_profile_id,
+      coaching_status: 'invited',
+      status: 'invited',
+    });
+    // Update invitation to point to new client
+    await base44.asServiceRole.entities.ParticipantInvitation.update(invitation.id, {
+      client_id: client.id,
+    });
   }
 
   // Build notes string for coach_name / department
