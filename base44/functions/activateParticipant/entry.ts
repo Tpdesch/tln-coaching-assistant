@@ -36,11 +36,18 @@ Deno.serve(async (req) => {
 
   // Get or recreate the Client record
   let client = null;
-  try {
-    client = await base44.entities.Client.get(invitation.client_id);
-  } catch (_) {}
+  if (invitation.client_id) {
+    try {
+      client = await base44.entities.Client.get(invitation.client_id);
+    } catch (_) {}
+  }
   if (!client) {
-    // Client was deleted — recreate it
+    // Client missing or deleted — check by email first
+    const existingClients = await base44.asServiceRole.entities.Client.filter({ email: invitation.participant_email });
+    client = Array.isArray(existingClients) ? existingClients[0] : null;
+  }
+  if (!client) {
+    // Create a fresh Client record
     client = await base44.asServiceRole.entities.Client.create({
       full_name: invitation.participant_email.split('@')[0],
       email: invitation.participant_email,
@@ -48,10 +55,10 @@ Deno.serve(async (req) => {
       coaching_status: 'invited',
       status: 'invited',
     });
-    // Update invitation to point to new client
-    await base44.asServiceRole.entities.ParticipantInvitation.update(invitation.id, {
-      client_id: client.id,
-    });
+  }
+  // Always keep invitation pointing to the correct client
+  if (invitation.client_id !== client.id) {
+    await base44.asServiceRole.entities.ParticipantInvitation.update(invitation.id, { client_id: client.id });
   }
 
   // Build notes string for coach_name / department
