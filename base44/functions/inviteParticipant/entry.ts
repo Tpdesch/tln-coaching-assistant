@@ -68,19 +68,11 @@ Deno.serve(async (req) => {
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + 7);
 
-  // Build the invitation URL — always use APP_BASE_URL secret if it looks like a valid URL
-  const envBase = (Deno.env.get('APP_BASE_URL') || '').trim().replace(/\/+$/, '');
-  let appBaseUrl;
-  try {
-    const parsed = new URL(envBase.startsWith('http') ? envBase : 'https://' + envBase);
-    appBaseUrl = parsed.origin;
-  } catch (_) {
-    // Fallback: derive from request origin
-    const reqOrigin = req.headers.get('origin') || req.headers.get('referer') || '';
-    appBaseUrl = 'https://tactful-nexus-coach-flow.base44.app';
-    if (reqOrigin) {
-      try { appBaseUrl = new URL(reqOrigin).origin; } catch (_) {}
-    }
+  // Build the invitation URL — derive from request origin, fallback to known app URL
+  const reqOrigin = req.headers.get('origin') || req.headers.get('referer') || '';
+  let appBaseUrl = 'https://tactful-nexus-coach-flow.base44.app';
+  if (reqOrigin) {
+    try { appBaseUrl = new URL(reqOrigin).origin; } catch (_) {}
   }
   const invitation_url = `${appBaseUrl}/participant-welcome?token=${token}`;
 
