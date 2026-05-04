@@ -218,13 +218,13 @@ export default function ClientCheckIn() {
           <Label className="text-sm font-medium text-gray-900 mb-3 block">This week, how frequently did you spend your Thought Time in the following ways?</Label>
           <div className="space-y-4">
             {thoughtConfig.map(({ level, label, color }) => (
-              <div key={level} className="pl-3 space-y-1.5" style={{ borderLeft: `4px solid ${color}` }}>
+              <div key={level} className="space-y-1.5">
                 <div className="text-xs font-medium text-gray-700">{label}</div>
                 <div className="space-y-1">
-                  <Slider value={[form[`thought_l${level}`]]} onValueChange={(v) => setForm({ ...form, [`thought_l${level}`]: v[0] })} min={1} max={5} step={1} className="w-full" />
+                  <Slider value={[form[`thought_l${level}`]]} onValueChange={(v) => setForm({ ...form, [`thought_l${level}`]: v[0] })} min={1} max={5} step={1} className="w-full" color={color} />
                   <div className="flex justify-between text-xs text-gray-500">
                     <span>Rarely</span>
-                    <span className="font-medium" style={{ color }}>{["Rarely","Occasionally","Sometimes","Often","Frequently"][form[`thought_l${level}`] - 1]}</span>
+                    <span className="font-medium text-gray-500">{["Rarely","Occasionally","Sometimes","Often","Frequently"][form[`thought_l${level}`] - 1]}</span>
                     <span>Frequently</span>
                   </div>
                 </div>
@@ -238,13 +238,13 @@ export default function ClientCheckIn() {
           <Label className="text-sm font-medium text-gray-900 mb-3 block">This week, how frequently did you spend your Action Time in the following ways?</Label>
           <div className="space-y-4">
             {levelConfig.map(({ level, label, color }) => (
-              <div key={level} className="pl-3 space-y-1.5" style={{ borderLeft: `4px solid ${color}` }}>
+              <div key={level} className="space-y-1.5">
                 <div className="text-xs font-medium text-gray-700">{label}</div>
                 <div className="space-y-1">
-                  <Slider value={[form[`action_l${level}`]]} onValueChange={(v) => setForm({ ...form, [`action_l${level}`]: v[0] })} min={1} max={5} step={1} className="w-full" />
+                  <Slider value={[form[`action_l${level}`]]} onValueChange={(v) => setForm({ ...form, [`action_l${level}`]: v[0] })} min={1} max={5} step={1} className="w-full" color={color} />
                   <div className="flex justify-between text-xs text-gray-500">
                     <span>Rarely</span>
-                    <span className="font-medium" style={{ color }}>{["Rarely","Occasionally","Sometimes","Often","Frequently"][form[`action_l${level}`] - 1]}</span>
+                    <span className="font-medium text-gray-500">{["Rarely","Occasionally","Sometimes","Often","Frequently"][form[`action_l${level}`] - 1]}</span>
                     <span>Frequently</span>
                   </div>
                 </div>
