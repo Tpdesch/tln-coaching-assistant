@@ -29,7 +29,7 @@ export default function CoachDashboard() {
   });
 
   const { data: allInteractions = [], isLoading: loadingInteractions } = useQuery({
-    queryKey: ["coach-interactions", myProfileId],
+    queryKey: ["coach-interactions", myProfileId, clients.length],
     enabled: ready && clients.length > 0,
     queryFn: async () => {
       const profileMap = {};
