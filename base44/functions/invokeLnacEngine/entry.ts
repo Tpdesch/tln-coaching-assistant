@@ -67,6 +67,17 @@ Deno.serve(async (req) => {
   const actionTotal = actionVals.reduce((s, v) => s + v, 0);
   const thoughtTotal = thoughtVals.reduce((s, v) => s + v, 0);
 
+  // Leadership gap fields
+  const total_action_score = actionTotal;
+  const total_thought_score = thoughtTotal;
+  const leadership_gap = total_thought_score - total_action_score;
+  const leadership_gap_direction = leadership_gap > 0 ? 'thought_ahead' : leadership_gap < 0 ? 'action_ahead' : 'aligned';
+  const leadership_gap_interpretation = leadership_gap > 0
+    ? 'Your Thought Time is ahead of your Action Time this week.'
+    : leadership_gap < 0
+      ? 'Your Action Time is ahead of your Thought Time this week.'
+      : 'Your Thought Time and Action Time are aligned this week.';
+
   // Percentage distributions
   const action_pct = {};
   const thought_pct = {};
@@ -212,12 +223,23 @@ Be direct, human, and specific. Do not use generic language. Do not use bullet p
     primary_level,
     drift_patterns,
     gap_analysis,
-    gap_companion: {},
+    gap_companion: {
+      total_thought_score,
+      total_action_score,
+      leadership_gap,
+      leadership_gap_direction,
+      leadership_gap_interpretation,
+    },
   });
 
-  // Also write the coaching reflection back to the interaction
+  // Also write the coaching reflection and gap fields back to the interaction
   await base44.asServiceRole.entities.Interactions.update(interaction.id, {
     coach_reflection_text,
+    total_thought_score,
+    total_action_score,
+    leadership_gap,
+    leadership_gap_direction,
+    leadership_gap_interpretation,
   });
 
   return Response.json({
