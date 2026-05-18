@@ -78,6 +78,15 @@
     },
     "coach_reflection_text": {
       "type": "string"
+    },
+    "total_thought_score": {
+      "type": "number"
+    },
+    "total_action_score": {
+      "type": "number"
+    },
+    "leadership_gap": {
+      "type": "number"
     }
   },
   "required": [

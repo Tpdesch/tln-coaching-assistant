@@ -64,6 +64,10 @@ export default function ClientCheckIn() {
       if (form.wins) freeText += `\nWins:\n${form.wins}\n`;
       if (form.challenges) freeText += `\nChallenges:\n${form.challenges}\n`;
 
+      const total_thought_score = form.thought_l1 + form.thought_l2 + form.thought_l3 + form.thought_l4 + form.thought_l5;
+      const total_action_score = form.action_l1 + form.action_l2 + form.action_l3 + form.action_l4 + form.action_l5;
+      const leadership_gap = total_thought_score - total_action_score;
+
       const interaction = await base44.entities.Interactions.create({
         client_profile_id: profile.id,
         client_id: client?.id ?? null,
@@ -78,6 +82,9 @@ export default function ClientCheckIn() {
         week_ending_date: form.week_ending_date,
         reflection_text: form.reflection_text,
         commitment_text: form.commitment_text,
+        total_thought_score,
+        total_action_score,
+        leadership_gap,
       });
 
       const lnacRes = await base44.functions.invoke("invokeLnacEngine", { interaction_id: interaction.id });
