@@ -68,6 +68,19 @@ export default function ClientCheckIn() {
       const total_action_score = form.action_l1 + form.action_l2 + form.action_l3 + form.action_l4 + form.action_l5;
       const leadership_gap = total_thought_score - total_action_score;
 
+      let leadership_gap_direction;
+      let leadership_gap_interpretation;
+      if (leadership_gap > 0) {
+        leadership_gap_direction = "thought_ahead";
+        leadership_gap_interpretation = "Your Thought Time is ahead of your Action Time this week.";
+      } else if (leadership_gap < 0) {
+        leadership_gap_direction = "action_ahead";
+        leadership_gap_interpretation = "Your Action Time is ahead of your Thought Time this week.";
+      } else {
+        leadership_gap_direction = "aligned";
+        leadership_gap_interpretation = "Your Thought Time and Action Time are aligned this week.";
+      }
+
       const interaction = await base44.entities.Interactions.create({
         client_profile_id: profile.id,
         client_id: client?.id ?? null,
@@ -85,6 +98,8 @@ export default function ClientCheckIn() {
         total_thought_score,
         total_action_score,
         leadership_gap,
+        leadership_gap_direction,
+        leadership_gap_interpretation,
       });
 
       const lnacRes = await base44.functions.invoke("invokeLnacEngine", { interaction_id: interaction.id });

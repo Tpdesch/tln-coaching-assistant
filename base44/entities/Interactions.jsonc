@@ -87,6 +87,17 @@
     },
     "leadership_gap": {
       "type": "number"
+    },
+    "leadership_gap_direction": {
+      "type": "string",
+      "enum": [
+        "thought_ahead",
+        "action_ahead",
+        "aligned"
+      ]
+    },
+    "leadership_gap_interpretation": {
+      "type": "string"
     }
   },
   "required": [
