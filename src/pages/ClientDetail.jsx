@@ -174,17 +174,14 @@ export default function ClientDetail() {
                   )}
 
                   {interaction.leadership_gap != null && (
-                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700">
+                    <div className="text-xs text-slate-700">
                       <span className="font-semibold">Leadership Gap: </span>
-                      <span className={interaction.leadership_gap > 0 ? "text-amber-700" : interaction.leadership_gap < 0 ? "text-orange-700" : "text-green-700"}>
+                      <span className={interaction.leadership_gap > 0 ? "text-amber-700 font-medium" : interaction.leadership_gap < 0 ? "text-orange-700 font-medium" : "text-green-700 font-medium"}>
                         {interaction.leadership_gap > 0 ? `+${interaction.leadership_gap}` : interaction.leadership_gap}
+                        {" "}
+                        {interaction.leadership_gap_direction === "thought_ahead" ? "Thought ahead" :
+                          interaction.leadership_gap_direction === "action_ahead" ? "Action ahead" : "Aligned"}
                       </span>
-                      {interaction.leadership_gap_direction && (
-                        <span className="ml-2 text-slate-500">
-                          ({interaction.leadership_gap_direction === "thought_ahead" ? "Thought ahead of Action" :
-                            interaction.leadership_gap_direction === "action_ahead" ? "Action ahead of Thought" : "Aligned"})
-                        </span>
-                      )}
                     </div>
                   )}
                 </div>

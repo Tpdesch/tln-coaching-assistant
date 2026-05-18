@@ -106,6 +106,17 @@ export default function CheckIns() {
               {interaction.reflection_text && (
                 <p className="text-sm text-gray-700 leading-relaxed line-clamp-3">{interaction.reflection_text}</p>
               )}
+              {interaction.leadership_gap != null && (
+                <div className="mt-2 text-xs text-slate-700">
+                  <span className="font-semibold">Leadership Gap: </span>
+                  <span className={interaction.leadership_gap > 0 ? "text-amber-700 font-medium" : interaction.leadership_gap < 0 ? "text-orange-700 font-medium" : "text-green-700 font-medium"}>
+                    {interaction.leadership_gap > 0 ? `+${interaction.leadership_gap}` : interaction.leadership_gap}
+                    {" "}
+                    {interaction.leadership_gap_direction === "thought_ahead" ? "Thought ahead" :
+                      interaction.leadership_gap_direction === "action_ahead" ? "Action ahead" : "Aligned"}
+                  </span>
+                </div>
+              )}
               {interaction.coach_reflection_text && (
                 <div className="mt-3 p-3 rounded-xl bg-amber-50 border border-amber-200">
                   <div className="flex items-center gap-1 mb-1">
