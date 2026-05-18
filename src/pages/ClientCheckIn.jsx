@@ -139,6 +139,16 @@ export default function ClientCheckIn() {
     const aci_delta = results?.aci_delta;
     const coach_reflection_text = results?.coach_reflection_text;
 
+    const total_thought_score = form.thought_l1 + form.thought_l2 + form.thought_l3 + form.thought_l4 + form.thought_l5;
+    const total_action_score = form.action_l1 + form.action_l2 + form.action_l3 + form.action_l4 + form.action_l5;
+    const gap = total_thought_score - total_action_score;
+    const gapLabel = gap > 0 ? "Thought ahead of Action" : gap < 0 ? "Action ahead of Thought" : "Thought and Action aligned";
+    const gapInterpretation = gap > 0
+      ? "Your internal leadership attention is running slightly ahead of what showed up externally this week."
+      : gap < 0
+        ? "Your external actions are running slightly ahead of your internal leadership attention this week."
+        : "Your internal attention and external actions were in balance this week.";
+
     return (
       <div className="max-w-3xl mx-auto px-4 py-8">
         <Link to="/ClientHome" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors mb-6">
@@ -166,6 +176,23 @@ export default function ClientCheckIn() {
               )}
             </div>
           )}
+
+          <div className="space-y-2">
+            <h3 className="text-base font-semibold text-gray-900">The Leadership Gap</h3>
+            <div className="rounded-lg bg-amber-50 border border-amber-200 p-4 space-y-2">
+              <div className="flex items-baseline gap-2">
+                <span className="text-xs font-medium text-amber-800">Leadership Gap:</span>
+                <span className={`text-xl font-bold ${gap > 0 ? 'text-amber-700' : gap < 0 ? 'text-orange-700' : 'text-green-700'}`}>
+                  {gap > 0 ? `+${gap}` : gap}
+                </span>
+              </div>
+              <p className="text-sm font-medium text-amber-900">{gapLabel}.</p>
+              <p className="text-sm text-amber-800">{gapInterpretation}</p>
+              <p className="text-xs text-amber-700 border-t border-amber-200 pt-2 mt-1">
+                The Leadership Gap shows the difference between your total Thought Time and total Action Time this week.
+              </p>
+            </div>
+          </div>
 
           {coach_reflection_text && (
             <div className="space-y-2">
