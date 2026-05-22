@@ -98,6 +98,23 @@
     },
     "leadership_gap_interpretation": {
       "type": "string"
+    },
+    "alignment_momentum_score": {
+      "type": "number",
+      "description": "Alignment Momentum Score (AMS) for this check-in"
+    },
+    "alignment_momentum_direction": {
+      "type": "string",
+      "enum": [
+        "accelerating",
+        "decelerating",
+        "steady"
+      ],
+      "description": "Direction of alignment momentum"
+    },
+    "alignment_momentum_summary": {
+      "type": "string",
+      "description": "Human-readable summary of alignment momentum"
     }
   },
   "required": [
