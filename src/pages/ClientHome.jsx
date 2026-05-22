@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Link, useNavigate } from "react-router-dom";
+import { TrendingUp, TrendingDown, Minus } from "lucide-react";
+import CheckInResultCard from "@/components/CheckInResultCard";
 
 export default function ClientHome() {
   const navigate = useNavigate();
@@ -28,11 +30,18 @@ export default function ClientHome() {
 
         if (!p?.id) { setLatestRun(null); return; }
 
-        const runs = await base44.entities.InferenceRuns.filter({ client_profile_id: p.id });
-        const sorted = (Array.isArray(runs) ? runs : [])
-          .slice()
-          .sort((a, b) => String(b.created_date).localeCompare(String(a.created_date)));
-        setLatestRun(sorted[0] || null);
+        const [interactions, runs] = await Promise.all([
+          base44.entities.Interactions.filter({ client_profile_id: p.id, type: "weekly_checkin" }, "-created_date", 1),
+          base44.entities.InferenceRuns.filter({ client_profile_id: p.id }, "-created_date", 1),
+        ]);
+        const latestInteraction = Array.isArray(interactions) ? interactions[0] : null;
+        const latestRun = Array.isArray(runs) ? runs[0] : null;
+        
+        if (latestInteraction && latestRun) {
+          setLatestRun({ ...latestRun, _interaction: latestInteraction });
+        } else {
+          setLatestRun(latestRun || null);
+        }
       } catch (e) {
         console.error(e);
         setError(e?.message || "Something went wrong.");
@@ -65,61 +74,25 @@ export default function ClientHome() {
         </Link>
       </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-4">
-        {/* Latest Insight Card */}
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
-          <div className="flex items-center justify-between">
-            <div className="text-sm font-semibold text-gray-900">Most Recent Analysis</div>
-            {latestRun?.created_date ? (
-              <div className="text-xs text-gray-500">{new Date(latestRun.created_date).toLocaleDateString()}</div>
-            ) : null}
+      <div className="mt-6 space-y-4">
+        {/* Latest Analysis Card */}
+        {loading ? (
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 text-sm text-gray-500">Loading…</div>
+        ) : error ? (
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 text-sm text-red-600">{error}</div>
+        ) : latestRun?._interaction ? (
+          <CheckInResultCard
+            interaction={latestRun._interaction}
+            inferenceRun={latestRun}
+            defaultExpanded={true}
+          />
+        ) : (
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 text-sm text-gray-600">
+            No analysis yet. Run your first check-in to generate alignment insights.
           </div>
+        )}
 
-          {loading ? (
-            <div className="mt-4 text-sm text-gray-500">Loading…</div>
-          ) : error ? (
-            <div className="mt-4 text-sm text-red-600">{error}</div>
-          ) : !latestRun ? (
-            <div className="mt-4 text-sm text-gray-600">
-              No analysis yet. Run your first check-in to generate alignment insights.
-            </div>
-          ) : (
-            <div className="mt-4 space-y-3">
-              {latestRun.top_action_level_1 != null && (
-                <div className="rounded-xl bg-amber-50 border border-amber-200 p-4">
-                  <div className="text-xs text-gray-500">Top Action Levels</div>
-                  <div className="mt-1 text-sm font-semibold text-gray-900">
-                    Level {latestRun.top_action_level_1}
-                    {latestRun.top_action_level_2 && ` • Level ${latestRun.top_action_level_2}`}
-                  </div>
-                </div>
-              )}
-              {latestRun.aci != null && (
-                <div className="rounded-xl bg-blue-50 border border-blue-200 p-4">
-                  <div className="text-xs text-gray-500">Alignment Consistency Index</div>
-                  <div className="mt-1 text-sm font-semibold text-blue-900">
-                    {latestRun.aci.toFixed(0)}
-                    {latestRun.aci_delta != null && (
-                      <span className={`ml-2 text-xs font-normal ${latestRun.aci_delta >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        {latestRun.aci_delta >= 0 ? '↑' : '↓'} {Math.abs(latestRun.aci_delta).toFixed(0)}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              )}
-              {latestRun.coach_reflection_text && (
-                <div className="rounded-xl border border-gray-200 p-4">
-                  <div className="text-xs text-gray-500 mb-1">Coaching Insight</div>
-                  <p className="text-sm text-gray-700 whitespace-pre-line leading-relaxed">
-                    {latestRun.coach_reflection_text}
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* My Check-Ins history link */}
+        {/* Check-In History link */}
         {!loading && (
           <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
             <div className="flex items-center justify-between">
@@ -136,7 +109,7 @@ export default function ClientHome() {
             </div>
           </div>
         )}
-      </div>
+        </div>
     </div>
   );
 }
