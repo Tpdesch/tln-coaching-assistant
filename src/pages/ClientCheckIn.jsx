@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { Loader2, CheckCircle2, ArrowLeft } from "lucide-react";
+import { Loader2, CheckCircle2, ArrowLeft, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 
@@ -128,13 +128,6 @@ export default function ClientCheckIn() {
   }
 
   if (success && results) {
-    const computePct = (vals) => {
-      const total = vals.reduce((s, v) => s + (v || 0), 0);
-      if (!total) return {};
-      return Object.fromEntries(vals.map((v, i) => [`l${i + 1}`, ((v || 0) / total) * 100]));
-    };
-    const action_pct = Object.keys(results?.action_pct || {}).length > 0 ? results.action_pct : computePct([form.action_l1, form.action_l2, form.action_l3, form.action_l4, form.action_l5]);
-    const thought_pct = Object.keys(results?.thought_pct || {}).length > 0 ? results.thought_pct : computePct([form.thought_l1, form.thought_l2, form.thought_l3, form.thought_l4, form.thought_l5]);
     const aci = results?.aci;
     const aci_delta = results?.aci_delta;
     const alignment_momentum_score = results?.alignment_momentum_score;
@@ -145,107 +138,116 @@ export default function ClientCheckIn() {
     const total_thought_score = form.thought_l1 + form.thought_l2 + form.thought_l3 + form.thought_l4 + form.thought_l5;
     const total_action_score = form.action_l1 + form.action_l2 + form.action_l3 + form.action_l4 + form.action_l5;
     const gap = total_thought_score - total_action_score;
-    const gapLabel = gap > 0 ? "Thought ahead of Action" : gap < 0 ? "Action ahead of Thought" : "Thought and Action aligned";
-    const gapInterpretation = gap > 0
-      ? "Your internal leadership attention is running slightly ahead of what showed up externally this week."
-      : gap < 0
-        ? "Your external actions are running slightly ahead of your internal leadership attention this week."
-        : "Your internal attention and external actions were in balance this week.";
+    const gap_direction = gap > 0 ? "thought_ahead" : gap < 0 ? "action_ahead" : "aligned";
+
+    // Parse coaching sections
+    const parseSection = (text, label, nextLabels) => {
+      if (!text) return null;
+      const idx = text.indexOf(label);
+      if (idx === -1) return null;
+      const after = idx + label.length;
+      const nextIdx = nextLabels.map(l => text.indexOf(l)).filter(n => n > idx).sort((a, b) => a - b)[0] ?? text.length;
+      return text.slice(after, nextIdx).trim();
+    };
+    const observation = parseSection(coach_reflection_text, "Observation:", ["Performance implication:", "This week's challenge:"]);
+    const meaning = parseSection(coach_reflection_text, "Performance implication:", ["This week's challenge:", "Observation:"]);
+    const focus = parseSection(coach_reflection_text, "This week's challenge:", ["Observation:", "Performance implication:"]);
+
+    const gapColor = gap > 0 ? "text-amber-700" : gap < 0 ? "text-orange-700" : "text-green-700";
+    const amsColor = alignment_momentum_direction === "improving" ? "text-green-600" : alignment_momentum_direction === "declining" ? "text-red-500" : "text-slate-500";
 
     return (
       <div className="max-w-3xl mx-auto px-4 py-8">
         <Link to="/ClientHome" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors mb-6">
           <ArrowLeft className="w-4 h-4" /> Back to Home
         </Link>
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-6">
-          <div className="flex items-center gap-3 pb-4 border-b border-gray-200">
-            <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+          {/* Header */}
+          <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100">
+            <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center shrink-0">
               <CheckCircle2 className="w-5 h-5 text-green-600" />
             </div>
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900">Check-In Complete</h2>
-              <p className="text-sm text-gray-600">Your weekly alignment insights</p>
+            <div className="flex-1">
+              <h2 className="text-base font-semibold text-gray-900">Check-In Complete</h2>
+              <p className="text-xs text-gray-400">Week ending {form.week_ending_date}</p>
             </div>
-          </div>
-
-          {aci != null && (
-            <div className="rounded-lg bg-blue-50 border border-blue-200 p-3">
-              <div className="text-xs font-medium text-blue-900 mb-1">Alignment Trend</div>
-              <div className="text-2xl font-bold text-blue-900">{aci.toFixed(0)}</div>
-              {aci_delta != null && (
-                <div className={`text-sm mt-0.5 ${aci_delta >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {aci_delta >= 0 ? '↑' : '↓'} {Math.abs(aci_delta).toFixed(0)} from last week
+            {/* Compact metrics row */}
+            <div className="flex items-center gap-2">
+              {aci != null && (
+                <div className="flex flex-col items-center px-3 py-1.5 rounded-lg bg-blue-50 border border-blue-100 min-w-[60px]">
+                  <span className="text-[10px] text-blue-500 font-medium uppercase tracking-wide">ACI</span>
+                  <span className="text-sm font-bold text-blue-800">{aci.toFixed(0)}</span>
+                  {aci_delta != null && <span className={`text-[10px] ${aci_delta >= 0 ? "text-green-600" : "text-red-500"}`}>{aci_delta >= 0 ? "↑" : "↓"}{Math.abs(aci_delta).toFixed(0)}</span>}
+                </div>
+              )}
+              <div className="flex flex-col items-center px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-100 min-w-[60px]">
+                <span className="text-[10px] text-amber-500 font-medium uppercase tracking-wide">Gap</span>
+                <span className={`text-sm font-bold ${gapColor}`}>{gap > 0 ? `+${gap}` : gap}</span>
+                <span className="text-[10px] text-gray-400">{gap_direction === "thought_ahead" ? "T>A" : gap_direction === "action_ahead" ? "A>T" : "Aligned"}</span>
+              </div>
+              {alignment_momentum_score != null ? (
+                <div className="flex flex-col items-center px-3 py-1.5 rounded-lg bg-indigo-50 border border-indigo-100 min-w-[60px]">
+                  <span className="text-[10px] text-indigo-500 font-medium uppercase tracking-wide">AMS</span>
+                  <span className={`text-sm font-bold flex items-center gap-0.5 ${amsColor}`}>
+                    {alignment_momentum_direction === "improving" ? <TrendingUp className="w-3 h-3" /> : alignment_momentum_direction === "declining" ? <TrendingDown className="w-3 h-3" /> : <Minus className="w-3 h-3" />}
+                    {alignment_momentum_score > 0 ? `+${alignment_momentum_score.toFixed(0)}` : alignment_momentum_score.toFixed(0)}
+                  </span>
+                  <span className="text-[10px] text-gray-400 capitalize">{alignment_momentum_direction}</span>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-100 min-w-[60px]">
+                  <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wide">AMS</span>
+                  <span className="text-xs text-gray-300 italic">—</span>
+                  <span className="text-[10px] text-gray-300">Pending</span>
                 </div>
               )}
             </div>
-          )}
-
-          {alignment_momentum_score != null ? (
-            <div className="rounded-lg bg-indigo-50 border border-indigo-200 p-3">
-              <div className="flex items-start justify-between gap-2">
-                <div className="text-xs font-medium text-indigo-900">Alignment Momentum</div>
-                <div className="text-xs text-indigo-700 italic max-w-xs text-right">Shows whether alignment is moving forward, holding steady, or drifting backward</div>
-              </div>
-              <div className="text-2xl font-bold text-indigo-900 mt-1">{alignment_momentum_score > 0 ? '+' : ''}{alignment_momentum_score.toFixed(0)} — {alignment_momentum_direction.charAt(0).toUpperCase() + alignment_momentum_direction.slice(1)}</div>
-              <div className="text-sm text-indigo-800 mt-1">{alignment_momentum_summary}</div>
-            </div>
-          ) : (
-            <div className="rounded-lg bg-indigo-50 border border-indigo-200 p-3">
-              <div className="text-xs font-medium text-indigo-900 mb-1">Alignment Momentum</div>
-              <div className="text-sm text-indigo-800">Alignment momentum will appear after your next check-in.</div>
-            </div>
-          )}
-
-          <div className="space-y-2">
-            <h3 className="text-base font-semibold text-gray-900">The Leadership Gap</h3>
-            <div className="rounded-lg bg-amber-50 border border-amber-200 p-4 space-y-2">
-              <div className="flex items-baseline gap-2">
-                <span className="text-xs font-medium text-amber-800">Leadership Gap:</span>
-                <span className={`text-xl font-bold ${gap > 0 ? 'text-amber-700' : gap < 0 ? 'text-orange-700' : 'text-green-700'}`}>
-                  {gap > 0 ? `+${gap}` : gap}
-                </span>
-              </div>
-              <p className="text-sm font-medium text-amber-900">{gapLabel}.</p>
-              <p className="text-sm text-amber-800">{gapInterpretation}</p>
-              <p className="text-xs text-amber-700 border-t border-amber-200 pt-2 mt-1">
-                The Leadership Gap shows the difference between your total Thought Time and total Action Time this week.
-              </p>
-            </div>
           </div>
 
-          {coach_reflection_text && (
-            <div className="space-y-2">
-              <h3 className="text-base font-semibold text-gray-900">Coaching Insight</h3>
-              <div className="rounded-lg bg-slate-50 border border-slate-200 p-4 space-y-2">
-                {coach_reflection_text.split("\n").map((line, i) => {
-                  const boldLabels = ["Observation:", "Performance implication:", "This week's challenge:"];
-                  const matchedLabel = boldLabels.find(l => line.startsWith(l));
-                  if (matchedLabel) {
-                    return (
-                      <p key={i} className="text-sm text-slate-800 leading-relaxed">
-                        <span className="font-bold">{matchedLabel}</span>{line.slice(matchedLabel.length)}
-                      </p>
-                    );
-                  }
-                  return <p key={i} className="text-sm text-slate-800 leading-relaxed">{line}</p>;
-                })}
+          <div className="px-6 py-5 space-y-4">
+            {/* Coaching Sections */}
+            {observation && (
+              <div className="rounded-xl bg-slate-50 border border-slate-200 p-4">
+                <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Observation</div>
+                <p className="text-sm text-slate-800 leading-relaxed">{observation}</p>
               </div>
-            </div>
-          )}
+            )}
+            {meaning && (
+              <div className="rounded-xl bg-amber-50 border border-amber-200 p-4">
+                <div className="text-[10px] font-semibold text-amber-600 uppercase tracking-widest mb-1">What This Means</div>
+                <p className="text-sm text-amber-900 leading-relaxed">{meaning}</p>
+              </div>
+            )}
+            {focus && (
+              <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-4">
+                <div className="text-[10px] font-semibold text-emerald-600 uppercase tracking-widest mb-1">Focus for Next Week</div>
+                <p className="text-sm text-emerald-900 leading-relaxed">{focus}</p>
+              </div>
+            )}
+            {!observation && !meaning && !focus && coach_reflection_text && (
+              <div className="rounded-xl bg-slate-50 border border-slate-200 p-4">
+                <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Coaching Insight</div>
+                <p className="text-sm text-slate-800 leading-relaxed whitespace-pre-line">{coach_reflection_text}</p>
+              </div>
+            )}
 
-          {(client?.anchor_text || profile?.anchor_text) && (
-            <div className="space-y-2">
-              <h3 className="text-base font-semibold text-gray-900">Current Focus (Anchor)</h3>
-              <div className="rounded-lg bg-purple-50 border border-purple-200 p-4">
+            {(client?.anchor_text || profile?.anchor_text) && (
+              <div className="rounded-xl bg-purple-50 border border-purple-200 p-4">
+                <div className="text-[10px] font-semibold text-purple-500 uppercase tracking-widest mb-1">Current Focus (Anchor)</div>
                 <p className="text-sm text-purple-900 whitespace-pre-line">{(client?.anchor_text ? client : profile).anchor_text}</p>
               </div>
-            </div>
-          )}
+            )}
 
-          <div className="pt-4 border-t border-gray-200">
-            <Link to="/ClientHome">
-              <Button className="w-full bg-amber-600 hover:bg-amber-700">Back to Home</Button>
-            </Link>
+            {!alignment_momentum_score && (
+              <p className="text-xs text-gray-400 italic text-center">Alignment Momentum will appear after your next check-in.</p>
+            )}
+
+            <div className="pt-2 border-t border-gray-100">
+              <Link to="/ClientHome">
+                <Button className="w-full bg-amber-600 hover:bg-amber-700">Back to Home</Button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
