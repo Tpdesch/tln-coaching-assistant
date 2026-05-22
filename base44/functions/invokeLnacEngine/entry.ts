@@ -127,14 +127,14 @@ Deno.serve(async (req) => {
   const raw_ams = (aci_delta || 0) + gap_delta;
   const alignment_momentum_score = Math.max(-10, Math.min(10, raw_ams));
   const alignment_momentum_direction =
-    alignment_momentum_score > 0 ? 'accelerating' :
-    alignment_momentum_score < 0 ? 'decelerating' : 'steady';
+    alignment_momentum_score >= 4 ? 'improving' :
+    alignment_momentum_score <= -4 ? 'declining' : 'stable';
   const alignment_momentum_summary =
-    alignment_momentum_direction === 'accelerating'
-      ? 'Alignment is strengthening — thought and action are converging.'
-      : alignment_momentum_direction === 'decelerating'
-      ? 'Alignment is under pressure — thought and action are diverging.'
-      : 'Alignment is holding steady this week.';
+    alignment_momentum_direction === 'improving'
+      ? 'Alignment momentum is improving.'
+      : alignment_momentum_direction === 'declining'
+      ? 'Alignment momentum is declining.'
+      : 'Alignment momentum is stable.';
 
   // Drift pattern detection
   const drift_patterns = [];

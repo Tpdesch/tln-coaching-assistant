@@ -51,9 +51,9 @@
     "alignment_momentum_direction": {
       "type": "string",
       "enum": [
-        "accelerating",
-        "decelerating",
-        "steady"
+        "improving",
+        "declining",
+        "stable"
       ],
       "description": "Direction of alignment momentum"
     },
