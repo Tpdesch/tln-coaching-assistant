@@ -137,6 +137,9 @@ export default function ClientCheckIn() {
     const thought_pct = Object.keys(results?.thought_pct || {}).length > 0 ? results.thought_pct : computePct([form.thought_l1, form.thought_l2, form.thought_l3, form.thought_l4, form.thought_l5]);
     const aci = results?.aci;
     const aci_delta = results?.aci_delta;
+    const alignment_momentum_score = results?.alignment_momentum_score;
+    const alignment_momentum_direction = results?.alignment_momentum_direction;
+    const alignment_momentum_summary = results?.alignment_momentum_summary;
     const coach_reflection_text = results?.coach_reflection_text;
 
     const total_thought_score = form.thought_l1 + form.thought_l2 + form.thought_l3 + form.thought_l4 + form.thought_l5;
@@ -174,6 +177,19 @@ export default function ClientCheckIn() {
                   {aci_delta >= 0 ? '↑' : '↓'} {Math.abs(aci_delta).toFixed(0)} from last week
                 </div>
               )}
+            </div>
+          )}
+
+          {alignment_momentum_score != null ? (
+            <div className="rounded-lg bg-indigo-50 border border-indigo-200 p-3">
+              <div className="text-xs font-medium text-indigo-900 mb-1">Alignment Momentum</div>
+              <div className="text-2xl font-bold text-indigo-900">{alignment_momentum_score > 0 ? '+' : ''}{alignment_momentum_score.toFixed(0)} — {alignment_momentum_direction.charAt(0).toUpperCase() + alignment_momentum_direction.slice(1)}</div>
+              <div className="text-sm text-indigo-800 mt-1">{alignment_momentum_summary}</div>
+            </div>
+          ) : (
+            <div className="rounded-lg bg-indigo-50 border border-indigo-200 p-3">
+              <div className="text-xs font-medium text-indigo-900 mb-1">Alignment Momentum</div>
+              <div className="text-sm text-indigo-800">Alignment momentum will appear after your next check-in.</div>
             </div>
           )}
 
