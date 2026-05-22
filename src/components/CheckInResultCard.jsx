@@ -120,17 +120,18 @@ export default function CheckInResultCard({ interaction, inferenceRun, defaultEx
       </button>
 
       {expanded && (
-        <div className="border-t border-gray-100 px-5 pb-6 space-y-5 pt-4">
+        <div className="border-t border-gray-100 px-5 pb-6 space-y-4 pt-4">
 
-          {/* Primary Insight Section */}
-          {sections && (
+          {/* Primary Insight - Prominent at Top */}
+          {sections?.observation && (
+            <div className="bg-slate-50 rounded-xl border border-slate-200 p-4">
+              <p className="text-base font-semibold text-slate-900 leading-relaxed">{sections.observation}</p>
+            </div>
+          )}
+
+          {/* Supporting Insights */}
+          {(sections?.meaning || sections?.focus) && (
             <div className="space-y-3">
-              {sections.observation && (
-                <div className="rounded-xl bg-slate-50 border border-slate-200 p-4">
-                  <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Observation</div>
-                  <p className="text-sm text-slate-800 leading-relaxed">{sections.observation}</p>
-                </div>
-              )}
               {sections.meaning && (
                 <div className="rounded-xl bg-amber-50 border border-amber-200 p-4">
                   <div className="text-[10px] font-semibold text-amber-600 uppercase tracking-widest mb-1">What This Means</div>
