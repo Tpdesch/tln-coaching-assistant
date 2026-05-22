@@ -182,8 +182,11 @@ export default function ClientCheckIn() {
 
           {alignment_momentum_score != null ? (
             <div className="rounded-lg bg-indigo-50 border border-indigo-200 p-3">
-              <div className="text-xs font-medium text-indigo-900 mb-1">Alignment Momentum</div>
-              <div className="text-2xl font-bold text-indigo-900">{alignment_momentum_score > 0 ? '+' : ''}{alignment_momentum_score.toFixed(0)} — {alignment_momentum_direction.charAt(0).toUpperCase() + alignment_momentum_direction.slice(1)}</div>
+              <div className="flex items-start justify-between gap-2">
+                <div className="text-xs font-medium text-indigo-900">Alignment Momentum</div>
+                <div className="text-xs text-indigo-700 italic max-w-xs text-right">Shows whether alignment is moving forward, holding steady, or drifting backward</div>
+              </div>
+              <div className="text-2xl font-bold text-indigo-900 mt-1">{alignment_momentum_score > 0 ? '+' : ''}{alignment_momentum_score.toFixed(0)} — {alignment_momentum_direction.charAt(0).toUpperCase() + alignment_momentum_direction.slice(1)}</div>
               <div className="text-sm text-indigo-800 mt-1">{alignment_momentum_summary}</div>
             </div>
           ) : (

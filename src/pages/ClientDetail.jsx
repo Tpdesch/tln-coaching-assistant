@@ -196,6 +196,7 @@ export default function ClientDetail() {
                     ) : (
                       <span className="text-slate-400 italic">—</span>
                     )}
+                    <span className="text-slate-500 text-xs italic ml-1" title="Combines changes in consistency and the Thought/Action gap">(?)</span>
                   </div>
                 </div>
               );

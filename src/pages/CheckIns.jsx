@@ -129,6 +129,7 @@ export default function CheckIns() {
                 ) : (
                   <span className="text-slate-400 italic">—</span>
                 )}
+                <span className="text-slate-500 text-xs italic ml-1" title="Combines changes in consistency and the Thought/Action gap">(?)</span>
               </div>
               {interaction.coach_reflection_text && (
                 <div className="mt-3 p-3 rounded-xl bg-amber-50 border border-amber-200">

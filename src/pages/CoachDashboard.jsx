@@ -153,7 +153,7 @@ export default function CoachDashboard() {
                         </div>
                       )}
                       {run.alignment_momentum_score != null && (
-                        <div className={`text-xs font-medium mt-0.5 ${run.alignment_momentum_direction === "improving" ? "text-green-600" : run.alignment_momentum_direction === "declining" ? "text-red-500" : "text-slate-500"}`}>
+                        <div className={`text-xs font-medium mt-0.5 ${run.alignment_momentum_direction === "improving" ? "text-green-600" : run.alignment_momentum_direction === "declining" ? "text-red-500" : "text-slate-500"}`} title="Combines changes in consistency and the Thought/Action gap">
                           AMS {run.alignment_momentum_score > 0 ? `+${run.alignment_momentum_score.toFixed(0)}` : run.alignment_momentum_score.toFixed(0)} {run.alignment_momentum_direction ? run.alignment_momentum_direction.charAt(0).toUpperCase() + run.alignment_momentum_direction.slice(1) : ""}
                         </div>
                       )}
