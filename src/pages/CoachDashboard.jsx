@@ -152,6 +152,11 @@ export default function CoachDashboard() {
                           {Math.abs(run.aci_delta).toFixed(0)}
                         </div>
                       )}
+                      {run.alignment_momentum_score != null && (
+                        <div className={`text-xs font-medium mt-0.5 ${run.alignment_momentum_direction === "improving" ? "text-green-600" : run.alignment_momentum_direction === "declining" ? "text-red-500" : "text-slate-500"}`}>
+                          AMS {run.alignment_momentum_score > 0 ? `+${run.alignment_momentum_score.toFixed(0)}` : run.alignment_momentum_score.toFixed(0)} {run.alignment_momentum_direction ? run.alignment_momentum_direction.charAt(0).toUpperCase() + run.alignment_momentum_direction.slice(1) : ""}
+                        </div>
+                      )}
                     </div>
                   )}
                   {isNew && <span className="text-[10px] px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200 shrink-0">New</span>}

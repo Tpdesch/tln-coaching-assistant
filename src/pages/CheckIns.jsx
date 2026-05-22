@@ -119,6 +119,17 @@ export default function CheckIns() {
                   <span className="text-slate-500 italic">Will appear after the next check-in.</span>
                 )}
               </div>
+              <div className="mt-1 text-xs text-slate-700">
+                <span className="font-semibold">AMS: </span>
+                {interaction.alignment_momentum_score != null ? (
+                  <span className={interaction.alignment_momentum_direction === "improving" ? "text-green-700 font-medium" : interaction.alignment_momentum_direction === "declining" ? "text-red-600 font-medium" : "text-slate-600 font-medium"}>
+                    {interaction.alignment_momentum_score > 0 ? `+${interaction.alignment_momentum_score.toFixed(0)}` : interaction.alignment_momentum_score.toFixed(0)}{" "}
+                    {interaction.alignment_momentum_direction ? interaction.alignment_momentum_direction.charAt(0).toUpperCase() + interaction.alignment_momentum_direction.slice(1) : ""}
+                  </span>
+                ) : (
+                  <span className="text-slate-400 italic">—</span>
+                )}
+              </div>
               {interaction.coach_reflection_text && (
                 <div className="mt-3 p-3 rounded-xl bg-amber-50 border border-amber-200">
                   <div className="flex items-center gap-1 mb-1">
