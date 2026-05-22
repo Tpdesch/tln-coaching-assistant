@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Briefcase, Building2, Mail, Calendar, Sparkles, TrendingUp, TrendingDown } from "lucide-react";
+import { ArrowLeft, Briefcase, Building2, Mail, Calendar, Sparkles, TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -137,25 +137,43 @@ export default function ClientDetail() {
           <div className="space-y-4">
             {checkins.map(interaction => {
               const run = runsByInteractionId[interaction.id];
+              const gap = interaction.leadership_gap;
+              const gapDir = gap > 0 ? "T>A" : gap < 0 ? "A>T" : "Aligned";
+              const gapColor = gap > 0 ? "text-amber-700" : gap < 0 ? "text-orange-700" : "text-green-700";
+              const amsColor = interaction.alignment_momentum_direction === "improving" ? "text-green-600" : interaction.alignment_momentum_direction === "declining" ? "text-red-500" : "text-slate-500";
+
               return (
                 <div key={interaction.id} className="bg-white rounded-2xl border border-gray-100 p-5 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-semibold text-gray-800">
                       Week ending {interaction.week_ending_date || interaction.created_date?.slice(0, 10)}
                     </span>
-                    <div className="flex items-center gap-3">
+                    {/* Compact metric pills */}
+                    <div className="flex items-center gap-1 shrink-0">
                       {run?.aci != null && (
-                        <div className="text-right">
-                          <span className="text-sm font-bold text-gray-800">ACI {run.aci.toFixed(0)}</span>
-                          {run.aci_delta != null && (
-                            <span className={`ml-1.5 text-xs inline-flex items-center gap-0.5 ${run.aci_delta >= 0 ? "text-green-600" : "text-red-500"}`}>
-                              {run.aci_delta >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                              {Math.abs(run.aci_delta).toFixed(0)}
-                            </span>
-                          )}
+                        <div className="flex flex-col items-center px-2 py-1 rounded bg-blue-50 border border-blue-100 min-w-[50px]">
+                          <span className="text-[9px] text-blue-500 font-semibold uppercase tracking-wide">ACI</span>
+                          <span className="text-xs font-bold text-blue-800">{run.aci.toFixed(0)}</span>
+                          {run.aci_delta != null && <span className={`text-[8px] ${run.aci_delta >= 0 ? "text-green-600" : "text-red-500"}`}>{run.aci_delta >= 0 ? "↑" : "↓"}{Math.abs(run.aci_delta).toFixed(0)}</span>}
                         </div>
                       )}
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200">Submitted</span>
+                      {gap != null && (
+                        <div className="flex flex-col items-center px-2 py-1 rounded bg-amber-50 border border-amber-100 min-w-[50px]">
+                          <span className="text-[9px] text-amber-500 font-semibold uppercase tracking-wide">Gap</span>
+                          <span className={`text-xs font-bold ${gapColor}`}>{gap > 0 ? `+${gap}` : gap}</span>
+                          <span className="text-[8px] text-gray-400">{gapDir}</span>
+                        </div>
+                      )}
+                      {interaction.alignment_momentum_score != null && (
+                        <div className="flex flex-col items-center px-2 py-1 rounded bg-indigo-50 border border-indigo-100 min-w-[50px]">
+                          <span className="text-[9px] text-indigo-500 font-semibold uppercase tracking-wide">AMS</span>
+                          <span className={`text-xs font-bold flex items-center gap-0.5 ${amsColor}`}>
+                            {interaction.alignment_momentum_direction === "improving" ? <TrendingUp className="w-2.5 h-2.5" /> : interaction.alignment_momentum_direction === "declining" ? <TrendingDown className="w-2.5 h-2.5" /> : <Minus className="w-2.5 h-2.5" />}
+                            {interaction.alignment_momentum_score > 0 ? `+${interaction.alignment_momentum_score.toFixed(0)}` : interaction.alignment_momentum_score.toFixed(0)}
+                          </span>
+                          <span className="text-[8px] text-gray-400 capitalize">{interaction.alignment_momentum_direction}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -172,34 +190,6 @@ export default function ClientDetail() {
                       <p className="text-xs text-amber-900 whitespace-pre-line">{interaction.coach_reflection_text}</p>
                     </div>
                   )}
-
-                  <div className="text-xs text-slate-700">
-                    <span className="font-semibold">Leadership Gap: </span>
-                    {interaction.leadership_gap != null ? (
-                      <span className={interaction.leadership_gap > 0 ? "text-amber-700 font-medium" : interaction.leadership_gap < 0 ? "text-orange-700 font-medium" : "text-green-700 font-medium"}>
-                        {interaction.leadership_gap > 0 ? `+${interaction.leadership_gap}` : interaction.leadership_gap}
-                        {" "}
-                        {interaction.leadership_gap_direction === "thought_ahead" ? "Thought ahead" :
-                          interaction.leadership_gap_direction === "action_ahead" ? "Action ahead" : "Aligned"}
-                      </span>
-                    ) : (
-                      <span className="text-slate-500 italic">Will appear after the next check-in.</span>
-                    )}
-                  </div>
-                  <div className="text-xs text-slate-700">
-                    <span className="font-semibold">AMS: </span>
-                    {interaction.alignment_momentum_score != null ? (
-                      <>
-                        <span className={interaction.alignment_momentum_direction === "improving" ? "text-green-700 font-medium" : interaction.alignment_momentum_direction === "declining" ? "text-red-600 font-medium" : "text-slate-600 font-medium"}>
-                          {interaction.alignment_momentum_score > 0 ? `+${interaction.alignment_momentum_score.toFixed(0)}` : interaction.alignment_momentum_score.toFixed(0)}{" "}
-                          {interaction.alignment_momentum_direction ? interaction.alignment_momentum_direction.charAt(0).toUpperCase() + interaction.alignment_momentum_direction.slice(1) : ""}
-                        </span>
-                        <span className="text-slate-500 text-xs italic ml-1" title="Combines changes in consistency and the Thought/Action gap">(?)</span>
-                      </>
-                    ) : (
-                      <span className="text-slate-400 italic">Alignment Momentum will appear after your next check-in.</span>
-                    )}
-                  </div>
                 </div>
               );
             })}
