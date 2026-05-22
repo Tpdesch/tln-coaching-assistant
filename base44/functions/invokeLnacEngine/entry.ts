@@ -116,6 +116,26 @@ Deno.serve(async (req) => {
     aci_delta = aci - prevRun.aci;
   }
 
+  // AMS: Alignment Momentum Score
+  // gap_delta = prior_abs_gap - current_abs_gap (positive = gap is shrinking = good)
+  const current_abs_gap = Math.abs(leadership_gap);
+  let prior_abs_gap = null;
+  if (prevRun?.gap_companion?.leadership_gap != null) {
+    prior_abs_gap = Math.abs(prevRun.gap_companion.leadership_gap);
+  }
+  const gap_delta = prior_abs_gap != null ? prior_abs_gap - current_abs_gap : 0;
+  const raw_ams = (aci_delta || 0) + gap_delta;
+  const alignment_momentum_score = Math.max(-10, Math.min(10, raw_ams));
+  const alignment_momentum_direction =
+    alignment_momentum_score > 0 ? 'accelerating' :
+    alignment_momentum_score < 0 ? 'decelerating' : 'steady';
+  const alignment_momentum_summary =
+    alignment_momentum_direction === 'accelerating'
+      ? 'Alignment is strengthening — thought and action are converging.'
+      : alignment_momentum_direction === 'decelerating'
+      ? 'Alignment is under pressure — thought and action are diverging.'
+      : 'Alignment is holding steady this week.';
+
   // Drift pattern detection
   const drift_patterns = [];
   const levelLabels = ['Transactional', 'Managerial', 'Tactical', 'Strategic', 'Transformational'];
@@ -230,6 +250,9 @@ Be direct, human, and specific. Do not use generic language. Do not use bullet p
       leadership_gap_direction,
       leadership_gap_interpretation,
     },
+    alignment_momentum_score,
+    alignment_momentum_direction,
+    alignment_momentum_summary,
   });
 
   // Also write the coaching reflection and gap fields back to the interaction
@@ -240,6 +263,9 @@ Be direct, human, and specific. Do not use generic language. Do not use bullet p
     leadership_gap,
     leadership_gap_direction,
     leadership_gap_interpretation,
+    alignment_momentum_score,
+    alignment_momentum_direction,
+    alignment_momentum_summary,
   });
 
   return Response.json({
