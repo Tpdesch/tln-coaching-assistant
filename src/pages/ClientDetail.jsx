@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Briefcase, Building2, Mail, Calendar, Sparkles, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { ArrowLeft, Briefcase, Building2, Mail, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import CheckInCarousel from "@/components/CheckInCarousel";
 
 const statusConfig = {
   active: { label: "Active", cls: "bg-emerald-50 text-emerald-700 border-emerald-200" },
@@ -127,73 +128,14 @@ export default function ClientDetail() {
       <div>
         <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Check-In History</h2>
         {loadingInteractions || loadingRuns ? (
-          <div className="space-y-3">{[1, 2, 3].map(i => <Skeleton key={i} className="h-24 rounded-2xl" />)}</div>
+          <div className="space-y-3">{[1, 2, 3].map(i => <Skeleton key={i} className="h-64 rounded-2xl" />)}</div>
         ) : checkins.length === 0 ? (
           <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center">
             <Calendar className="w-8 h-8 text-gray-200 mx-auto mb-2" />
             <p className="text-gray-400 text-sm">No check-ins submitted yet.</p>
           </div>
         ) : (
-          <div className="space-y-4">
-            {checkins.map(interaction => {
-              const run = runsByInteractionId[interaction.id];
-              const gap = interaction.leadership_gap;
-              const gapDir = gap > 0 ? "T>A" : gap < 0 ? "A>T" : "Aligned";
-              const gapColor = gap > 0 ? "text-amber-700" : gap < 0 ? "text-orange-700" : "text-green-700";
-              const amsColor = interaction.alignment_momentum_direction === "improving" ? "text-green-600" : interaction.alignment_momentum_direction === "declining" ? "text-red-500" : "text-slate-500";
-
-              return (
-                <div key={interaction.id} className="bg-white rounded-2xl border border-gray-100 p-5 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold text-gray-800">
-                      Week ending {interaction.week_ending_date || interaction.created_date?.slice(0, 10)}
-                    </span>
-                    {/* Compact metric pills */}
-                    <div className="flex items-center gap-1 shrink-0">
-                      {run?.aci != null && (
-                        <div className="flex flex-col items-center px-2 py-1 rounded bg-blue-50 border border-blue-100 min-w-[50px]">
-                          <span className="text-[9px] text-blue-500 font-semibold uppercase tracking-wide">ACI</span>
-                          <span className="text-xs font-bold text-blue-800">{run.aci.toFixed(0)}</span>
-                          {run.aci_delta != null && <span className={`text-[8px] ${run.aci_delta >= 0 ? "text-green-600" : "text-red-500"}`}>{run.aci_delta >= 0 ? "↑" : "↓"}{Math.abs(run.aci_delta).toFixed(0)}</span>}
-                        </div>
-                      )}
-                      {gap != null && (
-                        <div className="flex flex-col items-center px-2 py-1 rounded bg-amber-50 border border-amber-100 min-w-[50px]">
-                          <span className="text-[9px] text-amber-500 font-semibold uppercase tracking-wide">Gap</span>
-                          <span className={`text-xs font-bold ${gapColor}`}>{gap > 0 ? `+${gap}` : gap}</span>
-                          <span className="text-[8px] text-gray-400">{gapDir}</span>
-                        </div>
-                      )}
-                      {interaction.alignment_momentum_score != null && (
-                        <div className="flex flex-col items-center px-2 py-1 rounded bg-indigo-50 border border-indigo-100 min-w-[50px]">
-                          <span className="text-[9px] text-indigo-500 font-semibold uppercase tracking-wide">AMS</span>
-                          <span className={`text-xs font-bold flex items-center gap-0.5 ${amsColor}`}>
-                            {interaction.alignment_momentum_direction === "improving" ? <TrendingUp className="w-2.5 h-2.5" /> : interaction.alignment_momentum_direction === "declining" ? <TrendingDown className="w-2.5 h-2.5" /> : <Minus className="w-2.5 h-2.5" />}
-                            {interaction.alignment_momentum_score > 0 ? `+${interaction.alignment_momentum_score.toFixed(0)}` : interaction.alignment_momentum_score.toFixed(0)}
-                          </span>
-                          <span className="text-[8px] text-gray-400 capitalize">{interaction.alignment_momentum_direction}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {interaction.reflection_text && (
-                    <p className="text-sm text-gray-700 leading-relaxed">{interaction.reflection_text}</p>
-                  )}
-
-                  {interaction.coach_reflection_text && (
-                    <div className="p-3 rounded-xl bg-amber-50 border border-amber-200">
-                      <div className="flex items-center gap-1 mb-1">
-                        <Sparkles className="w-3 h-3 text-amber-600" />
-                        <span className="text-xs font-semibold text-amber-800">Coaching Reflection</span>
-                      </div>
-                      <p className="text-xs text-amber-900 whitespace-pre-line">{interaction.coach_reflection_text}</p>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+          <CheckInCarousel items={checkins.map(interaction => ({ interaction, inferenceRun: runsByInteractionId[interaction.id] }))} />
         )}
       </div>
     </div>
