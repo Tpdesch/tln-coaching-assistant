@@ -125,6 +125,7 @@ export default function CheckInResultCard({ interaction, inferenceRun, defaultEx
           {/* Primary Insight - Prominent at Top */}
           {sections?.observation && (
             <div className="bg-slate-50 rounded-xl border border-slate-200 p-4">
+              <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-2">Observation</div>
               <p className="text-base font-semibold text-slate-900 leading-relaxed">{sections.observation}</p>
             </div>
           )}
