@@ -228,7 +228,9 @@ Be direct, human, and specific. Do not use generic language. Do not use bullet p
     coach_reflection_text = typeof llmResult === 'string' ? llmResult.trim() : (llmResult?.text || '').trim();
   } catch (e) {
     console.error('LLM error:', e);
-    coach_reflection_text = `Observation: Your primary focus this week was at Level ${top_action_level_1} (${topActionLabel}), with your leadership alignment ${aci >= 75 ? 'showing strong consistency' : aci >= 45 ? 'developing a steady rhythm' : 'showing some variation worth exploring'}.\nPerformance implication: When your thought and action work together consistently, your leadership has a greater impact on the people and priorities around you.\nThis week's challenge: Identify one moment this week where you can intentionally bring your thinking and your visible actions closer together.`;
+    const alignmentState = aci >= 75 ? 'strong' : aci >= 45 ? 'moderate' : 'variable';
+    const alignmentObservation = alignmentState === 'strong' ? 'Your leadership focus and actions are working together consistently.' : alignmentState === 'moderate' ? 'Your leadership is developing a consistent rhythm.' : 'Your focus and actions need better alignment.';
+    coach_reflection_text = `Observation: Your primary focus this week was at Level ${top_action_level_1} (${topActionLabel}). ${alignmentObservation}\nPerformance implication: When your thinking and visible action align, your leadership creates clarity and builds trust with those around you.\nThis week's challenge: Identify one moment where you could bring your strategic thinking and your actions into closer alignment.`;
   }
 
   // Store the inference run
