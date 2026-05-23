@@ -3,14 +3,51 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 const levelLabels = ['Transactional', 'Managerial', 'Tactical', 'Strategic', 'Transformational'];
 
 function sanitiseObservation(text) {
-  return text
+  let t = text
+    // Internal metric terms
     .replace(/\bACI\b/g, 'leadership alignment')
     .replace(/\bAMS\b/g, 'growth direction')
     .replace(/alignment consistency index/gi, 'leadership alignment')
     .replace(/momentum score/gi, 'growth direction')
     .replace(/leadership gap/gi, 'thought vs action balance')
     .replace(/cosine similarity/gi, 'alignment pattern')
-    .replace(/\bLNAC\b/g, 'leadership framework');
+    .replace(/\bLNAC\b/g, 'leadership framework')
+    // First-person system phrases → neutral coaching language
+    .replace(/I noticed\b/gi, 'Your leadership alignment showed')
+    .replace(/I notice\b/gi, 'Your leadership alignment shows')
+    .replace(/I observed\b/gi, 'The check-in indicates')
+    .replace(/I observe\b/gi, 'The check-in indicates')
+    .replace(/I see\b/gi, 'The check-in shows')
+    .replace(/I can see\b/gi, 'The check-in shows')
+    .replace(/I think\b/gi, 'This pattern suggests')
+    .replace(/I recommend\b/gi, 'Focus this week on')
+    .replace(/I suggest\b/gi, 'Focus this week on')
+    .replace(/I encourage\b/gi, 'Consider')
+    .replace(/I want\b/gi, 'It would be valuable')
+    .replace(/I'd like\b/gi, 'It would be valuable')
+    .replace(/I would like\b/gi, 'It would be valuable')
+    .replace(/we see\b/gi, 'the check-in shows')
+    .replace(/we can see\b/gi, 'the check-in shows')
+    .replace(/we noticed\b/gi, 'the check-in indicates')
+    .replace(/we notice\b/gi, 'the check-in indicates')
+    .replace(/we observe\b/gi, 'the check-in indicates')
+    .replace(/we observed\b/gi, 'the check-in indicates')
+    .replace(/our analysis\b/gi, 'the check-in')
+    .replace(/our data\b/gi, 'the check-in data')
+    .replace(/my suggestion\b/gi, 'the recommended focus')
+    .replace(/my recommendation\b/gi, 'the recommended focus');
+
+  // Final validation: if first-person language still present, use safe fallback per section
+  const firstPersonCheck = /\b(I |I'm |I've |I'd |we |we're |our |my )\b/i;
+  if (firstPersonCheck.test(t)) {
+    const fallback = 'Your check-in shows a meaningful pattern in how your leadership focus is showing up this week.';
+    t = t
+      .replace(/^Observation:.*$/im, `Observation: ${fallback}`)
+      .replace(/^Performance implication:.*$/im, 'Performance implication: This pattern is worth exploring with your coach — it offers a useful signal about how your thinking and actions are showing up.')
+      .replace(/^This week's challenge:.*$/im, "This week's challenge: Notice one moment where your focus and actions are most aligned, and build from there.");
+  }
+
+  return t;
 }
 
 async function regenerateObservation(base44, interaction) {
@@ -86,6 +123,12 @@ CRITICAL LANGUAGE RULES — these are absolute and non-negotiable:
   • "growth direction" (not AMS or momentum score)
   • "thought vs action balance" (not leadership gap)
 - The participant must never see a raw number or internal score. Describe patterns in plain English only.
+- NEVER use first-person system language. Do not write: I, me, my, we, our, us, I noticed, I see, I recommend, we can see, our analysis, my suggestion.
+- ALWAYS use neutral coaching language directed to the participant. Approved examples:
+  • "Your leadership alignment showed more variation this week…"
+  • "This pattern suggests…"
+  • "The check-in indicates…"
+  • "Your Thought vs Action pattern shows…"
 
 Here is what this week's check-in tells us:
 
