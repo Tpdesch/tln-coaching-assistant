@@ -134,10 +134,16 @@ export default function CoachDashboard() {
             {recentCheckins.map(i => {
               const run = latestRunByProfile[i.client_profile_id];
               const isNew = new Date(i.created_date) >= oneWeekAgo;
+              const aci = run?.aci;
+              const stabilityLabel = aci == null ? null : aci >= 75 ? "Strong" : aci >= 45 ? "Stable" : "Variable";
+              const stabilityColor = aci == null ? "text-gray-800" : aci >= 75 ? "text-green-700" : aci >= 45 ? "text-amber-700" : "text-red-600";
+
               const gap = (i.total_thought_score || 0) - (i.total_action_score || 0);
-              const gapDir = gap > 0 ? "T>A" : gap < 0 ? "A>T" : "Aligned";
+              const gapDir = gap > 0 ? "Thought Ahead" : gap < 0 ? "Action Ahead" : "Balanced";
               const gapColor = gap > 0 ? "text-amber-700" : gap < 0 ? "text-orange-700" : "text-green-700";
-              const amsColor = run?.alignment_momentum_direction === "improving" ? "text-green-600" : run?.alignment_momentum_direction === "declining" ? "text-red-500" : "text-slate-500";
+
+              const momentumLabel = run?.alignment_momentum_direction === "improving" ? "Improving" : run?.alignment_momentum_direction === "declining" ? "Declining" : "Stable";
+              const momentumColor = run?.alignment_momentum_direction === "improving" ? "text-green-600" : run?.alignment_momentum_direction === "declining" ? "text-red-500" : "text-slate-500";
 
               return (
                 <div key={i.id} className="px-5 py-4 flex items-center gap-3">
@@ -151,28 +157,24 @@ export default function CoachDashboard() {
 
                   {/* Compact metric pills */}
                   <div className="flex items-center gap-1.5 shrink-0">
-                    {run?.aci != null && (
+                    {aci != null && (
                       <div className="flex flex-col items-center px-2 py-1 rounded bg-blue-50 border border-blue-100 min-w-[54px]">
-                        <span className="text-[9px] text-blue-500 font-semibold uppercase tracking-wide">ACI</span>
-                        <span className="text-xs font-bold text-blue-800">{run.aci.toFixed(0)}</span>
-                        {run.aci_delta != null && <span className={`text-[8px] ${run.aci_delta >= 0 ? "text-green-600" : "text-red-500"}`}>{run.aci_delta >= 0 ? "↑" : "↓"}{Math.abs(run.aci_delta).toFixed(0)}</span>}
+                        <span className="text-[9px] text-blue-500 font-semibold uppercase tracking-wide">Stability</span>
+                        <span className={`text-xs font-bold ${stabilityColor}`}>{stabilityLabel}</span>
                       </div>
                     )}
                     {gap != null && (
                       <div className="flex flex-col items-center px-2 py-1 rounded bg-amber-50 border border-amber-100 min-w-[54px]">
-                        <span className="text-[9px] text-amber-500 font-semibold uppercase tracking-wide">Gap</span>
-                        <span className={`text-xs font-bold ${gapColor}`}>{gap > 0 ? `+${gap}` : gap}</span>
-                        <span className="text-[8px] text-gray-400">{gapDir}</span>
+                        <span className="text-[9px] text-amber-500 font-semibold uppercase tracking-wide">Thought vs Action</span>
+                        <span className={`text-[11px] font-bold ${gapColor}`}>{gapDir}</span>
                       </div>
                     )}
                     {run?.alignment_momentum_score != null && (
                       <div className="flex flex-col items-center px-2 py-1 rounded bg-indigo-50 border border-indigo-100 min-w-[54px]">
-                        <span className="text-[9px] text-indigo-500 font-semibold uppercase tracking-wide">AMS</span>
-                        <span className={`text-xs font-bold flex items-center gap-0.5 ${amsColor}`}>
+                        <span className="text-[9px] text-indigo-500 font-semibold uppercase tracking-wide">Momentum</span>
+                        <span className={`text-xs font-bold flex items-center gap-0.5 ${momentumColor}`}>
                           {run.alignment_momentum_direction === "improving" ? <TrendingUp className="w-2.5 h-2.5" /> : run.alignment_momentum_direction === "declining" ? <TrendingDown className="w-2.5 h-2.5" /> : <Minus className="w-2.5 h-2.5" />}
-                          {run.alignment_momentum_score > 0 ? `+${run.alignment_momentum_score.toFixed(0)}` : run.alignment_momentum_score.toFixed(0)}
                         </span>
-                        <span className="text-[8px] text-gray-400 capitalize">{run.alignment_momentum_direction}</span>
                       </div>
                     )}
                   </div>
