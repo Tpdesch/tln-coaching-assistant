@@ -181,20 +181,28 @@ Deno.serve(async (req) => {
     ? levelLabels[actionSorted[0].level - 1]
     : 'Level ' + top_action_level_1;
 
-  let llmPrompt = `You are a leadership development coach using the LNAC (Leadership Needs Assessment Cycle) framework.
+  const leadershipAlignmentLabel = aci >= 75 ? 'strong' : aci >= 45 ? 'developing a consistent rhythm' : 'showing more variation than usual';
+  const leadershipAlignmentTrend = aci_delta == null ? '' : aci_delta >= 5 ? ', strengthening compared to last week' : aci_delta <= -5 ? ', showing more variation than last week' : ', consistent with last week';
+  const growthDirectionLabel = alignment_momentum_direction === 'improving' ? 'moving in a positive direction' : alignment_momentum_direction === 'declining' ? 'showing some variation worth exploring' : 'holding steady';
+  const thoughtVsActionLabel = leadership_gap_direction === 'thought_ahead' ? 'Thought slightly ahead of Action' : leadership_gap_direction === 'action_ahead' ? 'Action slightly ahead of Thought' : 'Balanced';
 
-A coaching participant just submitted their weekly check-in. Here is their data:
+  let llmPrompt = `You are a reflective leadership development coach working with an individual participant.
+
+A participant just completed their weekly check-in. Here is what their data tells us — use this to write a brief coaching reflection in plain, human language. Do not use internal scoring terms. Speak directly to the participant.
 
 Week Ending: ${interaction.week_ending_date || 'this week'}
-Primary Action Level: Level ${top_action_level_1} (${topActionLabel})
-Leadership Alignment (internal score): ${aci}${aci_delta != null ? ` (${aci_delta >= 0 ? '+' : ''}${aci_delta} from last week)` : ''}
-Growth Direction: ${alignment_momentum_direction} (momentum score: ${alignment_momentum_score})
-Thought vs Action: ${leadership_gap_direction === 'thought_ahead' ? 'Thought Ahead' : leadership_gap_direction === 'action_ahead' ? 'Action Ahead' : 'Balanced'}
-Action Distribution: ${Object.entries(action_pct).map(([k, v]) => `L${k.slice(1)}: ${v.toFixed(0)}%`).join(', ')}
-Thought Distribution: ${Object.entries(thought_pct).map(([k, v]) => `L${k.slice(1)}: ${v.toFixed(0)}%`).join(', ')}`;
+Primary Focus Level: Level ${top_action_level_1} (${topActionLabel})
+Leadership Alignment: ${leadershipAlignmentLabel}${leadershipAlignmentTrend}
+Growth Direction: ${growthDirectionLabel}
+Thought vs Action balance: ${thoughtVsActionLabel}
+Action Time Distribution: ${Object.entries(action_pct).map(([k, v]) => `L${k.slice(1)}: ${v.toFixed(0)}%`).join(', ')}
+Thought Time Distribution: ${Object.entries(thought_pct).map(([k, v]) => `L${k.slice(1)}: ${v.toFixed(0)}%`).join(', ')}`;
 
   if (drift_patterns.length > 0) {
-    llmPrompt += `\nDrift Patterns: ${drift_patterns.map(d => `L${d.level} ${d.direction} by ${d.magnitude}`).join('; ')}`;
+    const driftDesc = drift_patterns.map(d =>
+      `At Level ${d.level} (${d.label}), ${d.action_val > d.thought_val ? 'action time is notably ahead of thought time' : 'thought time is notably ahead of action time'}`
+    ).join('; ');
+    llmPrompt += `\nNotable Patterns: ${driftDesc}`;
   }
 
   if (anchorText) {
@@ -213,12 +221,12 @@ Thought Distribution: ${Object.entries(thought_pct).map(([k, v]) => `L${k.slice(
 
   llmPrompt += `
 
-Write a brief, focused coaching reflection (3–4 sentences max) using EXACTLY this format — each on its own line:
-Observation: [one sentence describing the pattern you observe — use participant-facing language only: "leadership alignment", "growth direction", "thought vs action". Never mention ACI, AMS, Alignment Consistency Index, Momentum Score, or Leadership Gap.]
-Performance implication: [one sentence on what this means for their effectiveness — keep it reflective, developmental, and non-judgmental]
-This week's challenge: [one actionable, specific challenge tied to their anchor or primary level]
+Write a brief, focused coaching reflection using EXACTLY this format — each section on its own line, no bullet points, no markdown:
+Observation: [One sentence describing what you notice about their leadership alignment, growth direction, or thought vs action balance this week. Use warm, reflective language. Never use the words ACI, AMS, alignment consistency index, momentum score, or leadership gap.]
+Performance implication: [One sentence on what this pattern means for how they show up as a leader — keep it developmental and non-judgmental.]
+This week's challenge: [One specific, actionable challenge tied to their focus area or anchor.]
 
-Be direct, human, and specific. Do not use generic language. Do not use bullet points or markdown. Do not use internal framework terms like ACI, AMS, or Leadership Gap in any output visible to the participant.`;
+Voice: direct, human, coaching. Speak to the participant as "you". Be specific to their data. Do not be generic.`;
 
   let coach_reflection_text = '';
   try {
