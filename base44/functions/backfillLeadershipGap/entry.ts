@@ -36,13 +36,13 @@ Deno.serve(async (req) => {
     let leadership_gap_direction, leadership_gap_interpretation;
     if (leadership_gap > 0) {
       leadership_gap_direction = 'thought_ahead';
-      leadership_gap_interpretation = 'Your Thought Time is ahead of your Action Time this week.';
+      leadership_gap_interpretation = 'Your strategic thinking is slightly ahead of your visible action this week — a sign of forward momentum.';
     } else if (leadership_gap < 0) {
       leadership_gap_direction = 'action_ahead';
-      leadership_gap_interpretation = 'Your Action Time is ahead of your Thought Time this week.';
+      leadership_gap_interpretation = 'Your actions are moving a little faster than your strategic thinking this week — worth noticing.';
     } else {
       leadership_gap_direction = 'aligned';
-      leadership_gap_interpretation = 'Your Thought Time and Action Time are aligned this week.';
+      leadership_gap_interpretation = 'Your thinking and actions are well-balanced this week.';
     }
 
     await base44.asServiceRole.entities.Interactions.update(i.id, {
@@ -108,10 +108,10 @@ Deno.serve(async (req) => {
 
       const alignment_momentum_summary =
         alignment_momentum_direction === 'improving'
-          ? 'Your alignment is moving forward this week.'
+          ? 'Your growth direction is improving — your leadership alignment is strengthening over time.'
           : alignment_momentum_direction === 'declining'
-          ? 'Your alignment has drifted backward this week.'
-          : 'Your alignment is holding steady.';
+          ? 'Your growth direction shows some variation — this is a useful signal to explore in your next check-in.'
+          : 'Your growth direction is steady — your leadership alignment is holding consistent.';
 
       await base44.asServiceRole.entities.Interactions.update(curr.id, {
         alignment_momentum_score,
