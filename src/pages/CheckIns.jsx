@@ -3,8 +3,10 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Calendar } from "lucide-react";
+import { Calendar, RefreshCw } from "lucide-react";
 import CheckInCarousel from "@/components/CheckInCarousel";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function CheckIns() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -12,11 +14,15 @@ export default function CheckIns() {
   const [clientFilter, setClientFilter] = useState(filterClientId);
   const [myProfileId, setMyProfileId] = useState(null);
   const [profileIdToName, setProfileIdToName] = useState({});
+  const [isBackfilling, setIsBackfilling] = useState(false);
+  const [myRole, setMyRole] = useState(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     (async () => {
       const me = await base44.auth.me();
       if (!me) return;
+      setMyRole(me.role || null);
       const rows = await base44.entities.Profiles.filter({ base44_user_id: me.id });
       const p = Array.isArray(rows) ? rows[0] : null;
       setMyProfileId(p?.id || null);
@@ -80,6 +86,19 @@ export default function CheckIns() {
     inferenceRun: runsByInteractionId[interaction.id]
   }));
 
+  const handleBackfill = async () => {
+    setIsBackfilling(true);
+    try {
+      const res = await base44.functions.invoke('backfillObservations', {});
+      const { processed, skipped, failed } = res.data;
+      toast({ title: "Backfill complete", description: `${processed} updated, ${skipped} skipped, ${failed} failed.` });
+    } catch (e) {
+      toast({ title: "Backfill failed", description: e?.message || "Unknown error", variant: "destructive" });
+    } finally {
+      setIsBackfilling(false);
+    }
+  };
+
   return (
     <div className="space-y-6 max-w-5xl">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -87,6 +106,12 @@ export default function CheckIns() {
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Weekly Check-Ins</h1>
           <p className="text-gray-500 text-sm mt-1">Track client progress and identify patterns</p>
         </div>
+        {myRole === 'admin' && (
+          <Button variant="outline" size="sm" onClick={handleBackfill} disabled={isBackfilling} className="flex items-center gap-2">
+            <RefreshCw className={`w-4 h-4 ${isBackfilling ? 'animate-spin' : ''}`} />
+            {isBackfilling ? 'Regenerating…' : 'Regenerate All Observations'}
+          </Button>
+        )}
       </div>
 
       <div className="flex gap-3">
