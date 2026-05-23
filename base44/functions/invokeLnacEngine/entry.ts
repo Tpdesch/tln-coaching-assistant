@@ -186,54 +186,76 @@ Deno.serve(async (req) => {
   const growthDirectionLabel = alignment_momentum_direction === 'improving' ? 'moving in a positive direction' : alignment_momentum_direction === 'declining' ? 'showing some variation worth exploring' : 'holding steady';
   const thoughtVsActionLabel = leadership_gap_direction === 'thought_ahead' ? 'Thought slightly ahead of Action' : leadership_gap_direction === 'action_ahead' ? 'Action slightly ahead of Thought' : 'Balanced';
 
-  let llmPrompt = `You are a reflective leadership development coach working with an individual participant.
+  let llmPrompt = `You are a reflective leadership development coach writing directly to a participant after their weekly check-in.
 
-A participant just completed their weekly check-in. Here is what their data tells us — use this to write a brief coaching reflection in plain, human language. Do not use internal scoring terms. Speak directly to the participant.
+CRITICAL LANGUAGE RULES — these are absolute and non-negotiable:
+- NEVER write: ACI, AMS, alignment consistency index, momentum score, leadership gap, cosine similarity, or any internal metric name.
+- ALWAYS use these terms instead:
+  • "leadership alignment" (not ACI or alignment consistency index)
+  • "growth direction" (not AMS or momentum score)
+  • "thought vs action balance" (not leadership gap)
+- The participant must never see a raw number or internal score. Describe patterns in plain English only.
+
+Here is what this week's check-in tells us:
 
 Week Ending: ${interaction.week_ending_date || 'this week'}
-Primary Focus Level: Level ${top_action_level_1} (${topActionLabel})
-Leadership Alignment: ${leadershipAlignmentLabel}${leadershipAlignmentTrend}
+Primary focus area: Level ${top_action_level_1} (${topActionLabel})
+Leadership Alignment this week: ${leadershipAlignmentLabel}${leadershipAlignmentTrend}
 Growth Direction: ${growthDirectionLabel}
 Thought vs Action balance: ${thoughtVsActionLabel}
-Action Time Distribution: ${Object.entries(action_pct).map(([k, v]) => `L${k.slice(1)}: ${v.toFixed(0)}%`).join(', ')}
-Thought Time Distribution: ${Object.entries(thought_pct).map(([k, v]) => `L${k.slice(1)}: ${v.toFixed(0)}%`).join(', ')}`;
+How they spent their Action Time: ${Object.entries(action_pct).map(([k, v]) => `Level ${k.slice(1)} (${levelLabels[parseInt(k.slice(1)) - 1]}): ${v.toFixed(0)}%`).join(', ')}
+How they spent their Thought Time: ${Object.entries(thought_pct).map(([k, v]) => `Level ${k.slice(1)} (${levelLabels[parseInt(k.slice(1)) - 1]}): ${v.toFixed(0)}%`).join(', ')}`;
 
   if (drift_patterns.length > 0) {
     const driftDesc = drift_patterns.map(d =>
-      `At Level ${d.level} (${d.label}), ${d.action_val > d.thought_val ? 'action time is notably ahead of thought time' : 'thought time is notably ahead of action time'}`
+      `At the ${d.label} level, ${d.action_val > d.thought_val ? 'their action time is notably ahead of their thinking time' : 'their thinking time is notably ahead of their action time'}`
     ).join('; ');
-    llmPrompt += `\nNotable Patterns: ${driftDesc}`;
+    llmPrompt += `\nNotable patterns this week: ${driftDesc}`;
   }
 
   if (anchorText) {
-    llmPrompt += `\nCurrent Focus (Anchor): ${anchorText}`;
-    if (anchorTarget) llmPrompt += ` (Target: Level ${anchorTarget})`;
-    if (anchorCounter) llmPrompt += ` (Counter: Level ${anchorCounter})`;
+    llmPrompt += `\nTheir current coaching focus: ${anchorText}`;
+    if (anchorTarget) llmPrompt += ` (working toward Level ${anchorTarget} — ${levelLabels[anchorTarget - 1] || ''})`;
+    if (anchorCounter) llmPrompt += ` (moving away from Level ${anchorCounter} — ${levelLabels[anchorCounter - 1] || ''})`;
   }
 
   if (interaction.reflection_text) {
-    llmPrompt += `\nParticipant Reflection: ${interaction.reflection_text}`;
+    llmPrompt += `\nWhat they reflected on this week: ${interaction.reflection_text}`;
   }
 
   if (interaction.commitment_text) {
-    llmPrompt += `\nParticipant Commitment: ${interaction.commitment_text}`;
+    llmPrompt += `\nWhat they committed to: ${interaction.commitment_text}`;
   }
 
   llmPrompt += `
 
-Write a brief, focused coaching reflection using EXACTLY this format — each section on its own line, no bullet points, no markdown:
-Observation: [One sentence describing what you notice about their leadership alignment, growth direction, or thought vs action balance this week. Use warm, reflective language. Never use the words ACI, AMS, alignment consistency index, momentum score, or leadership gap.]
-Performance implication: [One sentence on what this pattern means for how they show up as a leader — keep it developmental and non-judgmental.]
-This week's challenge: [One specific, actionable challenge tied to their focus area or anchor.]
+Write a coaching reflection using EXACTLY this 3-line format. Each label must appear exactly as shown, followed by your text:
 
-Voice: direct, human, coaching. Speak to the participant as "you". Be specific to their data. Do not be generic.`;
+Observation: [One warm, specific sentence about what you notice in their leadership alignment, growth direction, or thought vs action balance this week. Do NOT mention ACI, AMS, alignment consistency index, momentum score, leadership gap, or any score/number.]
+Performance implication: [One sentence on what this pattern means for how they show up as a leader — developmental, non-judgmental, human.]
+This week's challenge: [One specific, actionable challenge tied to their focus area or coaching anchor.]
+
+Tone: warm, direct, coaching. Address the participant as "you". Be specific to their actual data. Never be generic. Never use internal framework terminology.`;
+
+  // Sanitise any leaked internal terminology from LLM output
+  function sanitiseObservation(text) {
+    return text
+      .replace(/\bACI\b/g, 'leadership alignment')
+      .replace(/\bAMS\b/g, 'growth direction')
+      .replace(/alignment consistency index/gi, 'leadership alignment')
+      .replace(/momentum score/gi, 'growth direction')
+      .replace(/leadership gap/gi, 'thought vs action balance')
+      .replace(/cosine similarity/gi, 'alignment pattern')
+      .replace(/\bLNAC\b/g, 'leadership framework');
+  }
 
   let coach_reflection_text = '';
   try {
     const llmResult = await base44.integrations.Core.InvokeLLM({
       prompt: llmPrompt,
     });
-    coach_reflection_text = typeof llmResult === 'string' ? llmResult.trim() : (llmResult?.text || '').trim();
+    const raw = typeof llmResult === 'string' ? llmResult.trim() : (llmResult?.text || '').trim();
+    coach_reflection_text = sanitiseObservation(raw);
   } catch (e) {
     console.error('LLM error:', e);
     const alignmentState = aci >= 75 ? 'strong' : aci >= 45 ? 'moderate' : 'variable';
