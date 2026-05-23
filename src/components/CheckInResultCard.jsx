@@ -40,12 +40,12 @@ function parseCoachingText(text) {
   return sections;
 }
 
-function MetricPill({ label, value, sub, color }) {
+function MetricPill({ label, value, desc, color }) {
   return (
-    <div className="flex flex-col items-center px-3 py-2 rounded-lg bg-gray-50 border border-gray-100 min-w-[72px]">
+    <div className="flex flex-col items-center px-3 py-2 rounded-lg bg-gray-50 border border-gray-100 min-w-[80px]">
       <span className="text-[10px] text-gray-400 uppercase tracking-wide font-medium">{label}</span>
       <span className={`text-base font-bold leading-tight ${color || "text-gray-800"}`}>{value}</span>
-      {sub && <span className="text-[10px] text-gray-400">{sub}</span>}
+      {desc && <span className="text-[8px] text-gray-500 text-center mt-0.5 leading-tight line-clamp-2">{desc}</span>}
     </div>
   );
 }
@@ -70,14 +70,17 @@ export default function CheckInResultCard({ interaction, inferenceRun, defaultEx
   const sections = parseCoachingText(coach_reflection_text);
 
   // Participant-friendly interpretations
-  const stabilityLabel = aci == null ? null : aci >= 75 ? "Strong" : aci >= 45 ? "Stable" : "Variable";
-  const stabilityColor = aci == null ? "text-gray-800" : aci >= 75 ? "text-green-700" : aci >= 45 ? "text-amber-700" : "text-red-600";
+  const alignmentLabel = aci == null ? null : aci >= 75 ? "Strong" : aci >= 45 ? "Moderate" : "Variable";
+  const alignmentColor = aci == null ? "text-gray-800" : aci >= 75 ? "text-green-700" : aci >= 45 ? "text-amber-700" : "text-red-600";
+  const alignmentDesc = aci == null ? "" : aci >= 75 ? "Your leadership focus and actions are working together consistently." : aci >= 45 ? "Your leadership is developing a consistent rhythm." : "Your focus and actions need better alignment.";
 
-  const momentumLabel = ams_direction === "improving" ? "Improving" : ams_direction === "declining" ? "Declining" : "Stable";
-  const momentumColor = ams_direction === "improving" ? "text-green-600" : ams_direction === "declining" ? "text-red-500" : "text-slate-500";
+  const growthLabel = ams_direction === "improving" ? "Improving" : ams_direction === "declining" ? "Declining" : "Stable";
+  const growthColor = ams_direction === "improving" ? "text-green-600" : ams_direction === "declining" ? "text-red-500" : "text-slate-500";
+  const growthDesc = ams_direction === "improving" ? "Your alignment is moving in a positive direction." : ams_direction === "declining" ? "Your alignment is trending in a concerning direction." : "Your alignment remains consistent over time.";
 
   const thoughtVsActionLabel = gap_direction === "thought_ahead" ? "Thought Ahead" : gap_direction === "action_ahead" ? "Action Ahead" : "Balanced";
   const thoughtVsActionColor = gap_direction === "thought_ahead" ? "text-amber-700" : gap_direction === "action_ahead" ? "text-orange-700" : "text-green-700";
+  const thoughtVsActionDesc = gap_direction === "thought_ahead" ? "Your strategic thinking is slightly ahead of your visible action." : gap_direction === "action_ahead" ? "Your actions are moving faster than your strategic alignment." : "Your thinking and actions are well-balanced.";
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
@@ -99,19 +102,20 @@ export default function CheckInResultCard({ interaction, inferenceRun, defaultEx
           {/* Compact metric pills — always visible */}
           <div className="flex items-center gap-2 flex-wrap">
             {aci != null && (
-              <MetricPill label="Stability" value={stabilityLabel} color={stabilityColor} />
+              <MetricPill label="Leadership Alignment" value={alignmentLabel} desc={alignmentDesc} color={alignmentColor} />
             )}
             {ams_score != null && (
-              <div className="flex flex-col items-center px-3 py-2 rounded-lg bg-gray-50 border border-gray-100 min-w-[72px]">
-                <span className="text-[10px] text-gray-400 uppercase tracking-wide font-medium">Momentum</span>
-                <span className={`text-sm font-bold leading-tight flex items-center gap-0.5 ${momentumColor}`}>
+              <div className="flex flex-col items-center px-3 py-2 rounded-lg bg-gray-50 border border-gray-100 min-w-[80px]">
+                <span className="text-[10px] text-gray-400 uppercase tracking-wide font-medium">Growth Direction</span>
+                <span className={`text-sm font-bold leading-tight flex items-center gap-0.5 ${growthColor}`}>
                   <AmsIcon direction={ams_direction} />
-                  {momentumLabel}
+                  {growthLabel}
                 </span>
+                <span className="text-[8px] text-gray-500 text-center mt-0.5 leading-tight line-clamp-2">{growthDesc}</span>
               </div>
             )}
             {gap != null && (
-              <MetricPill label="Thought vs Action" value={thoughtVsActionLabel} color={thoughtVsActionColor} />
+              <MetricPill label="Thought vs Action" value={thoughtVsActionLabel} desc={thoughtVsActionDesc} color={thoughtVsActionColor} />
             )}
           </div>
         </div>
