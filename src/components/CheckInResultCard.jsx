@@ -69,9 +69,15 @@ export default function CheckInResultCard({ interaction, inferenceRun, defaultEx
 
   const sections = parseCoachingText(coach_reflection_text);
 
-  const gapColor = gap > 0 ? "text-amber-700" : gap < 0 ? "text-orange-700" : "text-green-700";
-  const gapLabel = gap_direction === "thought_ahead" ? "Thought ahead" : gap_direction === "action_ahead" ? "Action ahead" : "Aligned";
-  const amsColor = ams_direction === "improving" ? "text-green-600" : ams_direction === "declining" ? "text-red-500" : "text-slate-500";
+  // Participant-friendly interpretations
+  const stabilityLabel = aci == null ? null : aci >= 75 ? "Strong" : aci >= 45 ? "Stable" : "Variable";
+  const stabilityColor = aci == null ? "text-gray-800" : aci >= 75 ? "text-green-700" : aci >= 45 ? "text-amber-700" : "text-red-600";
+
+  const momentumLabel = ams_direction === "improving" ? "Improving" : ams_direction === "declining" ? "Declining" : "Stable";
+  const momentumColor = ams_direction === "improving" ? "text-green-600" : ams_direction === "declining" ? "text-red-500" : "text-slate-500";
+
+  const thoughtVsActionLabel = gap_direction === "thought_ahead" ? "Thought Ahead" : gap_direction === "action_ahead" ? "Action Ahead" : "Balanced";
+  const thoughtVsActionColor = gap_direction === "thought_ahead" ? "text-amber-700" : gap_direction === "action_ahead" ? "text-orange-700" : "text-green-700";
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
@@ -93,25 +99,19 @@ export default function CheckInResultCard({ interaction, inferenceRun, defaultEx
           {/* Compact metric pills — always visible */}
           <div className="flex items-center gap-2 flex-wrap">
             {aci != null && (
-              <MetricPill
-                label="ACI"
-                value={aci.toFixed(0)}
-                sub={aci_delta != null ? `${aci_delta >= 0 ? "↑" : "↓"}${Math.abs(aci_delta).toFixed(0)}` : null}
-                color={aci_delta != null ? (aci_delta >= 0 ? "text-green-700" : "text-red-600") : "text-gray-800"}
-              />
-            )}
-            {gap != null && (
-              <MetricPill label="Gap" value={gap > 0 ? `+${gap}` : `${gap}`} sub={gapLabel} color={gapColor} />
+              <MetricPill label="Stability" value={stabilityLabel} color={stabilityColor} />
             )}
             {ams_score != null && (
               <div className="flex flex-col items-center px-3 py-2 rounded-lg bg-gray-50 border border-gray-100 min-w-[72px]">
-                <span className="text-[10px] text-gray-400 uppercase tracking-wide font-medium">AMS</span>
-                <span className={`text-base font-bold leading-tight flex items-center gap-0.5 ${amsColor}`}>
+                <span className="text-[10px] text-gray-400 uppercase tracking-wide font-medium">Momentum</span>
+                <span className={`text-sm font-bold leading-tight flex items-center gap-0.5 ${momentumColor}`}>
                   <AmsIcon direction={ams_direction} />
-                  {ams_score > 0 ? `+${ams_score.toFixed(0)}` : ams_score.toFixed(0)}
+                  {momentumLabel}
                 </span>
-                <span className="text-[10px] text-gray-400 capitalize">{ams_direction}</span>
               </div>
+            )}
+            {gap != null && (
+              <MetricPill label="Thought vs Action" value={thoughtVsActionLabel} color={thoughtVsActionColor} />
             )}
           </div>
         </div>
