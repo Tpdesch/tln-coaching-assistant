@@ -73,10 +73,10 @@ Deno.serve(async (req) => {
   const leadership_gap = total_thought_score - total_action_score;
   const leadership_gap_direction = leadership_gap > 0 ? 'thought_ahead' : leadership_gap < 0 ? 'action_ahead' : 'aligned';
   const leadership_gap_interpretation = leadership_gap > 0
-    ? 'Your Thought Time is ahead of your Action Time this week.'
+    ? 'Your strategic thinking is slightly ahead of your visible action this week — a sign of forward momentum.'
     : leadership_gap < 0
-      ? 'Your Action Time is ahead of your Thought Time this week.'
-      : 'Your Thought Time and Action Time are aligned this week.';
+      ? 'Your actions are moving a little faster than your strategic thinking this week — worth noticing.'
+      : 'Your thinking and actions are well-balanced this week.';
 
   // Percentage distributions
   const action_pct = {};
@@ -131,10 +131,10 @@ Deno.serve(async (req) => {
     alignment_momentum_score <= -4 ? 'declining' : 'stable';
   const alignment_momentum_summary =
     alignment_momentum_direction === 'improving'
-      ? 'Alignment momentum is improving.'
+      ? 'Your growth direction is improving — your leadership alignment is strengthening over time.'
       : alignment_momentum_direction === 'declining'
-      ? 'Alignment momentum is declining.'
-      : 'Alignment momentum is stable.';
+      ? 'Your growth direction shows some variation — this is a useful signal to explore in your next check-in.'
+      : 'Your growth direction is steady — your leadership alignment is holding consistent.';
 
   // Drift pattern detection
   const drift_patterns = [];
@@ -187,7 +187,9 @@ A coaching participant just submitted their weekly check-in. Here is their data:
 
 Week Ending: ${interaction.week_ending_date || 'this week'}
 Primary Action Level: Level ${top_action_level_1} (${topActionLabel})
-ACI (Alignment Consistency Index): ${aci}${aci_delta != null ? ` (${aci_delta >= 0 ? '+' : ''}${aci_delta} from last week)` : ''}
+Leadership Alignment (internal score): ${aci}${aci_delta != null ? ` (${aci_delta >= 0 ? '+' : ''}${aci_delta} from last week)` : ''}
+Growth Direction: ${alignment_momentum_direction} (momentum score: ${alignment_momentum_score})
+Thought vs Action: ${leadership_gap_direction === 'thought_ahead' ? 'Thought Ahead' : leadership_gap_direction === 'action_ahead' ? 'Action Ahead' : 'Balanced'}
 Action Distribution: ${Object.entries(action_pct).map(([k, v]) => `L${k.slice(1)}: ${v.toFixed(0)}%`).join(', ')}
 Thought Distribution: ${Object.entries(thought_pct).map(([k, v]) => `L${k.slice(1)}: ${v.toFixed(0)}%`).join(', ')}`;
 
@@ -212,11 +214,11 @@ Thought Distribution: ${Object.entries(thought_pct).map(([k, v]) => `L${k.slice(
   llmPrompt += `
 
 Write a brief, focused coaching reflection (3–4 sentences max) using EXACTLY this format — each on its own line:
-Observation: [one sentence describing the pattern you observe in their data]
-Performance implication: [one sentence on what this means for their effectiveness]
+Observation: [one sentence describing the pattern you observe — use participant-facing language only: "leadership alignment", "growth direction", "thought vs action". Never mention ACI, AMS, Alignment Consistency Index, Momentum Score, or Leadership Gap.]
+Performance implication: [one sentence on what this means for their effectiveness — keep it reflective, developmental, and non-judgmental]
 This week's challenge: [one actionable, specific challenge tied to their anchor or primary level]
 
-Be direct, human, and specific. Do not use generic language. Do not use bullet points or markdown.`;
+Be direct, human, and specific. Do not use generic language. Do not use bullet points or markdown. Do not use internal framework terms like ACI, AMS, or Leadership Gap in any output visible to the participant.`;
 
   let coach_reflection_text = '';
   try {
@@ -226,7 +228,7 @@ Be direct, human, and specific. Do not use generic language. Do not use bullet p
     coach_reflection_text = typeof llmResult === 'string' ? llmResult.trim() : (llmResult?.text || '').trim();
   } catch (e) {
     console.error('LLM error:', e);
-    coach_reflection_text = `Observation: Your primary focus this week was at Level ${top_action_level_1} (${topActionLabel}).\nPerformance implication: Consistent alignment between thought and action builds leadership capacity over time.\nThis week's challenge: Reflect on one moment where you could elevate your thinking to match your most strategic action.`;
+    coach_reflection_text = `Observation: Your primary focus this week was at Level ${top_action_level_1} (${topActionLabel}), with your leadership alignment ${aci >= 75 ? 'showing strong consistency' : aci >= 45 ? 'developing a steady rhythm' : 'showing some variation worth exploring'}.\nPerformance implication: When your thought and action work together consistently, your leadership has a greater impact on the people and priorities around you.\nThis week's challenge: Identify one moment this week where you can intentionally bring your thinking and your visible actions closer together.`;
   }
 
   // Store the inference run
