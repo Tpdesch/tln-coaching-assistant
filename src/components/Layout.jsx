@@ -37,8 +37,8 @@ export default function Layout({ children }) {
   return (
     <div className="min-h-screen bg-[#F7F8FA] flex">
       {/* Sidebar — desktop */}
-      <aside className="hidden md:flex flex-col w-56 bg-white border-r border-gray-100 shrink-0">
-        <div className="px-5 py-5 border-b border-gray-100">
+      <aside className="hidden md:flex flex-col w-56 bg-[#1E3A5F] border-r border-gray-100 shrink-0">
+        <div className="px-5 py-5 border-b border-[#0F1F35]">
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6985f79ad4f5b634677bf810/16ea238ca_LeadershipNexusLogoResized.jpg"
             alt="TLN Coaching Assistant"
@@ -53,7 +53,7 @@ export default function Layout({ children }) {
                 key={path}
                 to={path}
                 className={`flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
-                  active ? "bg-amber-50 text-amber-700" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  active ? "bg-[#2D5A8C] text-white" : "text-gray-300 hover:bg-[#0F1F35] hover:text-white"
                 }`}
               >
                 <Icon className="w-4 h-4 shrink-0" />
@@ -62,11 +62,11 @@ export default function Layout({ children }) {
             );
           })}
         </nav>
-        <div className="px-3 py-4 border-t border-gray-100">
+        <div className="px-3 py-4 border-t border-[#0F1F35]">
           {userName && <div className="px-3 py-1 text-xs text-gray-400 mb-2">{userName}</div>}
           <button
             onClick={() => base44.auth.logout("/")}
-            className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition-colors w-full"
+            className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-gray-300 hover:bg-[#0F1F35] hover:text-white transition-colors w-full"
           >
             <LogOut className="w-4 h-4" /> Sign Out
           </button>
