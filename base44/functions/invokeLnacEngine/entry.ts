@@ -150,6 +150,16 @@ Deno.serve(async (req) => {
     })),
   ];
 
+  // Rolling trend calculations across the full timeline window
+  // alignment_trend_4wk = latest aci - oldest aci in window
+  // gap_trend_4wk = oldest abs_gap - latest abs_gap (positive = gap shrinking = good)
+  const alignment_trend_4wk = timeline.length >= 2
+    ? timeline[0].aci_score - timeline[timeline.length - 1].aci_score
+    : null;
+  const gap_trend_4wk = timeline.length >= 2
+    ? timeline[timeline.length - 1].abs_gap - timeline[0].abs_gap
+    : null;
+
   // Need at least 3 data points (current + 2 prior) for a meaningful trend
   let alignment_momentum_score = 0;
   let alignment_momentum_direction;
@@ -380,6 +390,8 @@ Tone: warm, direct, coaching. Address the participant as "you". Be specific to t
     alignment_momentum_score,
     alignment_momentum_direction,
     alignment_momentum_summary,
+    alignment_trend_4wk,
+    gap_trend_4wk,
   });
 
   // Also write the coaching reflection and gap fields back to the interaction

@@ -61,6 +61,14 @@
     "alignment_momentum_summary": {
       "type": "string",
       "description": "Human-readable summary of alignment momentum"
+    },
+    "alignment_trend_4wk": {
+      "type": "number",
+      "description": "Latest alignment score minus oldest alignment score across the 4-week window. Positive = improving."
+    },
+    "gap_trend_4wk": {
+      "type": "number",
+      "description": "Oldest absolute Thought vs Action gap minus latest. Positive = gap shrinking = good."
     }
   },
   "required": [
