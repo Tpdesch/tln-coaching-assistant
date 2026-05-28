@@ -104,68 +104,86 @@ Deno.serve(async (req) => {
   const cosine = dotProduct / (actionMag * thoughtMag);
   const aci = Math.round(cosine * 100);
 
-  // Fetch up to 6 most recent inference runs for this profile (for rolling trend)
+  // Fetch the 4 most recent weekly_checkin interactions for this profile (ordered by date desc)
+  // This is the source of truth for Growth Direction — we use actual check-in data, not inference runs.
+  const recentCheckins = await base44.asServiceRole.entities.Interactions.filter(
+    { client_profile_id: profile_id, type: 'weekly_checkin' },
+    '-week_ending_date',
+    4
+  );
+  const historicalCheckins = Array.isArray(recentCheckins) ? recentCheckins.filter(c => c.id !== interaction.id) : [];
+
+  // ACI delta: compare to the most recent prior check-in's stored ACI (via InferenceRuns)
+  let aci_delta = null;
   const prevRuns = await base44.asServiceRole.entities.InferenceRuns.filter(
     { client_profile_id: profile_id },
     '-created_date',
-    6
+    2
   );
   const recentRuns = Array.isArray(prevRuns) ? prevRuns : [];
-
-  // ACI delta: compare to the single most recent previous run
-  let aci_delta = null;
   const prevRun = recentRuns.length > 0 ? recentRuns[0] : null;
   if (prevRun?.aci != null) {
     aci_delta = aci - prevRun.aci;
   }
 
-  // AMS: Rolling Alignment Momentum Score
-  // Uses up to 4 prior runs with exponential decay weights (most recent = highest weight).
-  // For each prior run: ams_contribution = aci_change + gap_shrinkage, weighted by recency.
-  // Weights: [0.4, 0.3, 0.2, 0.1] for runs [t-1, t-2, t-3, t-4].
-  const rollingWeights = [0.4, 0.3, 0.2, 0.1];
+  // AMS: Rolling Alignment Momentum Score based on the 4 most recent weekly check-ins.
+  // Requires at least 3 check-ins (including the current one) to compute a meaningful trend.
+  // If fewer than 3 exist, direction = 'emerging'.
   const current_abs_gap = Math.abs(leadership_gap);
 
-  // Build a timeline: [current, ...recentRuns] for pairwise delta computation
+  // Build a timeline using stored scores from historical check-ins + current check-in
+  // Each entry: { aci_score, abs_gap } — we compute ACI from raw Likert values for prior check-ins
+  function computeAciFromCheckin(c) {
+    const av = [c.action_l1||1, c.action_l2||1, c.action_l3||1, c.action_l4||1, c.action_l5||1];
+    const tv = [c.thought_l1||1, c.thought_l2||1, c.thought_l3||1, c.thought_l4||1, c.thought_l5||1];
+    const dot = av.reduce((s,v,i) => s + v*tv[i], 0);
+    const aMag = Math.sqrt(av.reduce((s,v) => s+v*v, 0));
+    const tMag = Math.sqrt(tv.reduce((s,v) => s+v*v, 0));
+    return Math.round((dot / (aMag * tMag)) * 100);
+  }
+
   const timeline = [
-    { aci, abs_gap: current_abs_gap },
-    ...recentRuns.slice(0, 4).map(r => ({
-      aci: r.aci ?? null,
-      abs_gap: r.gap_companion?.leadership_gap != null ? Math.abs(r.gap_companion.leadership_gap) : null,
+    { aci_score: aci, abs_gap: current_abs_gap },
+    ...historicalCheckins.map(c => ({
+      aci_score: computeAciFromCheckin(c),
+      abs_gap: Math.abs((c.total_thought_score || 0) - (c.total_action_score || 0)),
     })),
   ];
 
-  let weighted_ams = 0;
-  let total_weight = 0;
-  for (let i = 0; i < Math.min(rollingWeights.length, timeline.length - 1); i++) {
-    const curr = timeline[i];
-    const prev = timeline[i + 1];
-    const weight = rollingWeights[i];
+  // Need at least 3 data points (current + 2 prior) for a meaningful trend
+  let alignment_momentum_score = 0;
+  let alignment_momentum_direction;
+  let alignment_momentum_summary;
 
-    const aci_change = (curr.aci != null && prev.aci != null) ? curr.aci - prev.aci : null;
-    const gap_change = (curr.abs_gap != null && prev.abs_gap != null) ? prev.abs_gap - curr.abs_gap : null;
-
-    if (aci_change != null || gap_change != null) {
-      const contribution = (aci_change ?? 0) + (gap_change ?? 0);
-      weighted_ams += contribution * weight;
+  if (timeline.length < 3) {
+    alignment_momentum_direction = 'emerging';
+    alignment_momentum_summary = 'Growth direction will become visible once more check-ins are completed.';
+  } else {
+    // Weighted rolling average across pairs: weights favour more recent transitions
+    const rollingWeights = [0.5, 0.3, 0.2];
+    let weighted_ams = 0;
+    let total_weight = 0;
+    for (let i = 0; i < Math.min(rollingWeights.length, timeline.length - 1); i++) {
+      const curr = timeline[i];
+      const prev = timeline[i + 1];
+      const weight = rollingWeights[i];
+      const aci_change = curr.aci_score - prev.aci_score;
+      const gap_change = prev.abs_gap - curr.abs_gap; // positive = gap shrinking = good
+      weighted_ams += (aci_change + gap_change) * weight;
       total_weight += weight;
     }
+    const raw_ams = total_weight > 0 ? weighted_ams / total_weight : 0;
+    alignment_momentum_score = Math.max(-10, Math.min(10, Math.round(raw_ams)));
+    alignment_momentum_direction =
+      alignment_momentum_score >= 3 ? 'improving' :
+      alignment_momentum_score <= -3 ? 'declining' : 'stable';
+    alignment_momentum_summary =
+      alignment_momentum_direction === 'improving'
+        ? 'Your growth direction is improving — your leadership alignment is strengthening over time.'
+        : alignment_momentum_direction === 'declining'
+        ? 'Your growth direction shows some variation — this is a useful signal to explore in your next check-in.'
+        : 'Your growth direction is steady — your leadership alignment is holding consistent.';
   }
-
-  // Normalise: if we have fewer than 4 data points, scale up to avoid penalising new participants
-  const raw_ams = total_weight > 0 ? weighted_ams / total_weight : 0;
-  const alignment_momentum_score = Math.max(-10, Math.min(10, Math.round(raw_ams)));
-
-  // Thresholds: tightened to reduce noise from single-week swings
-  const alignment_momentum_direction =
-    alignment_momentum_score >= 3 ? 'improving' :
-    alignment_momentum_score <= -3 ? 'declining' : 'stable';
-  const alignment_momentum_summary =
-    alignment_momentum_direction === 'improving'
-      ? 'Your growth direction is improving — your leadership alignment is strengthening over time.'
-      : alignment_momentum_direction === 'declining'
-      ? 'Your growth direction shows some variation — this is a useful signal to explore in your next check-in.'
-      : 'Your growth direction is steady — your leadership alignment is holding consistent.';
 
   // Drift pattern detection
   const drift_patterns = [];
@@ -214,7 +232,7 @@ Deno.serve(async (req) => {
 
   const leadershipAlignmentLabel = aci >= 75 ? 'strong' : aci >= 45 ? 'developing a consistent rhythm' : 'showing more variation than usual';
   const leadershipAlignmentTrend = aci_delta == null ? '' : aci_delta >= 5 ? ', strengthening compared to last week' : aci_delta <= -5 ? ', showing more variation than last week' : ', consistent with last week';
-  const growthDirectionLabel = alignment_momentum_direction === 'improving' ? 'trending in a positive direction across recent check-ins' : alignment_momentum_direction === 'declining' ? 'showing a pattern of variation worth exploring' : 'holding steady across recent check-ins';
+  const growthDirectionLabel = alignment_momentum_direction === 'improving' ? 'trending in a positive direction across recent check-ins' : alignment_momentum_direction === 'declining' ? 'showing a pattern of variation worth exploring' : alignment_momentum_direction === 'emerging' ? 'emerging — not enough check-ins yet to identify a trend' : 'holding steady across recent check-ins';
   const thoughtVsActionLabel = leadership_gap_direction === 'thought_ahead' ? 'Thought slightly ahead of Action' : leadership_gap_direction === 'action_ahead' ? 'Action slightly ahead of Thought' : 'Balanced';
 
   let llmPrompt = `You are a reflective leadership development coach writing directly to a participant after their weekly check-in.

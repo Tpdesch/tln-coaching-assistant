@@ -53,7 +53,8 @@
       "enum": [
         "improving",
         "declining",
-        "stable"
+        "stable",
+        "emerging"
       ],
       "description": "Direction of alignment momentum"
     },
