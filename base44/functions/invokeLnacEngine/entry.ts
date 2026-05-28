@@ -168,31 +168,30 @@ Deno.serve(async (req) => {
   if (timeline.length < 3) {
     alignment_momentum_direction = 'emerging';
     alignment_momentum_summary = 'Growth direction will become visible once more check-ins are completed.';
+    alignment_momentum_score = 0;
   } else {
-    // Weighted rolling average across pairs: weights favour more recent transitions
-    const rollingWeights = [0.5, 0.3, 0.2];
-    let weighted_ams = 0;
-    let total_weight = 0;
-    for (let i = 0; i < Math.min(rollingWeights.length, timeline.length - 1); i++) {
-      const curr = timeline[i];
-      const prev = timeline[i + 1];
-      const weight = rollingWeights[i];
-      const aci_change = curr.aci_score - prev.aci_score;
-      const gap_change = prev.abs_gap - curr.abs_gap; // positive = gap shrinking = good
-      weighted_ams += (aci_change + gap_change) * weight;
-      total_weight += weight;
+    // Classify using the 4-week trend fields:
+    // alignment_trend_4wk: positive = alignment improving
+    // gap_trend_4wk: positive = gap shrinking = good
+    const alignmentImproving = alignment_trend_4wk != null && alignment_trend_4wk >= 3;
+    const alignmentDeclining = alignment_trend_4wk != null && alignment_trend_4wk <= -3;
+    const gapShrinking = gap_trend_4wk != null && gap_trend_4wk >= 1;
+    const gapWidening = gap_trend_4wk != null && gap_trend_4wk <= -1;
+
+    if (alignmentImproving || gapShrinking) {
+      alignment_momentum_direction = 'improving';
+      alignment_momentum_summary = 'Your growth direction is improving — your leadership alignment is strengthening over time.';
+    } else if (alignmentDeclining || gapWidening) {
+      alignment_momentum_direction = 'declining';
+      alignment_momentum_summary = 'Your growth direction shows some variation — this is a useful signal to explore in your next check-in.';
+    } else {
+      alignment_momentum_direction = 'stable';
+      alignment_momentum_summary = 'Your growth direction is steady — your leadership alignment is holding consistent.';
     }
-    const raw_ams = total_weight > 0 ? weighted_ams / total_weight : 0;
-    alignment_momentum_score = Math.max(-10, Math.min(10, Math.round(raw_ams)));
-    alignment_momentum_direction =
-      alignment_momentum_score >= 3 ? 'improving' :
-      alignment_momentum_score <= -3 ? 'declining' : 'stable';
-    alignment_momentum_summary =
-      alignment_momentum_direction === 'improving'
-        ? 'Your growth direction is improving — your leadership alignment is strengthening over time.'
-        : alignment_momentum_direction === 'declining'
-        ? 'Your growth direction shows some variation — this is a useful signal to explore in your next check-in.'
-        : 'Your growth direction is steady — your leadership alignment is holding consistent.';
+
+    // Compute a numeric score for legacy use: weighted sum of the two trend signals
+    const rawScore = ((alignment_trend_4wk ?? 0) * 0.6) + ((gap_trend_4wk ?? 0) * 0.4);
+    alignment_momentum_score = Math.max(-10, Math.min(10, Math.round(rawScore)));
   }
 
   // Drift pattern detection
