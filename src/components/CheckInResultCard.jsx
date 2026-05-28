@@ -189,7 +189,7 @@ export default function CheckInResultCard({ interaction, inferenceRun, defaultEx
             <div className="space-y-3">
               {interaction.reflection_text && (
                 <div>
-                  <div className="text-xs font-medium text-gray-500 mb-1">Anchor Reflection</div>
+                  <div className="text-xs font-medium text-gray-500 mb-1">Leadership Development Reflection</div>
                   <p className="text-sm text-gray-700 bg-gray-50 rounded-lg px-3 py-2 leading-relaxed">{interaction.reflection_text}</p>
                 </div>
               )}
