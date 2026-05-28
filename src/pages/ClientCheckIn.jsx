@@ -324,8 +324,8 @@ export default function ClientCheckIn() {
         </div>
 
         <div>
-          <Label className="text-sm font-medium text-gray-900 mb-2 block">Anchor Reflection</Label>
-          <Textarea value={form.reflection_text} onChange={(e) => setForm({ ...form, reflection_text: e.target.value })} placeholder="Reflect on your anchor focus this week..." maxLength={500} className="h-24 resize-none" />
+          <Label className="text-sm font-medium text-gray-900 mb-2 block">Leadership Development Reflection</Label>
+          <Textarea value={form.reflection_text} onChange={(e) => setForm({ ...form, reflection_text: e.target.value })} placeholder="Reflect on your leadership development focus this week..." maxLength={500} className="h-24 resize-none" />
           <div className="text-xs text-gray-500 mt-1 text-right">{form.reflection_text.length}/500</div>
         </div>
 
