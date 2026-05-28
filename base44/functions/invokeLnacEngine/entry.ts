@@ -167,7 +167,7 @@ Deno.serve(async (req) => {
 
   if (timeline.length < 3) {
     alignment_momentum_direction = 'emerging';
-    alignment_momentum_summary = 'Growth direction will become visible once more check-ins are completed.';
+    alignment_momentum_summary = 'Growth Direction will become clearer after a few more check-ins.';
     alignment_momentum_score = 0;
   } else {
     // Classify using the 4-week trend fields:
@@ -180,13 +180,13 @@ Deno.serve(async (req) => {
 
     if (alignmentImproving || gapShrinking) {
       alignment_momentum_direction = 'improving';
-      alignment_momentum_summary = 'Your growth direction is improving — your leadership alignment is strengthening over time.';
+      alignment_momentum_summary = 'Your leadership pattern is moving in a more aligned direction over recent check-ins.';
     } else if (alignmentDeclining || gapWidening) {
       alignment_momentum_direction = 'declining';
-      alignment_momentum_summary = 'Your growth direction shows some variation — this is a useful signal to explore in your next check-in.';
+      alignment_momentum_summary = 'Your leadership pattern has shown some drift over recent check-ins.';
     } else {
       alignment_momentum_direction = 'stable';
-      alignment_momentum_summary = 'Your growth direction is steady — your leadership alignment is holding consistent.';
+      alignment_momentum_summary = 'Your leadership pattern has remained fairly steady over recent check-ins.';
     }
 
     // Compute a numeric score for legacy use: weighted sum of the two trend signals
