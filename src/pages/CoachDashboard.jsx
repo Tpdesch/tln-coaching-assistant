@@ -161,6 +161,7 @@ export default function CoachDashboard() {
                       <div className="flex flex-col items-center px-2 py-1 rounded bg-blue-50 border border-blue-100 min-w-[54px]">
                         <span className="text-[9px] text-blue-500 font-semibold uppercase tracking-wide">Alignment</span>
                         <span className={`text-xs font-bold ${alignmentColor}`}>{alignmentLabel}</span>
+                        {alignmentLabel && <span className="text-[11px] text-blue-400 text-center mt-0.5 leading-snug hidden sm:block max-w-[90px]">{aci >= 75 ? "Focus & actions aligned" : aci >= 45 ? "Building rhythm" : "Needs attention"}</span>}
                       </div>
                     )}
                     {gap != null && (

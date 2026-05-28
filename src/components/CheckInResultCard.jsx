@@ -45,7 +45,7 @@ function MetricPill({ label, value, desc, color }) {
     <div className="flex flex-col items-center px-3 py-2 rounded-lg bg-gray-50 border border-gray-100 min-w-[80px]">
       <span className="text-[10px] text-gray-400 uppercase tracking-wide font-medium">{label}</span>
       <span className={`text-base font-bold leading-tight ${color || "text-gray-800"}`}>{value}</span>
-      {desc && <span className="text-[8px] text-gray-500 text-center mt-0.5 leading-tight line-clamp-2">{desc}</span>}
+      {desc && <span className="text-xs text-gray-500 text-center mt-1 leading-snug line-clamp-2">{desc}</span>}
     </div>
   );
 }
@@ -95,7 +95,7 @@ export default function CheckInResultCard({ interaction, inferenceRun, defaultEx
               Week ending {interaction.week_ending_date || interaction.created_date?.slice(0, 10)}
             </div>
             {sections?.observation && !expanded && (
-              <div className="text-xs text-gray-400 mt-0.5 line-clamp-1 max-w-xs">{sections.observation}</div>
+              <div className="text-sm text-gray-400 mt-0.5 line-clamp-1 max-w-xs leading-snug">{sections.observation}</div>
             )}
           </div>
 
@@ -111,7 +111,7 @@ export default function CheckInResultCard({ interaction, inferenceRun, defaultEx
                   <AmsIcon direction={ams_direction} />
                   {growthLabel}
                 </span>
-                <span className="text-[8px] text-gray-500 text-center mt-0.5 leading-tight line-clamp-2">{growthDesc}</span>
+                <span className="text-xs text-gray-500 text-center mt-1 leading-snug line-clamp-2">{growthDesc}</span>
               </div>
             )}
             {gap != null && (
