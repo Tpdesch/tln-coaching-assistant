@@ -16,8 +16,8 @@ function parseCoachingText(text) {
   if (!text) return null;
   const sectionKeys = [
     { label: "Observation:", key: "observation" },
-    { label: "Performance implication:", key: "meaning" },
-    { label: "This week's challenge:", key: "focus" },
+    { label: "What This Means:", key: "meaning" },
+    { label: "Focus This Week:", key: "focus" },
   ];
 
   const sections = {};

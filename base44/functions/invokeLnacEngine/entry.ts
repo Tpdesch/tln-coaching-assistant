@@ -293,13 +293,19 @@ How they spent their Thought Time: ${Object.entries(thought_pct).map(([k, v]) =>
 
   llmPrompt += `
 
-Write a coaching reflection using EXACTLY this 3-line format. Each label must appear exactly as shown, followed by your text:
+Write a coaching reflection using EXACTLY this 3-line format. Each label must appear exactly as shown, followed by your text on the same line:
 
-Observation: [One warm, specific sentence about what you notice in their leadership alignment, growth direction, or thought vs action balance this week. Do NOT mention ACI, AMS, alignment consistency index, momentum score, leadership gap, or any score/number.]
-Performance implication: [One sentence on what this pattern means for how they show up as a leader — developmental, non-judgmental, human.]
-This week's challenge: [One specific, actionable challenge tied to their focus area or coaching anchor.]
+Observation: [One sentence, maximum 20 words. What the check-in shows about their leadership pattern this week. Plain coaching language only.]
+What This Means: [One sentence, maximum 20 words. What this pattern means for how they show up as a leader. Developmental, non-judgmental.]
+Focus This Week: [One sentence, maximum 15 words. One specific, actionable thing to focus on. Concrete and plain.]
 
-Tone: warm, direct, coaching. Address the participant as "you". Be specific to their actual data. Never be generic. Never use internal framework terminology.`;
+Rules:
+- No bullet lists, no multi-sentence paragraphs, no numbered lists.
+- No ACI, AMS, leadership gap, score, index, framework names, or any internal metric.
+- No first-person (I, we, our, my).
+- Address the participant as "you".
+- Use plain coaching language a non-expert would understand.
+- Stay within the word limits. Shorter is better.`;
 
   // Sanitise leaked internal terminology and first-person system language
   function sanitiseObservation(text) {
@@ -344,8 +350,8 @@ Tone: warm, direct, coaching. Address the participant as "you". Be specific to t
       // Replace only the problematic section lines, not the entire reflection
       t = t
         .replace(/^Observation:.*$/im, `Observation: ${fallback}`)
-        .replace(/^Performance implication:.*$/im, 'Performance implication: This pattern is worth exploring with your coach — it offers a useful signal about how your thinking and actions are showing up.')
-        .replace(/^This week's challenge:.*$/im, "This week's challenge: Notice one moment where your focus and actions are most aligned, and build from there.");
+        .replace(/^What This Means:.*$/im, 'What This Means: This pattern is worth exploring with your coach as a useful signal.')
+        .replace(/^Focus This Week:.*$/im, 'Focus This Week: Notice one moment where your focus and actions feel most aligned.');
     }
 
     return t;
@@ -360,9 +366,10 @@ Tone: warm, direct, coaching. Address the participant as "you". Be specific to t
     coach_reflection_text = sanitiseObservation(raw);
   } catch (e) {
     console.error('LLM error:', e);
-    const alignmentState = aci >= 75 ? 'strong' : aci >= 45 ? 'moderate' : 'variable';
-    const alignmentObservation = alignmentState === 'strong' ? 'Your leadership focus and actions are working together consistently.' : alignmentState === 'moderate' ? 'Your leadership is developing a consistent rhythm.' : 'Your focus and actions need better alignment.';
-    coach_reflection_text = `Observation: Your primary focus this week was at Level ${top_action_level_1} (${topActionLabel}). ${alignmentObservation}\nPerformance implication: When your thinking and visible action align, your leadership creates clarity and builds trust with those around you.\nThis week's challenge: Identify one moment where you could bring your strategic thinking and your actions into closer alignment.`;
+    const alignmentObservation = aci >= 75 ? 'Your actions and focus remained well aligned this week.' : aci >= 45 ? 'Your actions and focus were generally aligned this week.' : 'Your actions and focus showed more variation this week than usual.';
+    const whatThisMeans = aci >= 75 ? 'Consistent alignment helps you build trust and lead with clarity.' : aci >= 45 ? 'Some variation is normal — staying consistent will strengthen your impact.' : 'Recent demands may be affecting how consistently your leadership shows up.';
+    const focusThisWeek = aci >= 75 ? 'Choose one priority and protect your focus around it.' : 'Notice where your thinking and actions drift, and bring them closer.';
+    coach_reflection_text = `Observation: ${alignmentObservation}\nWhat This Means: ${whatThisMeans}\nFocus This Week: ${focusThisWeek}`;
   }
 
   // Store the inference run
