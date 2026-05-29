@@ -4,10 +4,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Search, Mail, Briefcase, Building2 } from "lucide-react";
+import { Plus, Search, Mail, Briefcase, Building2, Pencil } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
+import EditClientModal from "@/components/EditClientModal";
 
 const statusConfig = {
   active: { label: "Active", cls: "bg-emerald-50 text-emerald-700 border-emerald-200" },
@@ -20,6 +21,7 @@ const statusConfig = {
 export default function Clients() {
   const [showForm, setShowForm] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
+  const [editingClient, setEditingClient] = useState(null);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviting, setInviting] = useState(false);
   const [inviteMessage, setInviteMessage] = useState(null);
@@ -123,8 +125,8 @@ export default function Clients() {
           {filtered.map((client) => {
             const status = statusConfig[client.coaching_status] || statusConfig.onboarding;
             return (
-              <Link key={client.id} to={`/ClientDetail?id=${client.id}`} className="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-md transition-all block">
-                <div className="flex items-start gap-4">
+              <div key={client.id} className="bg-white rounded-2xl border border-gray-100 p-5 hover:shadow-md transition-all relative group">
+                <Link to={`/ClientDetail?id=${client.id}`} className="flex items-start gap-4 block">
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#334E68] to-[#102A43] flex items-center justify-center shrink-0">
                     <span className="text-white font-bold text-lg">{client.full_name?.charAt(0)}</span>
                   </div>
@@ -138,11 +140,30 @@ export default function Clients() {
                       {client.company && <span className="flex items-center gap-1"><Building2 className="w-3 h-3" />{client.company}</span>}
                     </div>
                   </div>
-                </div>
-              </Link>
+                </Link>
+                <button
+                  onClick={e => { e.preventDefault(); setEditingClient(client); }}
+                  className="absolute top-3 right-3 p-1.5 rounded-lg text-gray-400 hover:text-amber-600 hover:bg-amber-50 opacity-0 group-hover:opacity-100 transition"
+                  title="Edit client"
+                >
+                  <Pencil className="w-3.5 h-3.5" />
+                </button>
+              </div>
             );
           })}
         </div>
+      )}
+
+      {/* Edit Client Modal */}
+      {editingClient && (
+        <EditClientModal
+          client={editingClient}
+          onClose={() => setEditingClient(null)}
+          onSaved={(updated) => {
+            queryClient.invalidateQueries({ queryKey: ["clients", myProfileId] });
+            setEditingClient(null);
+          }}
+        />
       )}
 
       {/* Invite Dialog */}
