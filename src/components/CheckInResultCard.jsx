@@ -75,15 +75,15 @@ export default function CheckInResultCard({ interaction, inferenceRun, defaultEx
   // Participant-friendly interpretations
   const alignmentLabel = aci == null ? null : aci >= 75 ? "Strong" : aci >= 45 ? "Moderate" : "Variable";
   const alignmentColor = aci == null ? "text-gray-800" : aci >= 75 ? "text-green-700" : aci >= 45 ? "text-amber-700" : "text-red-600";
-  const alignmentDesc = aci == null ? "" : aci >= 75 ? "Your leadership focus and actions are working together consistently." : aci >= 45 ? "Your leadership is developing a consistent rhythm." : "Your focus and actions need better alignment.";
+  const alignmentDesc = aci == null ? "" : aci >= 75 ? "Your actions and focus remain well aligned." : aci >= 45 ? "Your actions and focus are generally aligned." : "Your actions and focus showed more variation this week.";
 
-  const growthLabel = ams_direction === "improving" ? "Improving" : ams_direction === "declining" ? "Declining" : "Stable";
-  const growthColor = ams_direction === "improving" ? "text-green-600" : ams_direction === "declining" ? "text-red-500" : "text-slate-500";
-  const growthDesc = ams_direction === "improving" ? "Your alignment is moving in a positive direction." : ams_direction === "declining" ? "Your alignment is trending in a concerning direction." : "Your alignment remains consistent over time.";
+  const growthLabel = ams_direction === "improving" ? "Improving" : ams_direction === "declining" ? "Declining" : ams_direction === "emerging" ? "Emerging" : "Stable";
+  const growthColor = ams_direction === "improving" ? "text-green-600" : ams_direction === "declining" ? "text-red-500" : ams_direction === "emerging" ? "text-slate-400" : "text-slate-500";
+  const growthDesc = ams_direction === "improving" ? "Your recent leadership pattern is moving in a positive direction." : ams_direction === "declining" ? "Your recent leadership pattern shows some drift." : ams_direction === "emerging" ? "More check-ins are needed to identify a clear pattern." : "Your recent leadership pattern has remained steady.";
 
   const thoughtVsActionLabel = gap_direction === "thought_ahead" ? "Thought Ahead" : gap_direction === "action_ahead" ? "Action Ahead" : "Balanced";
   const thoughtVsActionColor = gap_direction === "thought_ahead" ? "text-amber-700" : gap_direction === "action_ahead" ? "text-orange-700" : "text-green-700";
-  const thoughtVsActionDesc = gap_direction === "thought_ahead" ? "Your strategic thinking is slightly ahead of your visible action." : gap_direction === "action_ahead" ? "Your actions are moving faster than your strategic alignment." : "Your thinking and actions are well-balanced.";
+  const thoughtVsActionDesc = gap_direction === "thought_ahead" ? "Your thinking is ahead of your visible action." : gap_direction === "action_ahead" ? "Your actions are ahead of your current thinking." : "Your thinking and actions are working together.";
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
