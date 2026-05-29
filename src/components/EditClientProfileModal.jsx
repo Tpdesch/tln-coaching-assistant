@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Loader2 } from "lucide-react";
+import { Loader2, CheckCircle2 } from "lucide-react";
+import { toast } from "sonner";
 
 const TIMEZONES = [
   "America/New_York",
@@ -75,6 +76,7 @@ export default function EditClientProfileModal({ client, onClose, onSaved }) {
       }
 
       onSaved({ ...client, full_name: form.full_name.trim(), role: form.role.trim() });
+      toast.success("Profile updated");
       onClose();
     } catch (e) {
       console.error(e);
