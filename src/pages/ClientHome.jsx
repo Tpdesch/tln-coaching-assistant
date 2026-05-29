@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Link, useNavigate } from "react-router-dom";
-import { TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { TrendingUp, TrendingDown, Minus, Pencil } from "lucide-react";
 import CheckInResultCard from "@/components/CheckInResultCard";
+import EditClientProfileModal from "@/components/EditClientProfileModal";
 
 export default function ClientHome() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
+  const [client, setClient] = useState(null);
   const [latestRun, setLatestRun] = useState(null);
   const [error, setError] = useState(null);
+  const [showEditProfile, setShowEditProfile] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -24,9 +27,10 @@ export default function ClientHome() {
         setProfile(p);
 
         const clientRows = await base44.entities.Client.filter({ base44_user_id: me.id });
-        const client = Array.isArray(clientRows) ? clientRows[0] : null;
+        const clientRecord = Array.isArray(clientRows) ? clientRows[0] : null;
+        setClient(clientRecord);
 
-        if (!client?.full_name) { navigate("/ClientOnboarding"); return; }
+        if (!clientRecord?.full_name) { navigate("/ClientOnboarding"); return; }
 
         if (!p?.id) { setLatestRun(null); return; }
 
@@ -53,11 +57,37 @@ export default function ClientHome() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">Your Alignment Companion</h1>
-        <p className="text-gray-600 mt-2">
-          A quick weekly check-in keeps your thought + action aligned with the needs of your role.
-        </p>
+      {showEditProfile && client && (
+        <EditClientProfileModal
+          client={client}
+          onClose={() => setShowEditProfile(false)}
+          onSaved={(updated) => setClient(updated)}
+        />
+      )}
+
+      <div className="mb-6 flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900">Your Alignment Companion</h1>
+          {client && (
+            <div className="mt-1 text-sm text-gray-500 space-x-2">
+              {client.full_name && <span className="font-medium text-gray-700">{client.full_name}</span>}
+              {client.role && <span>· {client.role}</span>}
+              {client.notes?.match(/Department: (.+)/)?.[1] && (
+                <span>· {client.notes.match(/Department: (.+)/)[1]}</span>
+              )}
+            </div>
+          )}
+          <p className="text-gray-600 mt-2">
+            A quick weekly check-in keeps your thought + action aligned with the needs of your role.
+          </p>
+        </div>
+        <button
+          onClick={() => setShowEditProfile(true)}
+          className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-amber-600 transition shrink-0 mt-1"
+        >
+          <Pencil className="w-3.5 h-3.5" />
+          Edit Profile
+        </button>
       </div>
 
       {/* Primary CTA */}
