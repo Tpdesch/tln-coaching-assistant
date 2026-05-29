@@ -27,6 +27,28 @@ export default function EditClientModal({ client, onClose, onSaved }) {
     setSubmitting(true);
     setError(null);
     try {
+      // Authorization: re-fetch the client record server-side and verify coach ownership
+      const me = await base44.auth.me();
+      if (!me) { setError("Not authenticated."); setSubmitting(false); return; }
+
+      const freshClient = await base44.entities.Client.get(client.id);
+      if (!freshClient) { setError("Client record not found."); setSubmitting(false); return; }
+
+      const myProfiles = await base44.entities.Profiles.filter({ base44_user_id: me.id });
+      const myProfile = Array.isArray(myProfiles) ? myProfiles[0] : null;
+
+      if (!myProfile || myProfile.role !== "COACH") {
+        setError("You do not have permission to edit this client.");
+        setSubmitting(false);
+        return;
+      }
+
+      if (freshClient.coach_id !== myProfile.id) {
+        setError("You can only edit clients assigned to you.");
+        setSubmitting(false);
+        return;
+      }
+
       const payload = {
         full_name: form.full_name.trim(),
         role: form.role.trim(),

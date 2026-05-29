@@ -40,6 +40,19 @@ export default function EditClientProfileModal({ client, onClose, onSaved }) {
     setSubmitting(true);
     setError(null);
     try {
+      // Authorization: verify the logged-in user owns this client record
+      const me = await base44.auth.me();
+      if (!me) { setError("Not authenticated."); setSubmitting(false); return; }
+
+      const freshClient = await base44.entities.Client.get(client.id);
+      if (!freshClient) { setError("Client record not found."); setSubmitting(false); return; }
+
+      if (freshClient.base44_user_id !== me.id) {
+        setError("You can only edit your own profile.");
+        setSubmitting(false);
+        return;
+      }
+
       // Rebuild notes preserving fields we don't touch (Coach, etc.)
       const existingNotes = client?.notes || "";
       const coachLine = existingNotes.match(/Coach: (.+)/)?.[0] || null;
