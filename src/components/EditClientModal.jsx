@@ -59,6 +59,16 @@ export default function EditClientModal({ client, onClose, onSaved }) {
         payload.email = form.email.trim();
       }
       const updated = await base44.entities.Client.update(client.id, payload);
+
+      // Sync display_name to the linked Profile if client is active and has a base44_user_id
+      if (freshClient.base44_user_id && freshClient.status === "active") {
+        const profileRows = await base44.entities.Profiles.filter({ base44_user_id: freshClient.base44_user_id });
+        const profile = Array.isArray(profileRows) ? profileRows[0] : null;
+        if (profile?.id) {
+          await base44.entities.Profiles.update(profile.id, { display_name: form.full_name.trim() });
+        }
+      }
+
       onSaved({ ...client, ...payload, ...updated });
       onClose();
     } catch (e) {

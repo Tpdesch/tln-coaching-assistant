@@ -61,12 +61,20 @@ export default function EditClientProfileModal({ client, onClose, onSaved }) {
       if (form.department.trim()) notesLines.push(`Department: ${form.department.trim()}`);
       if (form.timezone.trim()) notesLines.push(`Timezone: ${form.timezone.trim()}`);
 
-      const updated = await base44.entities.Client.update(client.id, {
+      await base44.entities.Client.update(client.id, {
         full_name: form.full_name.trim(),
         role: form.role.trim(),
         notes: notesLines.join("\n") || undefined,
       });
-      onSaved({ ...client, ...updated, full_name: form.full_name.trim(), role: form.role.trim() });
+
+      // Sync display_name to the linked Profile
+      const profileRows = await base44.entities.Profiles.filter({ base44_user_id: me.id });
+      const profile = Array.isArray(profileRows) ? profileRows[0] : null;
+      if (profile?.id) {
+        await base44.entities.Profiles.update(profile.id, { display_name: form.full_name.trim() });
+      }
+
+      onSaved({ ...client, full_name: form.full_name.trim(), role: form.role.trim() });
       onClose();
     } catch (e) {
       console.error(e);
