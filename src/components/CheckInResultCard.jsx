@@ -72,13 +72,13 @@ function parseCoachingText(text) {
 
 function MetricCard({ label, value, desc, color, icon }) {
   return (
-    <div className="flex flex-col justify-center items-center px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 w-[160px] min-h-[120px] shrink-0">
+    <div className="flex flex-col items-center px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 w-[160px] shrink-0">
       <span className="text-[10px] text-gray-400 uppercase tracking-wide font-medium text-center leading-tight">{label}</span>
       <span className={`text-lg font-bold leading-tight flex items-center gap-1 mt-1 text-center ${color || "text-gray-800"}`}>
         {icon}
         {value}
       </span>
-      {desc && <span className="text-[11px] text-gray-500 text-center mt-1 leading-snug line-clamp-2">{desc}</span>}
+      {desc && <span className="text-[11px] text-gray-500 text-center mt-2 leading-snug">{desc}</span>}
     </div>
   );
 }
