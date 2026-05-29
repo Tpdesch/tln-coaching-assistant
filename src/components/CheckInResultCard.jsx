@@ -40,12 +40,15 @@ function parseCoachingText(text) {
   return sections;
 }
 
-function MetricPill({ label, value, desc, color }) {
+function MetricCard({ label, value, desc, color, icon }) {
   return (
-    <div className="flex flex-col items-center px-3 py-2 rounded-lg bg-gray-50 border border-gray-100 min-w-[80px]">
-      <span className="text-[10px] text-gray-400 uppercase tracking-wide font-medium">{label}</span>
-      <span className={`text-base font-bold leading-tight ${color || "text-gray-800"}`}>{value}</span>
-      {desc && <span className="text-xs text-gray-500 text-center mt-1 leading-snug line-clamp-2">{desc}</span>}
+    <div className="flex flex-col justify-center items-center px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 w-[160px] min-h-[88px] shrink-0">
+      <span className="text-[10px] text-gray-400 uppercase tracking-wide font-medium text-center leading-tight">{label}</span>
+      <span className={`text-lg font-bold leading-tight flex items-center gap-1 mt-1 text-center ${color || "text-gray-800"}`}>
+        {icon}
+        {value}
+      </span>
+      {desc && <span className="text-[11px] text-gray-500 text-center mt-1 leading-snug line-clamp-2">{desc}</span>}
     </div>
   );
 }
@@ -99,23 +102,22 @@ export default function CheckInResultCard({ interaction, inferenceRun, defaultEx
             )}
           </div>
 
-          {/* Compact metric pills — always visible */}
-          <div className="flex items-center gap-2 flex-wrap">
+          {/* Metric cards — always visible */}
+          <div className="flex items-stretch gap-2 flex-wrap">
             {aci != null && (
-              <MetricPill label="Leadership Alignment" value={alignmentLabel} desc={alignmentDesc} color={alignmentColor} />
+              <MetricCard label="Leadership Alignment" value={alignmentLabel} desc={alignmentDesc} color={alignmentColor} />
             )}
             {ams_score != null && (
-              <div className="flex flex-col items-center px-3 py-2 rounded-lg bg-gray-50 border border-gray-100 min-w-[80px]">
-                <span className="text-[10px] text-gray-400 uppercase tracking-wide font-medium">Growth Direction</span>
-                <span className={`text-sm font-bold leading-tight flex items-center gap-0.5 ${growthColor}`}>
-                  <AmsIcon direction={ams_direction} />
-                  {growthLabel}
-                </span>
-                <span className="text-xs text-gray-500 text-center mt-1 leading-snug line-clamp-2">{growthDesc}</span>
-              </div>
+              <MetricCard
+                label="Growth Direction"
+                value={growthLabel}
+                desc={growthDesc}
+                color={growthColor}
+                icon={<AmsIcon direction={ams_direction} />}
+              />
             )}
             {gap != null && (
-              <MetricPill label="Thought vs Action" value={thoughtVsActionLabel} desc={thoughtVsActionDesc} color={thoughtVsActionColor} />
+              <MetricCard label="Thought vs Action" value={thoughtVsActionLabel} desc={thoughtVsActionDesc} color={thoughtVsActionColor} />
             )}
           </div>
         </div>
