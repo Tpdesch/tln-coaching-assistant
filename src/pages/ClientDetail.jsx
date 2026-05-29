@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Briefcase, Building2, Mail, Calendar, Pencil } from "lucide-react";
+import { ArrowLeft, Briefcase, Building2, Mail, Calendar, Pencil, UserX } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import CheckInCarousel from "@/components/CheckInCarousel";
 import EditClientModal from "@/components/EditClientModal";
+import RemoveParticipantDialog from "@/components/RemoveParticipantDialog";
 
 const statusConfig = {
   active: { label: "Active", cls: "bg-emerald-50 text-emerald-700 border-emerald-200" },
@@ -14,6 +15,7 @@ const statusConfig = {
   completed: { label: "Completed", cls: "bg-blue-50 text-blue-700 border-blue-200" },
   onboarding: { label: "Onboarding", cls: "bg-amber-50 text-amber-700 border-amber-200" },
   invited: { label: "Invited", cls: "bg-purple-50 text-purple-700 border-purple-200" },
+  inactive: { label: "Inactive", cls: "bg-gray-100 text-gray-400 border-gray-200" },
 };
 
 export default function ClientDetail() {
@@ -21,7 +23,19 @@ export default function ClientDetail() {
   const clientId = urlParams.get("id");
   const [clientProfile, setClientProfile] = useState(null);
   const [showEdit, setShowEdit] = useState(false);
+  const [showRemove, setShowRemove] = useState(false);
+  const [myProfileId, setMyProfileId] = useState(null);
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    (async () => {
+      const me = await base44.auth.me();
+      if (!me) return;
+      const rows = await base44.entities.Profiles.filter({ base44_user_id: me.id });
+      const p = Array.isArray(rows) ? rows[0] : null;
+      setMyProfileId(p?.id || null);
+    })();
+  }, []);
 
   const { data: client, isLoading: loadingClient } = useQuery({
     queryKey: ["client", clientId],
@@ -95,6 +109,15 @@ export default function ClientDetail() {
         />
       )}
 
+      {showRemove && client && (
+        <RemoveParticipantDialog
+          client={client}
+          coachProfileId={myProfileId}
+          onClose={() => setShowRemove(false)}
+          onRemoved={() => queryClient.invalidateQueries({ queryKey: ["client", clientId] })}
+        />
+      )}
+
       <Link to="/Clients" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition-colors">
         <ArrowLeft className="w-4 h-4" /> Back to Clients
       </Link>
@@ -109,12 +132,22 @@ export default function ClientDetail() {
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-xl font-bold text-gray-900">{client.full_name}</h1>
               <Badge variant="outline" className={`text-xs ${status.cls}`}>{status.label}</Badge>
-              <button
-                onClick={() => setShowEdit(true)}
-                className="ml-auto flex items-center gap-1.5 text-xs text-gray-400 hover:text-amber-600 transition"
-              >
-                <Pencil className="w-3.5 h-3.5" /> Edit
-              </button>
+              <div className="ml-auto flex items-center gap-2">
+                <button
+                  onClick={() => setShowEdit(true)}
+                  className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-amber-600 transition"
+                >
+                  <Pencil className="w-3.5 h-3.5" /> Edit
+                </button>
+                {client.coaching_status !== "inactive" && (
+                  <button
+                    onClick={() => setShowRemove(true)}
+                    className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-red-600 transition"
+                  >
+                    <UserX className="w-3.5 h-3.5" /> Remove
+                  </button>
+                )}
+              </div>
             </div>
             <div className="flex flex-wrap gap-4 mt-2 text-sm text-gray-500">
               {client.role && <span className="flex items-center gap-1.5"><Briefcase className="w-3.5 h-3.5" />{client.role}</span>}

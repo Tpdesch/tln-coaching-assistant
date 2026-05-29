@@ -31,7 +31,8 @@
         "paused",
         "completed",
         "onboarding",
-        "invited"
+        "invited",
+        "inactive"
       ],
       "default": "active"
     },

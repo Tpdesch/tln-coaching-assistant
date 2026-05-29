@@ -4,11 +4,12 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Search, Mail, Briefcase, Building2, Pencil } from "lucide-react";
+import { Plus, Search, Mail, Briefcase, Building2, Pencil, UserX } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
 import EditClientModal from "@/components/EditClientModal";
+import RemoveParticipantDialog from "@/components/RemoveParticipantDialog";
 
 const statusConfig = {
   active: { label: "Active", cls: "bg-emerald-50 text-emerald-700 border-emerald-200" },
@@ -16,12 +17,14 @@ const statusConfig = {
   completed: { label: "Completed", cls: "bg-blue-50 text-blue-700 border-blue-200" },
   onboarding: { label: "Onboarding", cls: "bg-amber-50 text-amber-700 border-amber-200" },
   invited: { label: "Invited", cls: "bg-purple-50 text-purple-700 border-purple-200" },
+  inactive: { label: "Inactive", cls: "bg-gray-100 text-gray-400 border-gray-200" },
 };
 
 export default function Clients() {
   const [showForm, setShowForm] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
   const [editingClient, setEditingClient] = useState(null);
+  const [removingClient, setRemovingClient] = useState(null);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviting, setInviting] = useState(false);
   const [inviteMessage, setInviteMessage] = useState(null);
@@ -88,8 +91,9 @@ export default function Clients() {
   };
 
   const filtered = clients.filter((c) =>
-    c.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-    c.company?.toLowerCase().includes(search.toLowerCase())
+    c.coaching_status !== "inactive" &&
+    (c.full_name?.toLowerCase().includes(search.toLowerCase()) ||
+    c.company?.toLowerCase().includes(search.toLowerCase()))
   );
 
   return (
@@ -141,13 +145,24 @@ export default function Clients() {
                     </div>
                   </div>
                 </Link>
-                <button
-                  onClick={e => { e.preventDefault(); setEditingClient(client); }}
-                  className="absolute top-3 right-3 p-1.5 rounded-lg text-gray-400 hover:text-amber-600 hover:bg-amber-50 opacity-0 group-hover:opacity-100 transition"
-                  title="Edit client"
-                >
-                  <Pencil className="w-3.5 h-3.5" />
-                </button>
+                <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition">
+                  <button
+                    onClick={e => { e.preventDefault(); setEditingClient(client); }}
+                    className="p-1.5 rounded-lg text-gray-400 hover:text-amber-600 hover:bg-amber-50 transition"
+                    title="Edit client"
+                  >
+                    <Pencil className="w-3.5 h-3.5" />
+                  </button>
+                  {client.coaching_status !== "inactive" && (
+                    <button
+                      onClick={e => { e.preventDefault(); setRemovingClient(client); }}
+                      className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition"
+                      title="Remove participant"
+                    >
+                      <UserX className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
               </div>
             );
           })}
@@ -163,6 +178,16 @@ export default function Clients() {
             queryClient.invalidateQueries({ queryKey: ["clients", myProfileId] });
             setEditingClient(null);
           }}
+        />
+      )}
+
+      {/* Remove Participant Dialog */}
+      {removingClient && (
+        <RemoveParticipantDialog
+          client={removingClient}
+          coachProfileId={myProfileId}
+          onClose={() => setRemovingClient(null)}
+          onRemoved={() => queryClient.invalidateQueries({ queryKey: ["clients", myProfileId] })}
         />
       )}
 
