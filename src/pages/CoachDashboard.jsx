@@ -13,10 +13,12 @@ export default function CoachDashboard() {
     (async () => {
       const me = await base44.auth.me();
       if (!me) { window.location.href = "/SignIn"; return; }
-      setCoachFirstName((me.full_name || "").split(" ")[0] || "Coach");
       const rows = await base44.entities.Profiles.filter({ base44_user_id: me.id });
       const profile = Array.isArray(rows) ? rows[0] : null;
       if (!profile || profile.role !== "COACH") { window.location.href = "/SignIn"; return; }
+      // Prefer display_name → full_name from profile → fallback to account name
+      const displayName = profile.display_name || profile.full_name || me.full_name || "";
+      setCoachFirstName(displayName.split(" ")[0] || "Coach");
       setMyProfileId(profile.id);
       setReady(true);
     })();
