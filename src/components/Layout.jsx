@@ -24,9 +24,10 @@ export default function Layout({ children }) {
     (async () => {
       const me = await base44.auth.me().catch(() => null);
       if (!me) return;
-      setUserName((me.full_name || me.email || "").split(" ")[0]);
       const rows = await base44.entities.Profiles.filter({ base44_user_id: me.id });
       const p = Array.isArray(rows) ? rows[0] : null;
+      const displayName = p?.display_name || p?.full_name || me.full_name || me.email || "";
+      setUserName(displayName.split(" ")[0] || "");
       setRole(p?.role || null);
     })();
   }, []);

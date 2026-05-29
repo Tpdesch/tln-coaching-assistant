@@ -19,7 +19,10 @@ export default function SignIn() {
       const rows = await base44.entities.Profiles.filter({ base44_user_id: me.id });
       const profile = Array.isArray(rows) ? rows[0] : null;
       if (profile) {
-        await base44.entities.Profiles.update(profile.id, { role: profileRole });
+        // Patch display_name if it was never set
+        const updates = { role: profileRole };
+        if (!profile.display_name) updates.display_name = me.full_name || "";
+        await base44.entities.Profiles.update(profile.id, updates);
       } else {
         await base44.entities.Profiles.create({ base44_user_id: me.id, role: profileRole, display_name: me.full_name || "" });
       }

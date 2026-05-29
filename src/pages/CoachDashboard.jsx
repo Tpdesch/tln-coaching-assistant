@@ -3,10 +3,13 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Users, CalendarCheck, TrendingUp, TrendingDown, Minus, Clock } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import CoachDisplayNamePrompt from "@/components/CoachDisplayNamePrompt";
 
 export default function CoachDashboard() {
   const [myProfileId, setMyProfileId] = useState(null);
+  const [myProfile, setMyProfile] = useState(null);
   const [coachFirstName, setCoachFirstName] = useState("");
+  const [showNamePrompt, setShowNamePrompt] = useState(false);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -16,10 +19,13 @@ export default function CoachDashboard() {
       const rows = await base44.entities.Profiles.filter({ base44_user_id: me.id });
       const profile = Array.isArray(rows) ? rows[0] : null;
       if (!profile || profile.role !== "COACH") { window.location.href = "/SignIn"; return; }
+      setMyProfile(profile);
+      setMyProfileId(profile.id);
       // Prefer display_name → full_name from profile → fallback to account name
       const displayName = profile.display_name || profile.full_name || me.full_name || "";
       setCoachFirstName(displayName.split(" ")[0] || "Coach");
-      setMyProfileId(profile.id);
+      // Prompt if display_name has never been set
+      if (!profile.display_name) setShowNamePrompt(true);
       setReady(true);
     })();
   }, []);
@@ -102,6 +108,16 @@ export default function CoachDashboard() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6 pb-8 space-y-6">
+      {showNamePrompt && myProfile && (
+        <CoachDisplayNamePrompt
+          profileId={myProfile.id}
+          fallbackName={coachFirstName !== "Coach" ? coachFirstName : ""}
+          onSaved={(name) => {
+            setCoachFirstName(name.split(" ")[0] || "Coach");
+            setShowNamePrompt(false);
+          }}
+        />
+      )}
       <div>
         <h1 className="text-2xl font-semibold text-gray-900">Good morning, {coachFirstName}</h1>
         <p className="text-gray-400 text-sm mt-1">Here's what needs your attention this week</p>
