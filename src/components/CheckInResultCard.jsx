@@ -11,31 +11,61 @@ const LEVEL_CONFIG = [
 
 const LIKERT = ["Rarely", "Occasionally", "Sometimes", "Often", "Frequently"];
 
-// Parse coach_reflection_text into labeled sections
+// Fallback texts used when a section cannot be parsed
+const SECTION_FALLBACKS = {
+  observation: "Your leadership pattern showed a notable signal this week.",
+  meaning: "This pattern is worth exploring with your coach as a useful signal.",
+  focus: "Notice one moment where your focus and actions feel most aligned.",
+};
+
+// Parse coach_reflection_text into labeled sections.
+// Tries multiple label variants (with/without newline prefix, case-insensitive).
 function parseCoachingText(text) {
   if (!text) return null;
-  const sectionKeys = [
-    { label: "Observation:", key: "observation" },
-    { label: "What This Means:", key: "meaning" },
-    { label: "Focus This Week:", key: "focus" },
+
+  // Each entry: canonical key + all label strings to try (order matters — most specific first)
+  const sectionDefs = [
+    { key: "observation",  labels: ["Observation:"] },
+    { key: "meaning",      labels: ["What This Means:", "Performance implication:"] },
+    { key: "focus",        labels: ["Focus This Week:", "This week's challenge:", "Focus for Next Week:"] },
   ];
 
-  const sections = {};
-  let remaining = text;
-
-  for (let i = 0; i < sectionKeys.length; i++) {
-    const { label, key } = sectionKeys[i];
-    const idx = remaining.indexOf(label);
-    if (idx === -1) continue;
-    const nextIdx = sectionKeys
-      .slice(i + 1)
-      .map(s => remaining.indexOf(s.label))
-      .find(n => n > idx) ?? remaining.length;
-    sections[key] = remaining.slice(idx + label.length, nextIdx).trim();
+  // Find the start index of the first matching label (case-insensitive)
+  function findLabel(src, labels) {
+    for (const lbl of labels) {
+      const re = new RegExp(lbl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+      const m = re.exec(src);
+      if (m) return { idx: m.index, end: m.index + m[0].length };
+    }
+    return null;
   }
 
-  // Fallback: if no sections matched, treat whole text as observation
-  if (!Object.keys(sections).length) sections.observation = text.trim();
+  // Locate all sections
+  const found = sectionDefs.map(def => {
+    const match = findLabel(text, def.labels);
+    return match ? { key: def.key, start: match.idx, contentStart: match.end } : null;
+  }).filter(Boolean).sort((a, b) => a.start - b.start);
+
+  if (!found.length) {
+    // No labels at all — split by double-newline and assign in order
+    const parts = text.split(/\n\n+/).map(s => s.trim()).filter(Boolean);
+    return {
+      observation: parts[0] || SECTION_FALLBACKS.observation,
+      meaning:     parts[1] || SECTION_FALLBACKS.meaning,
+      focus:       parts[2] || SECTION_FALLBACKS.focus,
+    };
+  }
+
+  const sections = {};
+  found.forEach((item, i) => {
+    const nextStart = found[i + 1]?.start ?? text.length;
+    sections[item.key] = text.slice(item.contentStart, nextStart).trim();
+  });
+
+  // Fill any missing section with fallback
+  ["observation", "meaning", "focus"].forEach(k => {
+    if (!sections[k]) sections[k] = SECTION_FALLBACKS[k];
+  });
 
   return sections;
 }
@@ -128,29 +158,29 @@ export default function CheckInResultCard({ interaction, inferenceRun, defaultEx
       {expanded && (
         <div className="border-t border-gray-100 px-5 pb-6 space-y-4 pt-4">
 
-          {/* Primary Insight - Prominent at Top */}
-          {sections?.observation && (
-            <div className="bg-slate-50 rounded-xl border border-slate-200 p-4">
-              <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-2">Observation</div>
-              <p className="text-base font-semibold text-slate-900 leading-relaxed">{sections.observation}</p>
-            </div>
-          )}
-
-          {/* Supporting Insights */}
-          {(sections?.meaning || sections?.focus) && (
+          {/* Coaching Insights — always three distinct stacked blocks */}
+          {sections && (
             <div className="space-y-3">
-              {sections.meaning && (
-                <div className="rounded-xl bg-amber-50 border border-amber-200 p-4">
-                  <div className="text-[10px] font-semibold text-amber-600 uppercase tracking-widest mb-1">What This Means</div>
-                  <p className="text-sm text-amber-900 leading-relaxed">{sections.meaning}</p>
-                </div>
-              )}
-              {sections.focus && (
-                <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-4">
-                  <div className="text-[10px] font-semibold text-emerald-600 uppercase tracking-widest mb-1">Focus for Next Week</div>
-                  <p className="text-sm text-emerald-900 leading-relaxed">{sections.focus}</p>
-                </div>
-              )}
+              <div className="bg-slate-50 rounded-xl border border-slate-200 p-4">
+                <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-2">Observation</div>
+                <p className="text-sm font-semibold text-slate-900 leading-snug">
+                  {sections.observation || SECTION_FALLBACKS.observation}
+                </p>
+              </div>
+
+              <div className="rounded-xl bg-amber-50 border border-amber-200 p-4">
+                <div className="text-[10px] font-semibold text-amber-600 uppercase tracking-widest mb-2">What This Means</div>
+                <p className="text-sm text-amber-900 leading-snug">
+                  {sections.meaning || SECTION_FALLBACKS.meaning}
+                </p>
+              </div>
+
+              <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-4">
+                <div className="text-[10px] font-semibold text-emerald-600 uppercase tracking-widest mb-2">Focus This Week</div>
+                <p className="text-sm text-emerald-900 leading-snug">
+                  {sections.focus || SECTION_FALLBACKS.focus}
+                </p>
+              </div>
             </div>
           )}
 
