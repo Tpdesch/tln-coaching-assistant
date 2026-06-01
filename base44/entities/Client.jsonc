@@ -104,6 +104,16 @@
         "inactive"
       ],
       "default": "active"
+    },
+    "last_reminder_sent_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of the last check-in reminder email sent to this participant"
+    },
+    "reminder_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Total number of check-in reminder emails sent to this participant"
     }
   },
   "required": [

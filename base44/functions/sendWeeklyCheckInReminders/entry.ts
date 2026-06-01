@@ -142,6 +142,13 @@ ${checkInLink}
 Thank you,
 The Leadership Nexus Coaching Companion`,
         });
+
+        // Update reminder tracking fields on the Client record
+        await base44.asServiceRole.entities.Client.update(client.id, {
+          last_reminder_sent_at: new Date().toISOString(),
+          reminder_count: (client.reminder_count || 0) + 1,
+        });
+
         sent++;
       } catch (emailErr) {
         errors.push({ email: client.email, error: emailErr.message });
