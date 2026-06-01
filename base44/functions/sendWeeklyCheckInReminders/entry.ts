@@ -122,22 +122,25 @@ Deno.serve(async (req) => {
       // Send reminder email
       try {
         const appUrl = Deno.env.get('APP_BASE_URL');
-        const checkInLink = appUrl ? `${appUrl}/ClientCheckIn` : 'the TLN Coaching platform';
+        const checkInLink = appUrl ? `${appUrl}/ClientCheckIn` : 'https://app.leadershipnexus.com/ClientCheckIn';
+
+        const participantName = profile?.display_name || client.full_name || 'there';
 
         await base44.asServiceRole.integrations.Core.SendEmail({
           to: client.email,
-          subject: "Your weekly leadership check-in is ready",
-          body: `Hi ${client.full_name || 'there'},
+          from_name: 'The Leadership Nexus Coaching Companion',
+          subject: 'Leadership Nexus Weekly Check-In Reminder',
+          body: `Hi ${participantName},
 
-This is a friendly reminder to complete your weekly leadership check-in.
+This is a reminder to complete your weekly Leadership Nexus Coaching Companion check-in.
 
-Your check-in helps track your alignment progress and gives your coach the insights they need to support you effectively.
+Your weekly reflection takes approximately 2–3 minutes and helps you track your leadership alignment over time.
 
-It only takes a few minutes — please log in and submit your check-in for this week:
+Complete your check-in here:
 ${checkInLink}
 
 Thank you,
-TLN Coaching Assistant`,
+The Leadership Nexus Coaching Companion`,
         });
         sent++;
       } catch (emailErr) {
