@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Users, CalendarCheck, TrendingUp, TrendingDown, Minus, Clock } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import CoachDisplayNamePrompt from "@/components/CoachDisplayNamePrompt";
+import AwaitingCheckInWidget from "@/components/AwaitingCheckInWidget";
 
 export default function CoachDashboard() {
   const [myProfileId, setMyProfileId] = useState(null);
@@ -89,6 +90,16 @@ export default function CoachDashboard() {
     allInteractions.filter(i => new Date(i.created_date) >= oneWeekAgo).map(i => i.client_profile_id)
   );
 
+  // Map profile IDs back to client IDs for the awaiting widget
+  const profileToClientId = {};
+  clients.forEach(c => { if (c.base44_user_id) profileToClientId[c.base44_user_id] = c.id; });
+  const checkedInClientIds = new Set(
+    allInteractions
+      .filter(i => new Date(i.created_date) >= oneWeekAgo)
+      .map(i => i.client_id)
+      .filter(Boolean)
+  );
+
   const recentCheckins = Object.values(latestCheckinByProfile)
     .sort((a, b) => b.created_date.localeCompare(a.created_date))
     .slice(0, 8);
@@ -138,6 +149,9 @@ export default function CoachDashboard() {
           </div>
         ))}
       </div>
+
+      {/* Awaiting Check-In */}
+      <AwaitingCheckInWidget clients={clients} checkedInThisWeekIds={checkedInClientIds} />
 
       {/* Recent Check-Ins */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
