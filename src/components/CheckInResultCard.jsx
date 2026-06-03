@@ -78,25 +78,41 @@ const METRIC_TOOLTIPS = {
 
 function MetricInfo({ label }) {
   const [open, setOpen] = React.useState(false);
+  const [pos, setPos] = React.useState({ top: 0, left: 0 });
+  const btnRef = React.useRef(null);
   const tooltip = METRIC_TOOLTIPS[label];
   if (!tooltip) return null;
+
+  const show = () => {
+    if (btnRef.current) {
+      const r = btnRef.current.getBoundingClientRect();
+      setPos({ top: r.bottom + 6, left: r.left + r.width / 2 });
+    }
+    setOpen(true);
+  };
+
   return (
-    <span className="relative inline-flex items-center ml-0.5">
+    <span className="inline-flex items-center ml-0.5">
       <button
+        ref={btnRef}
         type="button"
-        onClick={e => { e.stopPropagation(); setOpen(v => !v); }}
-        onMouseEnter={() => setOpen(true)}
+        onClick={e => { e.stopPropagation(); show(); }}
+        onMouseEnter={show}
         onMouseLeave={() => setOpen(false)}
         className="text-gray-400 hover:text-gray-700 focus:outline-none transition-colors"
         aria-label={`About ${label}`}
       >
         <Info className="w-3.5 h-3.5" />
       </button>
-      {open && (
-        <span className="absolute top-full left-1/2 -translate-x-1/2 mt-1.5 z-50 w-48 bg-gray-900 text-white text-[11px] leading-snug rounded-lg px-2.5 py-2 shadow-lg pointer-events-none">
+      {open && typeof document !== "undefined" && React.createPortal(
+        <span
+          style={{ top: pos.top, left: pos.left, transform: "translateX(-50%)" }}
+          className="fixed z-[9999] w-48 bg-gray-900 text-white text-[11px] leading-snug rounded-lg px-2.5 py-2 shadow-lg pointer-events-none"
+        >
           {tooltip}
           <span className="absolute bottom-full left-1/2 -translate-x-1/2 border-4 border-transparent border-b-gray-900" />
-        </span>
+        </span>,
+        document.body
       )}
     </span>
   );
