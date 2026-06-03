@@ -1,5 +1,5 @@
 import React from "react";
-import { ChevronDown, ChevronUp, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { ChevronDown, ChevronUp, TrendingUp, TrendingDown, Minus, Info } from "lucide-react";
 
 const LEVEL_CONFIG = [
   { level: 1, label: "Transactional", color: "#C00000" },
@@ -70,10 +70,45 @@ function parseCoachingText(text) {
   return sections;
 }
 
+const METRIC_TOOLTIPS = {
+  "Leadership Alignment": "Measures how consistently your actions align with your leadership focus.",
+  "Growth Direction": "Tracks whether your leadership alignment is strengthening, holding steady, or drifting over recent check-ins.",
+  "Thought vs Action": "Shows whether your leadership thinking is ahead of your actions, behind them, or balanced.",
+};
+
+function MetricInfo({ label }) {
+  const [open, setOpen] = React.useState(false);
+  const tooltip = METRIC_TOOLTIPS[label];
+  if (!tooltip) return null;
+  return (
+    <span className="relative inline-flex items-center ml-0.5">
+      <button
+        type="button"
+        onClick={e => { e.stopPropagation(); setOpen(v => !v); }}
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={() => setOpen(false)}
+        className="text-gray-300 hover:text-gray-500 focus:outline-none transition-colors"
+        aria-label={`About ${label}`}
+      >
+        <Info className="w-3 h-3" />
+      </button>
+      {open && (
+        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 z-20 w-48 bg-gray-900 text-white text-[11px] leading-snug rounded-lg px-2.5 py-2 shadow-lg pointer-events-none">
+          {tooltip}
+          <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
+        </span>
+      )}
+    </span>
+  );
+}
+
 function MetricCard({ label, value, desc, color, icon }) {
   return (
     <div className="flex flex-col items-center px-4 py-3 rounded-xl bg-gray-50 border border-gray-100 w-[160px] shrink-0">
-      <span className="text-[10px] text-gray-400 uppercase tracking-wide font-medium text-center leading-tight">{label}</span>
+      <span className="text-[10px] text-gray-400 uppercase tracking-wide font-medium text-center leading-tight flex items-center gap-0.5">
+        {label}
+        <MetricInfo label={label} />
+      </span>
       <span className={`text-lg font-bold leading-tight flex items-center gap-1 mt-1 text-center ${color || "text-gray-800"}`}>
         {icon}
         {value}
