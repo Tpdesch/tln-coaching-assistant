@@ -1,5 +1,5 @@
-// CheckInResultCard — v2 (no nested buttons, portal tooltip)
 import React from "react";
+import ReactDOM from "react-dom";
 import { ChevronDown, ChevronUp, TrendingUp, TrendingDown, Minus, Info } from "lucide-react";
 
 const LEVEL_CONFIG = [
@@ -105,7 +105,7 @@ function MetricInfo({ label }) {
       >
         <Info className="w-3.5 h-3.5" />
       </button>
-      {open && typeof document !== "undefined" && React.createPortal(
+      {open && typeof document !== "undefined" && ReactDOM.createPortal(
         <span
           style={{ top: pos.top, left: pos.left, transform: "translateX(-50%)" }}
           className="fixed z-[9999] w-48 bg-gray-900 text-white text-[11px] leading-snug rounded-lg px-2.5 py-2 shadow-lg pointer-events-none"
