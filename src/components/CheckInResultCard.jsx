@@ -87,10 +87,10 @@ function MetricInfo({ label }) {
         onClick={e => { e.stopPropagation(); setOpen(v => !v); }}
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}
-        className="text-gray-300 hover:text-gray-500 focus:outline-none transition-colors"
+        className="text-gray-400 hover:text-gray-700 focus:outline-none transition-colors"
         aria-label={`About ${label}`}
       >
-        <Info className="w-3 h-3" />
+        <Info className="w-3.5 h-3.5" />
       </button>
       {open && (
         <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 z-20 w-48 bg-gray-900 text-white text-[11px] leading-snug rounded-lg px-2.5 py-2 shadow-lg pointer-events-none">
