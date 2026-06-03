@@ -1,3 +1,4 @@
+// CheckInResultCard — v2 (no nested buttons, portal tooltip)
 import React from "react";
 import { ChevronDown, ChevronUp, TrendingUp, TrendingDown, Minus, Info } from "lucide-react";
 
