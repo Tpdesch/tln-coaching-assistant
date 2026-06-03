@@ -169,19 +169,19 @@ export default function CheckInResultCard({ interaction, inferenceRun, defaultEx
   return (
     <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
       {/* Header / toggle */}
-      <button
-        onClick={() => setExpanded(e => !e)}
-        className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-gray-50 transition"
-      >
-        <div className="flex items-center gap-4 flex-wrap">
-          <div>
+      <div className="w-full px-5 py-4 flex items-center justify-between text-left">
+        <div className="flex items-center gap-4 flex-wrap flex-1 min-w-0">
+          <button
+            onClick={() => setExpanded(e => !e)}
+            className="text-left hover:opacity-80 transition shrink-0"
+          >
             <div className="text-sm font-semibold text-gray-900">
               Week ending {interaction.week_ending_date || interaction.created_date?.slice(0, 10)}
             </div>
             {sections?.observation && !expanded && (
               <div className="text-sm text-gray-400 mt-0.5 line-clamp-1 max-w-xs leading-snug">{sections.observation}</div>
             )}
-          </div>
+          </button>
 
           {/* Metric cards — always visible */}
           <div className="flex items-stretch gap-2 flex-wrap">
@@ -203,8 +203,10 @@ export default function CheckInResultCard({ interaction, inferenceRun, defaultEx
           </div>
         </div>
 
-        {expanded ? <ChevronUp className="w-4 h-4 text-gray-400 shrink-0" /> : <ChevronDown className="w-4 h-4 text-gray-400 shrink-0" />}
-      </button>
+        <button onClick={() => setExpanded(e => !e)} className="hover:opacity-80 transition shrink-0 ml-2">
+          {expanded ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+        </button>
+      </div>
 
       {expanded && (
         <div className="border-t border-gray-100 px-5 pb-6 space-y-4 pt-4">
