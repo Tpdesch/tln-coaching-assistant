@@ -5,9 +5,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { Loader2, CheckCircle2, ArrowLeft, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
+import CheckInResultCard from "@/components/CheckInResultCard";
 
 export default function ClientCheckIn() {
   const [profile, setProfile] = useState(null);
@@ -27,6 +28,7 @@ export default function ClientCheckIn() {
     leadership_moments: [],
   });
   const [results, setResults] = useState(null);
+  const [savedInteraction, setSavedInteraction] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -102,6 +104,7 @@ export default function ClientCheckIn() {
         leadership_gap_interpretation,
       });
 
+      setSavedInteraction(interaction);
       const lnacRes = await base44.functions.invoke("invokeLnacEngine", { interaction_id: interaction.id });
       setResults(lnacRes.data);
       setSuccess(true);
@@ -127,34 +130,22 @@ export default function ClientCheckIn() {
     );
   }
 
-  if (success && results) {
-    const aci = results?.aci;
-    const aci_delta = results?.aci_delta;
-    const alignment_momentum_score = results?.alignment_momentum_score;
-    const alignment_momentum_direction = results?.alignment_momentum_direction;
-    const alignment_momentum_summary = results?.alignment_momentum_summary;
-    const coach_reflection_text = results?.coach_reflection_text;
-
-    const total_thought_score = form.thought_l1 + form.thought_l2 + form.thought_l3 + form.thought_l4 + form.thought_l5;
-    const total_action_score = form.action_l1 + form.action_l2 + form.action_l3 + form.action_l4 + form.action_l5;
-    const gap = total_thought_score - total_action_score;
-    const gap_direction = gap > 0 ? "thought_ahead" : gap < 0 ? "action_ahead" : "aligned";
-
-    // Parse coaching sections
-    const parseSection = (text, label, nextLabels) => {
-      if (!text) return null;
-      const idx = text.indexOf(label);
-      if (idx === -1) return null;
-      const after = idx + label.length;
-      const nextIdx = nextLabels.map(l => text.indexOf(l)).filter(n => n > idx).sort((a, b) => a - b)[0] ?? text.length;
-      return text.slice(after, nextIdx).trim();
+  if (success && results && savedInteraction) {
+    // Build an interaction object enriched with AMS fields from the inference run
+    const enrichedInteraction = {
+      ...savedInteraction,
+      alignment_momentum_score: results?.alignment_momentum_score,
+      alignment_momentum_direction: results?.alignment_momentum_direction,
+      alignment_momentum_summary: results?.alignment_momentum_summary,
     };
-    const observation = parseSection(coach_reflection_text, "Observation:", ["Performance implication:", "This week's challenge:"]);
-    const meaning = parseSection(coach_reflection_text, "Performance implication:", ["This week's challenge:", "Observation:"]);
-    const focus = parseSection(coach_reflection_text, "This week's challenge:", ["Observation:", "Performance implication:"]);
-
-    const gapColor = gap > 0 ? "text-amber-700" : gap < 0 ? "text-orange-700" : "text-green-700";
-    const amsColor = alignment_momentum_direction === "improving" ? "text-green-600" : alignment_momentum_direction === "declining" ? "text-red-500" : "text-slate-500";
+    const inferenceRun = {
+      aci: results?.aci,
+      aci_delta: results?.aci_delta,
+      coach_reflection_text: results?.coach_reflection_text,
+      alignment_momentum_score: results?.alignment_momentum_score,
+      alignment_momentum_direction: results?.alignment_momentum_direction,
+      alignment_momentum_summary: results?.alignment_momentum_summary,
+    };
 
     return (
       <div className="max-w-3xl mx-auto px-4 py-8">
@@ -162,93 +153,16 @@ export default function ClientCheckIn() {
           <ArrowLeft className="w-4 h-4" /> Back to Home
         </Link>
 
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-          {/* Header */}
-          <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100">
-            <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center shrink-0">
-              <CheckCircle2 className="w-5 h-5 text-green-600" />
-            </div>
-            <div className="flex-1">
-              <h2 className="text-base font-semibold text-gray-900">Check-In Complete</h2>
-              <p className="text-xs text-gray-400">Week ending {form.week_ending_date}</p>
-            </div>
-            {/* Compact metrics row */}
-            <div className="flex items-center gap-2">
-              {aci != null && (
-                <div className="flex flex-col items-center px-3 py-1.5 rounded-lg bg-blue-50 border border-blue-100 min-w-[60px]">
-                  <span className="text-[10px] text-blue-500 font-medium uppercase tracking-wide">ACI</span>
-                  <span className="text-sm font-bold text-blue-800">{aci.toFixed(0)}</span>
-                  {aci_delta != null && <span className={`text-[10px] ${aci_delta >= 0 ? "text-green-600" : "text-red-500"}`}>{aci_delta >= 0 ? "↑" : "↓"}{Math.abs(aci_delta).toFixed(0)}</span>}
-                </div>
-              )}
-              <div className="flex flex-col items-center px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-100 min-w-[60px]">
-                <span className="text-[10px] text-amber-500 font-medium uppercase tracking-wide">Gap</span>
-                <span className={`text-sm font-bold ${gapColor}`}>{gap > 0 ? `+${gap}` : gap}</span>
-                <span className="text-[10px] text-gray-400">{gap_direction === "thought_ahead" ? "T>A" : gap_direction === "action_ahead" ? "A>T" : "Aligned"}</span>
-              </div>
-              {alignment_momentum_score != null ? (
-                <div className="flex flex-col items-center px-3 py-1.5 rounded-lg bg-indigo-50 border border-indigo-100 min-w-[60px]">
-                  <span className="text-[10px] text-indigo-500 font-medium uppercase tracking-wide">AMS</span>
-                  <span className={`text-sm font-bold flex items-center gap-0.5 ${amsColor}`}>
-                    {alignment_momentum_direction === "improving" ? <TrendingUp className="w-3 h-3" /> : alignment_momentum_direction === "declining" ? <TrendingDown className="w-3 h-3" /> : <Minus className="w-3 h-3" />}
-                    {alignment_momentum_score > 0 ? `+${alignment_momentum_score.toFixed(0)}` : alignment_momentum_score.toFixed(0)}
-                  </span>
-                  <span className="text-[10px] text-gray-400 capitalize">{alignment_momentum_direction}</span>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-100 min-w-[60px]">
-                  <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wide">AMS</span>
-                  <span className="text-xs text-gray-300 italic">—</span>
-                  <span className="text-[10px] text-gray-300">Pending</span>
-                </div>
-              )}
-            </div>
-          </div>
+        <CheckInResultCard
+          interaction={enrichedInteraction}
+          inferenceRun={inferenceRun}
+          defaultExpanded={true}
+        />
 
-          <div className="px-6 py-5 space-y-4">
-            {/* Coaching Sections */}
-            {observation && (
-              <div className="rounded-xl bg-slate-50 border border-slate-200 p-4">
-                <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Observation</div>
-                <p className="text-sm text-slate-800 leading-relaxed">{observation}</p>
-              </div>
-            )}
-            {meaning && (
-              <div className="rounded-xl bg-amber-50 border border-amber-200 p-4">
-                <div className="text-[10px] font-semibold text-amber-600 uppercase tracking-widest mb-1">What This Means</div>
-                <p className="text-sm text-amber-900 leading-relaxed">{meaning}</p>
-              </div>
-            )}
-            {focus && (
-              <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-4">
-                <div className="text-[10px] font-semibold text-emerald-600 uppercase tracking-widest mb-1">Focus for Next Week</div>
-                <p className="text-sm text-emerald-900 leading-relaxed">{focus}</p>
-              </div>
-            )}
-            {!observation && !meaning && !focus && coach_reflection_text && (
-              <div className="rounded-xl bg-slate-50 border border-slate-200 p-4">
-                <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Coaching Insight</div>
-                <p className="text-sm text-slate-800 leading-relaxed whitespace-pre-line">{coach_reflection_text}</p>
-              </div>
-            )}
-
-            {(client?.anchor_text || profile?.anchor_text) && (
-              <div className="rounded-xl bg-purple-50 border border-purple-200 p-4">
-                <div className="text-[10px] font-semibold text-purple-500 uppercase tracking-widest mb-1">Current Focus (Anchor)</div>
-                <p className="text-sm text-purple-900 whitespace-pre-line">{(client?.anchor_text ? client : profile).anchor_text}</p>
-              </div>
-            )}
-
-            {!alignment_momentum_score && (
-              <p className="text-xs text-gray-400 italic text-center">Alignment Momentum will appear after your next check-in.</p>
-            )}
-
-            <div className="pt-2 border-t border-gray-100">
-              <Link to="/ClientHome">
-                <Button className="w-full bg-amber-600 hover:bg-amber-700">Back to Home</Button>
-              </Link>
-            </div>
-          </div>
+        <div className="mt-4">
+          <Link to="/ClientHome">
+            <Button className="w-full bg-amber-600 hover:bg-amber-700">Back to Home</Button>
+          </Link>
         </div>
       </div>
     );
