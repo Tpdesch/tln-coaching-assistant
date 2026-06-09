@@ -18,6 +18,7 @@ import ClientOnboarding from './pages/ClientOnboarding';
 import MyCheckIns from './pages/MyCheckIns';
 import ParticipantWelcome from './pages/ParticipantWelcome';
 import ClientDetail from './pages/ClientDetail';
+import AdminDashboard from './pages/AdminDashboard';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -45,6 +46,11 @@ const AuthenticatedApp = () => {
       <Route path="/SignIn" element={<SignIn />} />
       <Route path="/ClientOnboarding" element={<ClientOnboarding />} />
       <Route path="/participant-welcome" element={<ParticipantWelcome />} />
+
+      {/* Admin pages with layout */}
+      <Route element={<Layout />}>
+        <Route path="/AdminDashboard" element={<AdminDashboard />} />
+      </Route>
 
       {/* Coach pages with layout */}
       <Route element={<Layout />}>
