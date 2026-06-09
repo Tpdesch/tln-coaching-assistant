@@ -19,6 +19,7 @@ import MyCheckIns from './pages/MyCheckIns';
 import ParticipantWelcome from './pages/ParticipantWelcome';
 import ClientDetail from './pages/ClientDetail';
 import AdminDashboard from './pages/AdminDashboard';
+import BetaReset from './pages/BetaReset';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -50,6 +51,7 @@ const AuthenticatedApp = () => {
       {/* Admin pages with layout */}
       <Route element={<Layout />}>
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
+        <Route path="/BetaReset" element={<BetaReset />} />
       </Route>
 
       {/* Coach pages with layout */}
