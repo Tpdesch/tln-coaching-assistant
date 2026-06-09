@@ -10,12 +10,15 @@ Deno.serve(async (req) => {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  // Fetch the profile and verify admin role
-  const profiles = await base44.asServiceRole.entities.Profiles.filter({ base44_user_id: user.id });
-  const profile = Array.isArray(profiles) ? profiles[0] : null;
+  // Allow platform-level admins OR profiles with admin/coach_admin role
+  const isB44Admin = user.role === 'admin';
 
-  if (!profile || (profile.role !== 'admin' && profile.role !== 'coach_admin')) {
-    return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+  if (!isB44Admin) {
+    const profiles = await base44.asServiceRole.entities.Profiles.filter({ base44_user_id: user.id });
+    const profile = Array.isArray(profiles) ? profiles[0] : null;
+    if (!profile || (profile.role !== 'admin' && profile.role !== 'coach_admin')) {
+      return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+    }
   }
 
   const body = await req.json().catch(() => ({}));
