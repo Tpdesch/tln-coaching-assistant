@@ -17,16 +17,20 @@ export default function AdminDashboard() {
         const me = await base44.auth.me();
         if (!me) { setAuthorized(false); return; }
 
-        const profileRows = await base44.entities.Profiles.filter({ base44_user_id: me.id });
-        const myProfile = Array.isArray(profileRows) ? profileRows[0] : null;
-        const role = myProfile?.role;
+        // Allow platform-level admins in directly
+        if (me.role === "admin") {
+          setAuthorized(true);
+        } else {
+          const profileRows = await base44.entities.Profiles.filter({ base44_user_id: me.id });
+          const myProfile = Array.isArray(profileRows) ? profileRows[0] : null;
+          const role = myProfile?.role;
 
-        if (role !== "admin" && role !== "coach_admin") {
-          setAuthorized(false);
-          return;
+          if (role !== "admin" && role !== "coach_admin") {
+            setAuthorized(false);
+            return;
+          }
+          setAuthorized(true);
         }
-
-        setAuthorized(true);
 
         // Fetch all data in parallel
         const [allProfiles, allClients, allInteractions, allRuns] = await Promise.all([
