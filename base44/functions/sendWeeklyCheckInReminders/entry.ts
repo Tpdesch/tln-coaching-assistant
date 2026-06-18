@@ -2,7 +2,6 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
 const DEFAULT_TIMEZONE = 'America/New_York';
 
-// Returns true if it's currently Friday 8am in the given timezone
 function isFriday8amInTimezone(tz) {
   try {
     const now = new Date();
@@ -12,18 +11,14 @@ function isFriday8amInTimezone(tz) {
       hour: 'numeric',
       hour12: false,
     }).formatToParts(now);
-
-    const weekday = parts.find(p => p.type === 'weekday')?.value; // e.g. "Fri"
-    const hour = parseInt(parts.find(p => p.type === 'hour')?.value, 10); // 0-23
-
+    const weekday = parts.find(p => p.type === 'weekday')?.value;
+    const hour = parseInt(parts.find(p => p.type === 'hour')?.value, 10);
     return weekday === 'Fri' && hour === 8;
   } catch {
-    // Unknown timezone — fall back to default
     return isFriday8amInTimezone(DEFAULT_TIMEZONE);
   }
 }
 
-// Returns the Friday (week-ending date) for the participant's current week as "YYYY-MM-DD"
 function getWeekEndingFridayInTimezone(tz) {
   try {
     const now = new Date();
@@ -35,14 +30,11 @@ function getWeekEndingFridayInTimezone(tz) {
       weekday: 'short',
     });
     const parts = formatter.formatToParts(now);
-    const weekday = parts.find(p => p.type === 'weekday')?.value; // "Fri", "Mon", etc.
     const year = parts.find(p => p.type === 'year')?.value;
     const month = parts.find(p => p.type === 'month')?.value;
     const day = parts.find(p => p.type === 'day')?.value;
-
     const localDate = new Date(`${year}-${month}-${day}T00:00:00`);
-    const dayOfWeek = localDate.getDay(); // 0=Sun .. 5=Fri
-    const daysUntilFriday = (5 - dayOfWeek + 7) % 7;
+    const daysUntilFriday = (5 - localDate.getDay() + 7) % 7;
     const friday = new Date(localDate);
     friday.setDate(localDate.getDate() + daysUntilFriday);
     return friday.toISOString().slice(0, 10);
@@ -51,32 +43,44 @@ function getWeekEndingFridayInTimezone(tz) {
   }
 }
 
+function hasCheckedInThisWeek(allWeeklyCheckins, profileId, clientId, weekEnding) {
+  const weekStart = new Date(`${weekEnding}T00:00:00`);
+  weekStart.setDate(weekStart.getDate() - 6);
+  const weekStartStr = weekStart.toISOString().slice(0, 10);
+
+  return allWeeklyCheckins.some(i => {
+    const matchesProfile = profileId && i.client_profile_id === profileId;
+    const matchesClient = !profileId && i.client_id === clientId;
+    if (!matchesProfile && !matchesClient) return false;
+    if (i.week_ending_date) return i.week_ending_date === weekEnding;
+    const created = i.created_date?.slice(0, 10);
+    return created >= weekStartStr && created <= weekEnding;
+  });
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
-    // Allow scheduled/admin invocations only
+    // Auth: allow admins and scheduled (unauthenticated) invocations
     const user = await base44.auth.me().catch(() => null);
     if (user && user.role !== 'admin') {
       return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    // 1. Fetch all active clients — skip those missing email
-    const activeStatuses = ['active', 'onboarding'];
-    const allClients = await base44.asServiceRole.entities.Client.list();
-    const skippedMissingEmail = [];
-    const activeClients = allClients.filter(c => {
-      if (!activeStatuses.includes(c.coaching_status) || !activeStatuses.includes(c.status)) return false;
-      if (!c.email) { skippedMissingEmail.push(c.full_name || c.id); return false; }
-      return true;
-    });
+    // Parse input — dryRun defaults to true
+    let body = {};
+    try { body = await req.json(); } catch { /* no body is fine */ }
+    const dryRun = body.dryRun !== false; // default true
 
-    if (!activeClients.length) {
-      return Response.json({ message: 'No active participants found.', sent: 0, skipped_missing_email: skippedMissingEmail.length });
-    }
+    // 1. Fetch data in parallel
+    const [allClients, allProfiles, allWeeklyCheckins] = await Promise.all([
+      base44.asServiceRole.entities.Client.list(),
+      base44.asServiceRole.entities.Profiles.list(),
+      base44.asServiceRole.entities.Interactions.filter({ type: 'weekly_checkin' }),
+    ]);
 
-    // 2. Fetch profiles — index by base44_user_id and by id
-    const allProfiles = await base44.asServiceRole.entities.Profiles.list();
+    // 2. Index profiles
     const profileByUserId = {};
     const profileById = {};
     allProfiles.forEach(p => {
@@ -84,14 +88,23 @@ Deno.serve(async (req) => {
       profileById[p.id] = p;
     });
 
-    // 3. Fetch all weekly check-ins for this run (used across all clients)
-    const allWeeklyCheckins = await base44.asServiceRole.entities.Interactions.filter({ type: 'weekly_checkin' });
+    // 3. Filter active clients
+    const activeStatuses = ['active', 'onboarding'];
+    let skipped_missing_email = 0;
+    const activeClients = allClients.filter(c => {
+      if (!activeStatuses.includes(c.coaching_status) || !activeStatuses.includes(c.status)) return false;
+      if (!c.email) { skipped_missing_email++; return false; }
+      return true;
+    });
 
     // 4. Process each client
-    let sent = 0;
-    const skipped = [];
-    const notYet = [];
+    let reminders_sent = 0;
+    let skipped_completed = 0;
+    const wouldSend = [];
     const errors = [];
+
+    const appUrl = Deno.env.get('APP_BASE_URL') || 'https://app.leadershipnexus.com';
+    const checkInLink = `${appUrl}/ClientCheckIn`;
 
     for (const client of activeClients) {
       const profile = client.base44_user_id ? profileByUserId[client.base44_user_id] : null;
@@ -99,54 +112,37 @@ Deno.serve(async (req) => {
 
       const tz = profile?.timezone || client.timezone || DEFAULT_TIMEZONE;
 
-      // Only send if it's Friday 8am in this participant's timezone
-      if (!isFriday8amInTimezone(tz)) {
-        notYet.push({ email: client.email, tz });
-        continue;
-      }
+      // For scheduled runs: skip if not Friday 8am. For manual/dry-run: skip this gate.
+      if (!dryRun && !isFriday8amInTimezone(tz)) continue;
 
-      // Determine the correct week-ending Friday in their timezone
       const weekEnding = getWeekEndingFridayInTimezone(tz);
 
-      // Check if they already submitted a check-in for this week.
-      // Primary match: client_profile_id when the participant has a Profile.
-      // Fallback: client_id for participants without a Profile.
-      // Also accept interactions this week that used created_date instead of week_ending_date.
-      const weekStart = new Date(`${weekEnding}T00:00:00`);
-      weekStart.setDate(weekStart.getDate() - 6); // Mon of that week
-      const weekStartStr = weekStart.toISOString().slice(0, 10);
-
-      const alreadyCheckedIn = allWeeklyCheckins.some(i => {
-        // Match to this participant
-        const matchesProfile = profileId && i.client_profile_id === profileId;
-        const matchesClient = !profileId && i.client_id === client.id;
-        if (!matchesProfile && !matchesClient) return false;
-
-        // Check week: prefer week_ending_date, fall back to created_date within the week
-        if (i.week_ending_date) return i.week_ending_date === weekEnding;
-        const created = i.created_date?.slice(0, 10);
-        return created >= weekStartStr && created <= weekEnding;
-      });
-
-      if (alreadyCheckedIn) {
-        skipped.push(client.email);
+      if (hasCheckedInThisWeek(allWeeklyCheckins, profileId, client.id, weekEnding)) {
+        skipped_completed++;
         continue;
       }
 
-      // Resolve coach name: Profiles.display_name → Profiles.full_name → "your coach"
+      // Resolve names
+      const participantName = profile?.display_name || profile?.full_name || client.full_name || 'there';
       let coachName = 'your coach';
       if (client.coach_id) {
         const coachProfile = profileById[client.coach_id];
         coachName = coachProfile?.display_name || coachProfile?.full_name || 'your coach';
       }
 
-      // Send reminder email
+      if (dryRun) {
+        wouldSend.push({
+          participant_name: participantName,
+          email: client.email,
+          coach_name: coachName,
+          week_ending: weekEnding,
+        });
+        continue;
+      }
+
+      // Live send
       try {
-        const appUrl = Deno.env.get('APP_BASE_URL');
-        const checkInLink = appUrl ? `${appUrl}/ClientCheckIn` : 'https://app.leadershipnexus.com/ClientCheckIn';
-
-        const participantName = profile?.display_name || profile?.full_name || client.full_name || 'there';
-
+        const senderName = coachName !== 'your coach' ? coachName : 'The Leadership Nexus Coaching Companion';
         await base44.asServiceRole.integrations.Core.SendEmail({
           to: client.email,
           from_name: 'The Leadership Nexus Coaching Companion',
@@ -161,28 +157,29 @@ Complete your check-in here:
 ${checkInLink}
 
 Thank you,
-${coachName !== 'your coach' ? coachName : 'The Leadership Nexus Coaching Companion'}`,
+${senderName}`,
         });
 
-        // Update reminder tracking fields on the Client record
         await base44.asServiceRole.entities.Client.update(client.id, {
           last_reminder_sent_at: new Date().toISOString(),
           reminder_count: (client.reminder_count || 0) + 1,
         });
 
-        sent++;
+        reminders_sent++;
       } catch (emailErr) {
         errors.push({ email: client.email, error: emailErr.message });
       }
     }
 
     return Response.json({
-      message: 'Weekly check-in reminder run complete.',
-      sent,
-      skipped: skipped.length,
-      skipped_missing_email: skippedMissingEmail.length,
-      not_yet_their_8am: notYet.length,
+      dry_run: dryRun,
+      total_clients_checked: activeClients.length,
+      reminders_sent: dryRun ? 0 : reminders_sent,
+      would_send_count: dryRun ? wouldSend.length : 0,
+      skipped_completed,
+      skipped_missing_email,
       errors,
+      wouldSend: dryRun ? wouldSend : [],
     });
 
   } catch (error) {
