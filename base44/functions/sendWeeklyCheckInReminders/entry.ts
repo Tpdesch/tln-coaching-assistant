@@ -68,10 +68,12 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    // Parse input — dryRun defaults to true
+    // Parse input
     let body = {};
     try { body = await req.json(); } catch { /* no body is fine */ }
     const dryRun = body.dryRun !== false; // default true
+    const targetEmail = body.targetEmail || null;   // filter to single participant
+    const targetCoachId = body.targetCoachId || null; // filter to single coach's participants
 
     // 1. Fetch data in parallel
     const [allClients, allProfiles, allWeeklyCheckins] = await Promise.all([
@@ -91,13 +93,20 @@ Deno.serve(async (req) => {
     // 3. Filter active clients
     const activeStatuses = ['active', 'onboarding'];
     let skipped_missing_email = 0;
-    const activeClients = allClients.filter(c => {
+    let activeClients = allClients.filter(c => {
       if (!activeStatuses.includes(c.coaching_status) || !activeStatuses.includes(c.status)) return false;
       if (!c.email) { skipped_missing_email++; return false; }
       return true;
     });
 
-    // 4. Process each client
+    // 4. Apply targeting filters
+    if (targetEmail) {
+      activeClients = activeClients.filter(c => c.email?.toLowerCase() === targetEmail.toLowerCase());
+    } else if (targetCoachId) {
+      activeClients = activeClients.filter(c => c.coach_id === targetCoachId);
+    }
+
+    // 5. Process each client
     let reminders_sent = 0;
     let skipped_completed = 0;
     const wouldSend = [];
@@ -106,14 +115,16 @@ Deno.serve(async (req) => {
     const appUrl = Deno.env.get('APP_BASE_URL') || 'https://app.leadershipnexus.com';
     const checkInLink = `${appUrl}/ClientCheckIn`;
 
+    // For manual targeted sends, skip the Friday 8am timezone gate
+    const isTargeted = !!(targetEmail || targetCoachId);
+
     for (const client of activeClients) {
       const profile = client.base44_user_id ? profileByUserId[client.base44_user_id] : null;
       const profileId = profile?.id;
-
       const tz = profile?.timezone || client.timezone || DEFAULT_TIMEZONE;
 
-      // For scheduled runs: skip if not Friday 8am. For manual/dry-run: skip this gate.
-      if (!dryRun && !isFriday8amInTimezone(tz)) continue;
+      // For scheduled runs: skip if not Friday 8am. Skip this gate for targeted/manual sends.
+      if (!dryRun && !isTargeted && !isFriday8amInTimezone(tz)) continue;
 
       const weekEnding = getWeekEndingFridayInTimezone(tz);
 
@@ -122,7 +133,6 @@ Deno.serve(async (req) => {
         continue;
       }
 
-      // Resolve names
       const participantName = profile?.display_name || profile?.full_name || client.full_name || 'there';
       let coachName = 'your coach';
       if (client.coach_id) {
@@ -173,6 +183,7 @@ ${senderName}`,
 
     return Response.json({
       dry_run: dryRun,
+      targeted: isTargeted,
       total_clients_checked: activeClients.length,
       reminders_sent: dryRun ? 0 : reminders_sent,
       would_send_count: dryRun ? wouldSend.length : 0,
