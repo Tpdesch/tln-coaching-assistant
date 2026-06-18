@@ -19,12 +19,20 @@ export default function SignIn() {
       const rows = await base44.entities.Profiles.filter({ base44_user_id: me.id });
       const profile = Array.isArray(rows) ? rows[0] : null;
       if (profile) {
-        // Patch display_name if it was never set
         const updates = { role: profileRole };
         if (!profile.display_name) updates.display_name = me.full_name || "";
+        if (!profile.full_name && me.full_name) updates.full_name = me.full_name;
+        if (!profile.email && me.email) updates.email = me.email;
         await base44.entities.Profiles.update(profile.id, updates);
       } else {
-        await base44.entities.Profiles.create({ base44_user_id: me.id, role: profileRole, display_name: me.full_name || "" });
+        const displayName = me.full_name || "";
+        await base44.entities.Profiles.create({
+          base44_user_id: me.id,
+          role: profileRole,
+          display_name: displayName,
+          full_name: me.full_name || "",
+          email: me.email || "",
+        });
       }
       if (profileRole === "CLIENT") {
         const clientRows = await base44.entities.Client.filter({ email: me.email });
