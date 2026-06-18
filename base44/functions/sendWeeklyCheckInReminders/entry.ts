@@ -61,25 +61,33 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    // 1. Fetch all active clients (exclude inactive / removed)
+    // 1. Fetch all active clients — skip those missing email
     const activeStatuses = ['active', 'onboarding'];
     const allClients = await base44.asServiceRole.entities.Client.list();
-    const activeClients = allClients.filter(c =>
-      activeStatuses.includes(c.coaching_status) &&
-      activeStatuses.includes(c.status) &&
-      c.email
-    );
+    const skippedMissingEmail = [];
+    const activeClients = allClients.filter(c => {
+      if (!activeStatuses.includes(c.coaching_status) || !activeStatuses.includes(c.status)) return false;
+      if (!c.email) { skippedMissingEmail.push(c.full_name || c.id); return false; }
+      return true;
+    });
 
     if (!activeClients.length) {
-      return Response.json({ message: 'No active participants found.', sent: 0 });
+      return Response.json({ message: 'No active participants found.', sent: 0, skipped_missing_email: skippedMissingEmail.length });
     }
 
-    // 2. Fetch profiles to map base44_user_id -> profile (which may hold timezone)
+    // 2. Fetch profiles — index by base44_user_id and by id
     const allProfiles = await base44.asServiceRole.entities.Profiles.list();
     const profileByUserId = {};
-    allProfiles.forEach(p => { profileByUserId[p.base44_user_id] = p; });
+    const profileById = {};
+    allProfiles.forEach(p => {
+      if (p.base44_user_id) profileByUserId[p.base44_user_id] = p;
+      profileById[p.id] = p;
+    });
 
-    // 3. Process each client
+    // 3. Fetch all weekly check-ins for this run (used across all clients)
+    const allWeeklyCheckins = await base44.asServiceRole.entities.Interactions.filter({ type: 'weekly_checkin' });
+
+    // 4. Process each client
     let sent = 0;
     const skipped = [];
     const notYet = [];
@@ -89,7 +97,6 @@ Deno.serve(async (req) => {
       const profile = client.base44_user_id ? profileByUserId[client.base44_user_id] : null;
       const profileId = profile?.id;
 
-      // Resolve timezone: prefer profile timezone, fall back to client notes field, then default
       const tz = profile?.timezone || client.timezone || DEFAULT_TIMEZONE;
 
       // Only send if it's Friday 8am in this participant's timezone
@@ -101,22 +108,36 @@ Deno.serve(async (req) => {
       // Determine the correct week-ending Friday in their timezone
       const weekEnding = getWeekEndingFridayInTimezone(tz);
 
-      // Check if they already submitted a check-in for this week
-      const weeklyCheckins = await base44.asServiceRole.entities.Interactions.filter({
-        type: 'weekly_checkin',
-        week_ending_date: weekEnding,
+      // Check if they already submitted a check-in for this week.
+      // Primary match: client_profile_id when the participant has a Profile.
+      // Fallback: client_id for participants without a Profile.
+      // Also accept interactions this week that used created_date instead of week_ending_date.
+      const weekStart = new Date(`${weekEnding}T00:00:00`);
+      weekStart.setDate(weekStart.getDate() - 6); // Mon of that week
+      const weekStartStr = weekStart.toISOString().slice(0, 10);
+
+      const alreadyCheckedIn = allWeeklyCheckins.some(i => {
+        // Match to this participant
+        const matchesProfile = profileId && i.client_profile_id === profileId;
+        const matchesClient = !profileId && i.client_id === client.id;
+        if (!matchesProfile && !matchesClient) return false;
+
+        // Check week: prefer week_ending_date, fall back to created_date within the week
+        if (i.week_ending_date) return i.week_ending_date === weekEnding;
+        const created = i.created_date?.slice(0, 10);
+        return created >= weekStartStr && created <= weekEnding;
       });
-
-      const checkedInProfileIds = new Set(weeklyCheckins.map(i => i.client_profile_id));
-      const checkedInClientIds = new Set(weeklyCheckins.map(i => i.client_id).filter(Boolean));
-
-      const alreadyCheckedIn =
-        (profileId && checkedInProfileIds.has(profileId)) ||
-        checkedInClientIds.has(client.id);
 
       if (alreadyCheckedIn) {
         skipped.push(client.email);
         continue;
+      }
+
+      // Resolve coach name: Profiles.display_name → Profiles.full_name → "your coach"
+      let coachName = 'your coach';
+      if (client.coach_id) {
+        const coachProfile = profileById[client.coach_id];
+        coachName = coachProfile?.display_name || coachProfile?.full_name || 'your coach';
       }
 
       // Send reminder email
@@ -124,7 +145,7 @@ Deno.serve(async (req) => {
         const appUrl = Deno.env.get('APP_BASE_URL');
         const checkInLink = appUrl ? `${appUrl}/ClientCheckIn` : 'https://app.leadershipnexus.com/ClientCheckIn';
 
-        const participantName = profile?.display_name || client.full_name || 'there';
+        const participantName = profile?.display_name || profile?.full_name || client.full_name || 'there';
 
         await base44.asServiceRole.integrations.Core.SendEmail({
           to: client.email,
@@ -140,7 +161,7 @@ Complete your check-in here:
 ${checkInLink}
 
 Thank you,
-The Leadership Nexus Coaching Companion`,
+${coachName !== 'your coach' ? coachName : 'The Leadership Nexus Coaching Companion'}`,
         });
 
         // Update reminder tracking fields on the Client record
@@ -159,6 +180,7 @@ The Leadership Nexus Coaching Companion`,
       message: 'Weekly check-in reminder run complete.',
       sent,
       skipped: skipped.length,
+      skipped_missing_email: skippedMissingEmail.length,
       not_yet_their_8am: notYet.length,
       errors,
     });
