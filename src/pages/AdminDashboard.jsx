@@ -7,6 +7,7 @@ import AdminCandidateTable from "@/components/admin/AdminCandidateTable";
 import AdminPatternSummary from "@/components/admin/AdminPatternSummary";
 import AdminDataQuality from "@/components/admin/AdminDataQuality";
 import AdminReminderPanel from "@/components/admin/AdminReminderPanel";
+import AdminCoachRoster from "@/components/admin/AdminCoachRoster";
 
 export default function AdminDashboard() {
   const [authorized, setAuthorized] = useState(null); // null = loading
@@ -83,6 +84,7 @@ export default function AdminDashboard() {
 
       <AdminOverviewCards {...data} />
       <AdminCoachTable {...data} />
+      <AdminCoachRoster {...data} />
       <AdminCandidateTable {...data} />
       <AdminPatternSummary {...data} />
       <AdminDataQuality {...data} />
