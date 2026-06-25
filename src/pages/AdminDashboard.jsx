@@ -8,6 +8,7 @@ import AdminPatternSummary from "@/components/admin/AdminPatternSummary";
 import AdminDataQuality from "@/components/admin/AdminDataQuality";
 import AdminReminderPanel from "@/components/admin/AdminReminderPanel";
 import AdminCoachRoster from "@/components/admin/AdminCoachRoster";
+import AdminReminderLog from "@/components/admin/AdminReminderLog";
 
 export default function AdminDashboard() {
   const [authorized, setAuthorized] = useState(null); // null = loading
@@ -89,6 +90,7 @@ export default function AdminDashboard() {
       <AdminPatternSummary {...data} />
       <AdminDataQuality {...data} />
       <AdminReminderPanel {...data} />
+      <AdminReminderLog {...data} />
     </div>
   );
 }
