@@ -71,7 +71,7 @@ Deno.serve(async (req) => {
     // Parse input
     let body = {};
     try { body = await req.json(); } catch { /* no body is fine */ }
-    const dryRun = body.dryRun !== false; // default true
+    const dryRun = body.dryRun === true; // default false — scheduled runs send live
     const targetEmail = body.targetEmail || null;   // filter to single participant
     const targetCoachId = body.targetCoachId || null; // filter to single coach's participants
 
