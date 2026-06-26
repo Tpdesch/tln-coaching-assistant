@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, Outlet } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { LayoutDashboard, Users, CalendarCheck, LogOut, Menu, X, Home, ClipboardList } from "lucide-react";
+import { LayoutDashboard, Users, CalendarCheck, LogOut, Menu, X, Home, ClipboardList, ShieldCheck, RotateCcw } from "lucide-react";
 
 const coachNav = [
   { label: "Dashboard", path: "/Dashboard", icon: LayoutDashboard },
@@ -12,6 +12,11 @@ const coachNav = [
 const clientNav = [
   { label: "Home", path: "/ClientHome", icon: Home },
   { label: "My Check-Ins", path: "/MyCheckIns", icon: ClipboardList },
+];
+
+const adminNav = [
+  { label: "Admin Dashboard", path: "/AdminDashboard", icon: ShieldCheck },
+  { label: "Beta Reset", path: "/BetaReset", icon: RotateCcw },
 ];
 
 export default function Layout({ children }) {
@@ -28,11 +33,15 @@ export default function Layout({ children }) {
       const p = Array.isArray(rows) ? rows[0] : null;
       const displayName = p?.display_name || p?.full_name || me.full_name || me.email || "";
       setUserName(displayName.split(" ")[0] || "");
-      setRole(p?.role || null);
+      // Platform admins and coach_admin profiles get admin navigation
+      const effectiveRole = me.role === "admin" || p?.role === "admin" || p?.role === "coach_admin"
+        ? "admin"
+        : p?.role || null;
+      setRole(effectiveRole);
     })();
   }, []);
 
-  const navItems = role === "COACH" ? coachNav : role === "CLIENT" ? clientNav : [];
+  const navItems = role === "admin" ? adminNav : role === "COACH" ? coachNav : role === "CLIENT" ? clientNav : [];
   const currentPath = location.pathname;
 
   return (
