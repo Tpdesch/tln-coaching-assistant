@@ -10,6 +10,7 @@ import AdminReminderPanel from "@/components/admin/AdminReminderPanel";
 import AdminCoachRoster from "@/components/admin/AdminCoachRoster";
 import AdminReminderLog from "@/components/admin/AdminReminderLog";
 import AdminCheckInFeed from "@/components/admin/AdminCheckInFeed";
+import AdminMonthlyReviewTest from "@/components/admin/AdminMonthlyReviewTest";
 
 export default function AdminDashboard() {
   const [authorized, setAuthorized] = useState(null); // null = loading
@@ -92,6 +93,7 @@ export default function AdminDashboard() {
       <AdminPatternSummary {...data} />
       <AdminDataQuality {...data} />
       <AdminReminderPanel {...data} />
+      <AdminMonthlyReviewTest {...data} />
       <AdminReminderLog {...data} />
     </div>
   );
