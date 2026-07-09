@@ -118,6 +118,72 @@
   color: #9ca3af;
 }
 
+/* ---- Report header (3-column) ---- */
+
+.report-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.report-header-left,
+.report-header-right {
+  flex: 1;
+}
+
+.report-header-center {
+  flex: 0 1 auto;
+  text-align: center;
+}
+
+.report-header-right {
+  text-align: right;
+}
+
+.report-logo-placeholder {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #6b7280;
+  letter-spacing: 0.05em;
+}
+
+/* ---- Client information / metadata block ---- */
+
+.report-divider {
+  border-top: 1px solid #e5e7eb;
+  margin: 0.5rem 0;
+}
+
+.report-info-row {
+  display: flex;
+  gap: 1.5rem;
+  padding: 0.35rem 0;
+}
+
+.report-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.report-info-label {
+  font-size: 0.65rem;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.report-info-value {
+  font-size: 0.8rem;
+  color: #374151;
+  font-weight: 500;
+}
+
+.report-info-value-accent {
+  color: #2d7a4f; /* Leadership Nexus green */
+}
+
 /* ---- 12-column report grid ---- */
 
 .report-grid {
