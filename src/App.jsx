@@ -19,6 +19,7 @@ import MyCheckIns from './pages/MyCheckIns';
 import ParticipantWelcome from './pages/ParticipantWelcome';
 import ClientDetail from './pages/ClientDetail';
 import AdminDashboard from './pages/AdminDashboard';
+import MonthlyLeadershipReview from './pages/MonthlyLeadershipReview';
 import BetaReset from './pages/BetaReset';
 
 const AuthenticatedApp = () => {
@@ -51,6 +52,7 @@ const AuthenticatedApp = () => {
       {/* Admin pages with layout */}
       <Route element={<Layout />}>
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
+        <Route path="/MonthlyLeadershipReview" element={<MonthlyLeadershipReview />} />
         <Route path="/BetaReset" element={<BetaReset />} />
       </Route>
 
