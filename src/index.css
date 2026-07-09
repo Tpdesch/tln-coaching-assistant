@@ -118,6 +118,41 @@
   color: #9ca3af;
 }
 
+/* ---- 12-column report grid ---- */
+
+.report-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: 0.3in;
+  row-gap: 0.5rem;
+  position: relative;
+}
+
+/* Screen-only alignment guides overlay */
+.report-grid-guides {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: 0.3in;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.report-grid-guide-col {
+  background-color: rgba(59, 130, 246, 0.06);
+  border-left: 1px dashed rgba(59, 130, 246, 0.2);
+  border-right: 1px dashed rgba(59, 130, 246, 0.2);
+}
+
+.report-grid > * {
+  position: relative;
+  z-index: 1;
+}
+
 @media print {
   @page {
     size: letter portrait;
@@ -140,5 +175,10 @@
     box-shadow: none;
     width: 8.5in;
     min-height: 11in;
+    position: relative;
+  }
+
+  .report-grid-guides {
+    display: none;
   }
 }
