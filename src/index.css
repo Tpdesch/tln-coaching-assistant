@@ -184,6 +184,72 @@
   color: #2d7a4f; /* Leadership Nexus green */
 }
 
+/* ---- Leadership Alignment Snapshot ---- */
+
+.report-section-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.4rem;
+}
+
+.report-snapshot {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 0.6in;
+  padding: 0.4rem 0;
+}
+
+.report-snapshot-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.report-snapshot-metric + .report-snapshot-metric {
+  border-left: 1px solid #e5e7eb;
+  padding-left: 0.6in;
+  margin-left: -0.3in;
+}
+
+.report-snapshot-label {
+  font-size: 0.65rem;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.report-snapshot-main {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.report-snapshot-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1f2937;
+  line-height: 1;
+}
+
+.report-snapshot-value-accent {
+  color: #2d7a4f; /* Leadership Nexus green */
+}
+
+.report-snapshot-delta {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #2d7a4f;
+}
+
+.report-snapshot-sub {
+  font-size: 0.7rem;
+  color: #6b7280;
+  text-transform: capitalize;
+}
+
 /* ---- 12-column report grid ---- */
 
 .report-grid {

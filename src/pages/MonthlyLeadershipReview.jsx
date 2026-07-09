@@ -59,7 +59,7 @@ export default function MonthlyLeadershipReview() {
             <div className="report-divider" />
           </div>
 
-          {/* Executive Summary placeholder */}
+          {/* Executive Summary */}
           <div className="col-span-12">
             <p className="report-placeholder">
               Executive Summary — {monthlyLeadershipBrief.executive_summary.headline}
@@ -69,6 +69,32 @@ export default function MonthlyLeadershipReview() {
               {monthlyLeadershipBrief.executive_summary.confidence}
               {")"}
             </p>
+          </div>
+
+          {/* Leadership Alignment Snapshot */}
+          <div className="col-span-12">
+            <h2 className="report-section-title">Leadership Alignment Snapshot</h2>
+            <div className="report-snapshot">
+              <div className="report-snapshot-metric">
+                <span className="report-snapshot-label">Leadership Alignment Score</span>
+                <div className="report-snapshot-main">
+                  <span className="report-snapshot-value">{monthlyLeadershipBrief.alignment_score}</span>
+                  <span className="report-snapshot-delta">+{monthlyLeadershipBrief.alignment_score_delta}</span>
+                </div>
+                <span className="report-snapshot-sub">{monthlyLeadershipBrief.alignment_trend_direction}</span>
+              </div>
+              <div className="report-snapshot-metric">
+                <span className="report-snapshot-label">Thought / Action Gap</span>
+                <span className="report-snapshot-value">{monthlyLeadershipBrief.thought_action_gap}</span>
+                <span className="report-snapshot-sub">{monthlyLeadershipBrief.thought_action_gap_label}</span>
+              </div>
+              <div className="report-snapshot-metric">
+                <span className="report-snapshot-label">Current Leadership Level</span>
+                <span className="report-snapshot-value report-snapshot-value-accent">{monthlyLeadershipBrief.leadership_nexus_level}</span>
+                <span className="report-snapshot-sub">&nbsp;</span>
+              </div>
+            </div>
+            <div className="report-divider" />
           </div>
         </div>
         <div className="report-grid-guides" aria-hidden="true">
