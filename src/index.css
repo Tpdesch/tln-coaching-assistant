@@ -256,6 +256,181 @@
   text-transform: capitalize;
 }
 
+/* ---- Executive Summary ---- */
+
+.report-summary-headline {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1f2937;
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+}
+
+.report-summary-narrative {
+  font-size: 0.8rem;
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+.report-summary-confidence {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #2d7a4f;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 0.4rem;
+}
+
+/* ---- Leadership Profile Distribution ---- */
+
+.report-profile-grid {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr;
+  column-gap: 1rem;
+  row-gap: 0.35rem;
+  align-items: center;
+}
+
+.report-profile-header {
+  font-size: 0.65rem;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.report-profile-level {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.report-profile-bar {
+  height: 6px;
+  background: #f3f4f6;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.report-profile-bar-required {
+  height: 100%;
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+.report-profile-bar-actual {
+  height: 100%;
+  background: #2d7a4f;
+  border-radius: 3px;
+}
+
+/* ---- Weekly Alignment Trend ---- */
+
+.report-trend-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.report-trend-table th {
+  font-size: 0.65rem;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-align: left;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.report-trend-table td {
+  font-size: 0.8rem;
+  color: #374151;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.report-trend-num {
+  text-align: right;
+}
+
+/* ---- Coaching Priorities ---- */
+
+.report-focus-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.report-focus-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.report-focus-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.report-focus-label-positive {
+  color: #2d7a4f;
+}
+
+.report-focus-label-caution {
+  color: #b45309;
+}
+
+.report-focus-text {
+  font-size: 0.8rem;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.report-primary-focus {
+  padding: 0.6rem 0 0.2rem;
+}
+
+.report-primary-focus-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1e3a5f;
+  margin-bottom: 0.3rem;
+}
+
+.report-primary-focus-explanation {
+  font-size: 0.8rem;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+/* ---- Development Actions ---- */
+
+.report-dev-action {
+  padding: 0.3rem 0;
+}
+
+.report-dev-action-label {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #2d7a4f;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.3rem;
+}
+
+.report-dev-action-label-secondary {
+  color: #6b7280;
+}
+
+.report-dev-action-text {
+  font-size: 0.8rem;
+  color: #374151;
+  line-height: 1.6;
+}
+
 /* ---- 12-column report grid ---- */
 
 .report-grid {
