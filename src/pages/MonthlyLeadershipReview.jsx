@@ -13,7 +13,7 @@ export default function MonthlyLeadershipReview() {
                 <span className="report-logo-placeholder">Leadership Nexus</span>
               </div>
               <div className="report-header-center">
-                <h1 className="report-title">Monthly Leadership Alignment Review</h1>
+                <h1 className="report-title">Monthly Leadership Brief</h1>
               </div>
               <div className="report-header-right">
                 <span className="report-logo-placeholder">Jamesson Solutions</span>
