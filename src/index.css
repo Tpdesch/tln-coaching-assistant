@@ -86,3 +86,59 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ---- Monthly Leadership Review: print-ready report canvas ---- */
+
+.report-viewport {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem 1rem;
+  background-color: #f3f4f6; /* subtle light-gray app background */
+  min-height: 100vh;
+}
+
+.report-page {
+  width: 8.5in;
+  min-height: 11in;
+  background-color: #ffffff;
+  padding: 0.5in;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+.report-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e3a5f; /* Leadership Nexus navy */
+  margin-bottom: 0.25rem;
+}
+
+.report-placeholder {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+@media print {
+  @page {
+    size: letter portrait;
+    margin: 0;
+  }
+
+  body {
+    background: #ffffff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .report-viewport {
+    background: #ffffff !important;
+    padding: 0;
+    min-height: auto;
+  }
+
+  .report-page {
+    box-shadow: none;
+    width: 8.5in;
+    min-height: 11in;
+  }
+}
