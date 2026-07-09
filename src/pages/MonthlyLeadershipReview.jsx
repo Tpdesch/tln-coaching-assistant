@@ -1,5 +1,5 @@
 import React from "react";
-import { monthlyReview } from "@/data/monthlyReviewMock";
+import { monthlyLeadershipBrief } from "@/data/monthlyReviewMock";
 
 export default function MonthlyLeadershipReview() {
   return (
@@ -27,33 +27,33 @@ export default function MonthlyLeadershipReview() {
             <div className="report-info-row">
               <div className="report-info-item">
                 <span className="report-info-label">Client Name</span>
-                <span className="report-info-value">{monthlyReview.client_name}</span>
+                <span className="report-info-value">{monthlyLeadershipBrief.client_name}</span>
               </div>
               <div className="report-info-item">
                 <span className="report-info-label">Title</span>
-                <span className="report-info-value">{monthlyReview.client_title}</span>
+                <span className="report-info-value">{monthlyLeadershipBrief.client_title}</span>
               </div>
               <div className="report-info-item">
                 <span className="report-info-label">Company</span>
-                <span className="report-info-value">{monthlyReview.client_company}</span>
+                <span className="report-info-value">{monthlyLeadershipBrief.client_company}</span>
               </div>
               <div className="report-info-item">
                 <span className="report-info-label">Leadership Nexus Level</span>
-                <span className="report-info-value report-info-value-accent">{monthlyReview.leadership_nexus_level}</span>
+                <span className="report-info-value report-info-value-accent">{monthlyLeadershipBrief.leadership_nexus_level}</span>
               </div>
             </div>
             <div className="report-info-row">
               <div className="report-info-item">
                 <span className="report-info-label">Review Period</span>
-                <span className="report-info-value">{monthlyReview.review_period}</span>
+                <span className="report-info-value">{monthlyLeadershipBrief.review_period}</span>
               </div>
               <div className="report-info-item">
                 <span className="report-info-label">Coach Name</span>
-                <span className="report-info-value">{monthlyReview.coach_name}</span>
+                <span className="report-info-value">{monthlyLeadershipBrief.coach_name}</span>
               </div>
               <div className="report-info-item">
                 <span className="report-info-label">Generated Date</span>
-                <span className="report-info-value">{monthlyReview.generated_date}</span>
+                <span className="report-info-value">{monthlyLeadershipBrief.generated_date}</span>
               </div>
             </div>
             <div className="report-divider" />
@@ -61,7 +61,14 @@ export default function MonthlyLeadershipReview() {
 
           {/* Executive Summary placeholder */}
           <div className="col-span-12">
-            <p className="report-placeholder">Executive Summary: {monthlyReview.executive_summary}</p>
+            <p className="report-placeholder">
+              Executive Summary — {monthlyLeadershipBrief.executive_summary.headline}
+              {" — "}
+              {monthlyLeadershipBrief.executive_summary.narrative}
+              {" (Confidence: "}
+              {monthlyLeadershipBrief.executive_summary.confidence}
+              {")"}
+            </p>
           </div>
         </div>
         <div className="report-grid-guides" aria-hidden="true">

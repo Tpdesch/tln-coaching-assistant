@@ -1,7 +1,7 @@
 // Mock monthly leadership review — single source of truth for the report UI.
 // Will be replaced by real generateMonthlyLeadershipReview output once the structure is validated.
 
-export const monthlyReview = {
+export const monthlyLeadershipBrief = {
   client_name: "Sarah Mitchell",
   client_title: "Director of Operations",
   client_company: "Northwind Logistics",
@@ -10,8 +10,12 @@ export const monthlyReview = {
   coach_name: "James Laggett",
   generated_date: "2026-07-01",
 
-  executive_summary:
-    "Sarah demonstrated consistent leadership alignment throughout June, maintaining an ACI of 94 while navigating a significant customer escalation and preparing for a key executive meeting. Her strategic thinking remained ahead of her visible action, reflecting a leader in transition from tactical execution to strategic delegation. The month's data highlights a clear opportunity to shift customer-level issues to her direct reports, freeing capacity for higher-leverage work.",
+  executive_summary: {
+    headline: "Consistent Strategic Alignment with a Delegation Opportunity",
+    narrative:
+      "Sarah demonstrated consistent leadership alignment throughout June, maintaining an ACI of 94 while navigating a significant customer escalation and preparing for a key executive meeting. Her strategic thinking remained ahead of her visible action, reflecting a leader in transition from tactical execution to strategic delegation. The month's data highlights a clear opportunity to shift customer-level issues to her direct reports, freeing capacity for higher-leverage work.",
+    confidence: "High",
+  },
 
   alignment_score: 94,
   alignment_score_delta: 3,
