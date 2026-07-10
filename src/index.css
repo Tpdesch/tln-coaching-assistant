@@ -564,6 +564,71 @@
   text-align: right;
 }
 
+/* ---- Coaching Insights ---- */
+
+.report-insights-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 1.5rem;
+  padding: 0.3rem 0;
+}
+
+.report-insights-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.report-insights-col + .report-insights-col {
+  border-left: 1px solid #e5e7eb;
+  padding-left: 1.5rem;
+}
+
+.report-insights-col-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7280;
+  margin-bottom: 0.4rem;
+}
+
+.report-insights-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.report-insights-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.report-insights-marker {
+  flex-shrink: 0;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  margin-top: 0.4rem;
+}
+
+.report-insights-marker-strength {
+  background: #2d7a4f;
+}
+
+.report-insights-marker-risk {
+  background: #b45309;
+}
+
+.report-insights-text {
+  font-size: 0.78rem;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
 /* ---- Coaching Priorities ---- */
 
 .report-focus-grid {

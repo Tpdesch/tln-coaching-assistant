@@ -3,7 +3,7 @@ import { monthlyLeadershipBrief as brief } from "@/data/monthlyReviewMock";
 import ReportExecutiveSummary from "@/components/report/ReportExecutiveSummary";
 import ReportLeadershipDiagnostic from "@/components/report/ReportLeadershipDiagnostic";
 import ReportMonthlyTrend from "@/components/report/ReportMonthlyTrend";
-import ReportCoachingFocus from "@/components/report/ReportCoachingFocus";
+import ReportCoachingInsights from "@/components/report/ReportCoachingInsights";
 import ReportDevelopmentActions from "@/components/report/ReportDevelopmentActions";
 
 export default function MonthlyLeadershipReview() {
@@ -79,12 +79,10 @@ export default function MonthlyLeadershipReview() {
           {/* EVIDENCE: Weekly Trend */}
           <ReportMonthlyTrend trend={brief.monthly_trend} />
 
-          {/* COACHING PRIORITIES */}
-          <ReportCoachingFocus
-            whatsWorking={brief.whats_working}
-            watchOutFor={brief.watch_out_for}
-            primaryFocus={brief.primary_focus}
-            primaryFocusExplanation={brief.primary_focus_explanation}
+          {/* COACHING INSIGHTS */}
+          <ReportCoachingInsights
+            strengthsToBuildOn={brief.coaching_insights.strengths_to_build_on}
+            emergingRisks={brief.coaching_insights.emerging_risks}
           />
 
           {/* DEVELOPMENT ACTIONS */}

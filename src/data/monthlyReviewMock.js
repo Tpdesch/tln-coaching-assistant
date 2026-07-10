@@ -59,6 +59,19 @@ export const monthlyLeadershipBrief = {
     level_5: 6,
   },
 
+  coaching_insights: {
+    strengths_to_build_on: [
+      "Consistently elevates strategic thinking before executive meetings, preparing with intentionality rather than reacting in the moment.",
+      "Demonstrates growing self-awareness by naming the delegation gap in her own reflections without prompting from the coach.",
+      "Maintains alignment scores above 90 across all four weeks, showing sustained discipline even during high-pressure escalations.",
+    ],
+    emerging_risks: [
+      "Customer escalations continue to route directly to Sarah rather than her direct reports, reinforcing a tactical default under pressure.",
+      "The delegation conversation with Jonathan has been deferred for two consecutive weeks, suggesting avoidance rather than scheduling conflict.",
+      "Level 1 activity remains above target while Level 3–4 capacity is underutilized, indicating a profile drift toward tactical execution.",
+    ],
+  },
+
   whats_working:
     "Sarah's strategic thinking continues to strengthen, particularly in her preparation for executive-level engagements. She is self-aware about the delegation gap and has begun naming it explicitly in her reflections.",
 
