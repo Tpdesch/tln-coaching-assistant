@@ -4,7 +4,7 @@ import ReportExecutiveSummary from "@/components/report/ReportExecutiveSummary";
 import ReportLeadershipDiagnostic from "@/components/report/ReportLeadershipDiagnostic";
 import ReportMonthlyTrend from "@/components/report/ReportMonthlyTrend";
 import ReportCoachingInsights from "@/components/report/ReportCoachingInsights";
-import ReportDevelopmentActions from "@/components/report/ReportDevelopmentActions";
+import ReportLeadershipPractices from "@/components/report/ReportLeadershipPractices";
 
 export default function MonthlyLeadershipReview() {
   return (
@@ -85,10 +85,11 @@ export default function MonthlyLeadershipReview() {
             emergingRisks={brief.coaching_insights.emerging_risks}
           />
 
-          {/* DEVELOPMENT ACTIONS */}
-          <ReportDevelopmentActions
-            recommendation={brief.growth_recommendation}
-            secondaryFocus={brief.secondary_focus}
+          {/* LEADERSHIP PRACTICES */}
+          <ReportLeadershipPractices
+            primary={brief.leadership_practices.primary_practice}
+            supporting={brief.leadership_practices.supporting_practice}
+            growth={brief.leadership_practices.growth_practice}
           />
         </div>
       </div>

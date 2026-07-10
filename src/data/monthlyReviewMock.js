@@ -87,6 +87,36 @@ export const monthlyLeadershipBrief = {
   growth_recommendation:
     "By next month, Sarah should have a documented delegation agreement with Jonathan for tier-1 customer issues, and should track the hours reclaimed for Level 3-4 work. Target a 5-point reduction in Level 1 time allocation.",
 
+  leadership_practices: {
+    primary_practice: {
+      title: "Delegation as Capacity Reclamation",
+      purpose:
+        "Redirect tier-1 customer escalations to Jonathan so Sarah's capacity shifts toward strategic-level work.",
+      practice:
+        "Establish a written escalation protocol with Jonathan by week two, then route all incoming tier-1 issues through him without exception for the remainder of the month.",
+      reflection_question:
+        "What is one specific decision this week that I chose to delegate rather than handle myself?",
+    },
+    supporting_practice: {
+      title: "Executive Presence Preparation",
+      purpose:
+        "Deepen the anticipatory preparation habit that already differentiates Sarah's senior-stakeholder engagements.",
+      practice:
+        "Before each executive meeting, spend fifteen minutes documenting the single strategic message you want to leave behind and one question you want the room to wrestle with.",
+      reflection_question:
+        "Did I enter the room with a strategic frame, or did I react to the room's frame?",
+    },
+    growth_practice: {
+      title: "Strategic Visibility Through Narrative",
+      purpose:
+        "Expand long-term leadership capacity by translating operational wins into strategic narratives for senior audiences.",
+      practice:
+        "Once this month, convert a recent operational outcome into a three-sentence strategic narrative and share it with a peer outside your immediate function.",
+      reflection_question:
+        "What story am I currently telling about my leadership, and is it the story I want senior leaders to hear?",
+    },
+  },
+
   monthly_trend: [
     { week_label: "Week 1", alignment_score: 91, thought_action_gap: 3 },
     { week_label: "Week 2", alignment_score: 93, thought_action_gap: 2 },
