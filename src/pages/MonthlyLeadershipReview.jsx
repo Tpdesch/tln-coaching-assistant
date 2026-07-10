@@ -1,6 +1,6 @@
 import React from "react";
 import { monthlyLeadershipBrief as brief } from "@/data/monthlyReviewMock";
-import ReportExecutiveSummary from "@/components/report/ReportExecutiveSummary";
+import ReportExecutiveBrief from "@/components/report/ReportExecutiveBrief";
 import ReportLeadershipDiagnostic from "@/components/report/ReportLeadershipDiagnostic";
 import ReportMonthlyTrend from "@/components/report/ReportMonthlyTrend";
 import ReportCoachingInsights from "@/components/report/ReportCoachingInsights";
@@ -64,8 +64,8 @@ export default function MonthlyLeadershipReview() {
             <div className="report-divider" />
           </div>
 
-          {/* CONTEXT → INSIGHT: Executive Summary */}
-          <ReportExecutiveSummary data={brief.executive_summary} />
+          {/* CONTEXT → INSIGHT: Executive Brief */}
+          <ReportExecutiveBrief data={brief.executive_brief} />
 
           {/* INSIGHT: Leadership Diagnostic */}
           <ReportLeadershipDiagnostic

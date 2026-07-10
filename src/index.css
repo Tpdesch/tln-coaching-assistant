@@ -282,6 +282,36 @@
   margin-top: 0.4rem;
 }
 
+/* ---- Executive Brief ---- */
+
+.report-brief {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.3rem 0;
+}
+
+.report-brief-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.report-brief-field-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7280;
+}
+
+.report-brief-field-text {
+  font-size: 0.8rem;
+  color: #4b5563;
+  line-height: 1.6;
+  margin: 0;
+}
+
 /* ---- Leadership Diagnostic ---- */
 
 .report-diagnostic {

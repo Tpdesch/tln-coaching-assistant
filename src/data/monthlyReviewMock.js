@@ -17,6 +17,15 @@ export const monthlyLeadershipBrief = {
     confidence: "High",
   },
 
+  executive_brief: {
+    leadership_snapshot:
+      "Sarah maintained strong leadership alignment throughout June, holding an alignment score of 94 with strategic thinking consistently ahead of visible action. Her most significant developmental trend is a widening gap between strategic capacity and tactical execution — she is building anticipatory leadership faster than she is delegating operational ownership. The current state is one of a leader in transition: self-aware about the delegation gap, disciplined in preparation, and ready to reclaim capacity at the strategic level.",
+    coaching_priority:
+      "The single most important conversation this session is the delegation agreement with Jonathan. Customer escalations have routed directly to Sarah for two consecutive weeks, and the deferral is now drifting from scheduling conflict toward avoidance. This conversation is the fulcrum between continued tactical entrenchment and a measurable shift toward strategic leadership.",
+    desired_outcome:
+      "If Sarah intentionally practices the recommended Leadership Practices over the coming month, successful development would look like a documented escalation protocol with Jonathan, a measurable reduction in Level 1 activity, and at least one instance where she converts an operational win into a strategic narrative shared beyond her immediate function. The result is a leader whose visible action begins to match her strategic thinking.",
+  },
+
   alignment_score: 94,
   alignment_score_delta: 3,
   alignment_trend_direction: "improving",
