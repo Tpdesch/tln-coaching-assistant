@@ -67,13 +67,21 @@ export default function MonthlyLeadershipReview() {
           <div className="col-span-12">
             <div className="report-header">
               <div className="report-header-left">
-                <span className="report-logo-placeholder">Leadership Nexus</span>
+                <img
+                  src="https://media.base44.com/images/public/69f3a039374ef274bec2c0fa/7f76d1077_generated_image.png"
+                  alt="Leadership Nexus"
+                  className="report-logo"
+                />
               </div>
               <div className="report-header-center">
                 <h1 className="report-title">Monthly Leadership Brief</h1>
               </div>
               <div className="report-header-right">
-                <span className="report-logo-placeholder">Jamesson Solutions</span>
+                <img
+                  src="https://media.base44.com/images/public/69f3a039374ef274bec2c0fa/34d41ac3a_generated_image.png"
+                  alt="Jamesson Solutions"
+                  className="report-logo"
+                />
               </div>
             </div>
           </div>

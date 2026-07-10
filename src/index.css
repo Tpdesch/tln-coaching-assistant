@@ -162,6 +162,13 @@
   letter-spacing: 0.05em;
 }
 
+.report-logo {
+  max-height: 1.5rem;
+  max-width: 100%;
+  width: auto;
+  object-fit: contain;
+}
+
 /* ---- Client information / metadata block ---- */
 
 .report-divider {
