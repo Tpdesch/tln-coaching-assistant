@@ -24,6 +24,25 @@ export const monthlyLeadershipBrief = {
   thought_action_gap: 2,
   thought_action_gap_label: "Thought Ahead",
 
+  leadership_pattern: {
+    title: "Strategic Anticipation Before Executive Engagement",
+    explanation:
+      "Sarah consistently elevates her strategic thinking in advance of senior-stakeholder meetings, demonstrating strong anticipatory leadership and preparation discipline.",
+    classification: "Strength",
+  },
+
+  leadership_momentum: {
+    indicator: "Improving",
+    interpretation:
+      "Alignment scores rose from 91 to 94 over the review period, with Thought consistently ahead of Action. Sarah is building strategic capacity faster than she is delegating tactical execution.",
+  },
+
+  primary_development_pattern: {
+    title: "Delegation as Capacity Reclamation",
+    explanation:
+      "Customer escalations should flow through Jonathan, not Sarah. Reclaiming this capacity is the highest-leverage move for shifting her profile toward strategic levels.",
+  },
+
   required_leadership_profile: {
     level_1: 30,
     level_2: 25,

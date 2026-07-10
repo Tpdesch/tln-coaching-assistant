@@ -1,7 +1,7 @@
 import React from "react";
 import { monthlyLeadershipBrief as brief } from "@/data/monthlyReviewMock";
 import ReportExecutiveSummary from "@/components/report/ReportExecutiveSummary";
-import ReportLeadershipProfile from "@/components/report/ReportLeadershipProfile";
+import ReportLeadershipDiagnostic from "@/components/report/ReportLeadershipDiagnostic";
 import ReportMonthlyTrend from "@/components/report/ReportMonthlyTrend";
 import ReportCoachingFocus from "@/components/report/ReportCoachingFocus";
 import ReportDevelopmentActions from "@/components/report/ReportDevelopmentActions";
@@ -67,37 +67,16 @@ export default function MonthlyLeadershipReview() {
           {/* CONTEXT → INSIGHT: Executive Summary */}
           <ReportExecutiveSummary data={brief.executive_summary} />
 
-          {/* INSIGHT: Leadership Alignment Snapshot */}
-          <div className="col-span-12">
-            <h2 className="report-section-title">Leadership Alignment Snapshot</h2>
-            <div className="report-snapshot">
-              <div className="report-snapshot-metric">
-                <span className="report-snapshot-label">Leadership Alignment Score</span>
-                <div className="report-snapshot-main">
-                  <span className="report-snapshot-value">{brief.alignment_score}</span>
-                  <span className="report-snapshot-delta">+{brief.alignment_score_delta}</span>
-                </div>
-                <span className="report-snapshot-sub">{brief.alignment_trend_direction}</span>
-              </div>
-              <div className="report-snapshot-metric">
-                <span className="report-snapshot-label">Thought / Action Gap</span>
-                <span className="report-snapshot-value">{brief.thought_action_gap}</span>
-                <span className="report-snapshot-sub">{brief.thought_action_gap_label}</span>
-              </div>
-              <div className="report-snapshot-metric">
-                <span className="report-snapshot-label">Current Leadership Level</span>
-                <span className="report-snapshot-value report-snapshot-value-accent">{brief.leadership_nexus_level}</span>
-                <span className="report-snapshot-sub">&nbsp;</span>
-              </div>
-            </div>
-            <div className="report-divider" />
-          </div>
-
-          {/* EVIDENCE: Leadership Profile + Weekly Trend */}
-          <ReportLeadershipProfile
+          {/* INSIGHT: Leadership Diagnostic */}
+          <ReportLeadershipDiagnostic
+            leadershipPattern={brief.leadership_pattern}
             required={brief.required_leadership_profile}
             actual={brief.actual_leadership_profile}
+            leadershipMomentum={brief.leadership_momentum}
+            primaryDevelopmentPattern={brief.primary_development_pattern}
           />
+
+          {/* EVIDENCE: Weekly Trend */}
           <ReportMonthlyTrend trend={brief.monthly_trend} />
 
           {/* COACHING PRIORITIES */}
