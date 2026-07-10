@@ -91,11 +91,25 @@
 
 .report-viewport {
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
   padding: 2rem 1rem;
   background-color: #f3f4f6; /* subtle light-gray app background */
   min-height: 100vh;
+}
+
+.report-pdf-toolbar {
+  width: 8.5in;
+  max-width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.75rem;
+}
+
+@media print {
+  .report-pdf-toolbar {
+    display: none;
+  }
 }
 
 .report-page {
