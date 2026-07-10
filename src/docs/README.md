@@ -1,5 +1,7 @@
 # Leadership Nexus Architecture
 
+**Version 1.0 — Structurally Complete**
+
 The authoritative repository for all product philosophy, methodology, design standards, functional specifications, technical standards, AI guidance, and future product roadmap documentation.
 
 The Leadership Nexus Architecture serves as the single source of truth for how the Leadership Nexus platform is conceived, designed, implemented, and evolved.
@@ -81,3 +83,18 @@ All Architecture documents should:
 | 41 | Product Vision | Planned |
 | 42 | Platform Evolution | Planned |
 | 43 | Research Notes | Planned |
+
+### RESEARCH & FOUNDATIONS
+
+*Documents the conceptual, theoretical, and research foundations that inform the Leadership Nexus methodology. This section is explanatory rather than prescriptive — methodology documents remain the authoritative source describing HOW Leadership Nexus operates.*
+
+| # | Document | Status |
+|---|----------|--------|
+| 50 | Leadership Development Theory | Planned |
+| 51 | Adult Development Foundations | Planned |
+| 52 | Systems Thinking | Planned |
+| 53 | Organizational Leadership Principles | Planned |
+| 54 | Leadership Nexus Conceptual Foundations | Planned |
+| 55 | Supporting Research & Validation | Planned |
+| 56 | References & Bibliography | Planned |
+| 57 | Historical Development of Leadership Nexus | Planned |
