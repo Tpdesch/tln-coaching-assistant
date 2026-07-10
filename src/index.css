@@ -144,15 +144,21 @@
 .report-header-left,
 .report-header-right {
   flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.report-header-left {
+  justify-content: center;
+}
+
+.report-header-right {
+  justify-content: center;
 }
 
 .report-header-center {
   flex: 0 1 auto;
   text-align: center;
-}
-
-.report-header-right {
-  text-align: right;
 }
 
 .report-logo-placeholder {
@@ -163,10 +169,14 @@
 }
 
 .report-logo {
-  max-height: 1.5rem;
+  max-height: 3rem;
   max-width: 100%;
   width: auto;
   object-fit: contain;
+}
+
+.report-logo-js {
+  max-height: 2.25rem;
 }
 
 /* ---- Client information / metadata block ---- */

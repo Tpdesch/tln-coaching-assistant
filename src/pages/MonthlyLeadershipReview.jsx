@@ -80,7 +80,7 @@ export default function MonthlyLeadershipReview() {
                 <img
                   src="https://media.base44.com/images/public/69f3a039374ef274bec2c0fa/f853dc255_JSLogo.png"
                   alt="Jamesson Solutions"
-                  className="report-logo"
+                  className="report-logo report-logo-js"
                 />
               </div>
             </div>
