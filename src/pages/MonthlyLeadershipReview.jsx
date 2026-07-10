@@ -68,8 +68,8 @@ export default function MonthlyLeadershipReview() {
             <div className="report-header">
               <div className="report-header-left">
                 <img
-                  src="https://media.base44.com/images/public/69f3a039374ef274bec2c0fa/7f76d1077_generated_image.png"
-                  alt="Leadership Nexus"
+                  src="https://media.base44.com/images/public/69f3a039374ef274bec2c0fa/8584c9c6a_LeadershipNexusLogoResized.jpg"
+                  alt="The Leadership Nexus"
                   className="report-logo"
                 />
               </div>
@@ -78,7 +78,7 @@ export default function MonthlyLeadershipReview() {
               </div>
               <div className="report-header-right">
                 <img
-                  src="https://media.base44.com/images/public/69f3a039374ef274bec2c0fa/34d41ac3a_generated_image.png"
+                  src="https://media.base44.com/images/public/69f3a039374ef274bec2c0fa/f853dc255_JSLogo.png"
                   alt="Jamesson Solutions"
                   className="report-logo"
                 />
