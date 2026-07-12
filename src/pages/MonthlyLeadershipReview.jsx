@@ -86,39 +86,44 @@ export default function MonthlyLeadershipReview() {
             </div>
           </div>
 
-          {/* CONTEXT: Client information + report metadata */}
+          {/* CONTEXT: Client Information — three-column executive layout */}
           <div className="col-span-12">
             <div className="report-divider" />
-            <div className="report-info-row">
-              <div className="report-info-item">
-                <span className="report-info-label">Client Name</span>
-                <span className="report-info-value">{brief.client_name}</span>
+            <div className="report-client-info">
+              {/* Left column: Client Information */}
+              <div className="report-client-info-col report-client-info-col-left">
+                <span className="report-client-info-heading">Client Information</span>
+                <div className="report-client-info-fields">
+                  <span className="report-client-name">{brief.client_name}</span>
+                  <span className="report-client-detail">{brief.client_title}</span>
+                  <span className="report-client-detail">{brief.client_company}</span>
+                  <span className="report-client-detail">
+                    Leadership Nexus Level <span className="report-client-level">{brief.leadership_nexus_level}</span>
+                  </span>
+                </div>
               </div>
-              <div className="report-info-item">
-                <span className="report-info-label">Title</span>
-                <span className="report-info-value">{brief.client_title}</span>
+
+              {/* Center column: Coach */}
+              <div className="report-client-info-col report-client-info-col-center">
+                <span className="report-client-info-heading">Coach</span>
+                <div className="report-client-info-fields">
+                  <span className="report-client-detail">{brief.coach_name}</span>
+                </div>
               </div>
-              <div className="report-info-item">
-                <span className="report-info-label">Company</span>
-                <span className="report-info-value">{brief.client_company}</span>
-              </div>
-              <div className="report-info-item">
-                <span className="report-info-label">Leadership Nexus Level</span>
-                <span className="report-info-value report-info-value-accent">{brief.leadership_nexus_level}</span>
-              </div>
-            </div>
-            <div className="report-info-row">
-              <div className="report-info-item">
-                <span className="report-info-label">Review Period</span>
-                <span className="report-info-value">{brief.review_period}</span>
-              </div>
-              <div className="report-info-item">
-                <span className="report-info-label">Coach Name</span>
-                <span className="report-info-value">{brief.coach_name}</span>
-              </div>
-              <div className="report-info-item">
-                <span className="report-info-label">Generated Date</span>
-                <span className="report-info-value">{brief.generated_date}</span>
+
+              {/* Right column: Review Information */}
+              <div className="report-client-info-col report-client-info-col-right">
+                <span className="report-client-info-heading">Review Information</span>
+                <div className="report-client-info-fields">
+                  <span className="report-client-detail">
+                    <span className="report-client-detail-label">Generated</span>
+                    <span>{brief.generated_date}</span>
+                  </span>
+                  <span className="report-client-detail">
+                    <span className="report-client-detail-label">Period</span>
+                    <span>{brief.review_period}</span>
+                  </span>
+                </div>
               </div>
             </div>
             <div className="report-divider" />

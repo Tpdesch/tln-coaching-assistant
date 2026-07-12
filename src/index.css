@@ -186,33 +186,86 @@
   margin: 0.5rem 0;
 }
 
-.report-info-row {
-  display: flex;
-  gap: 1.5rem;
-  padding: 0.35rem 0;
+/* ---- Client Information — three-column executive layout ---- */
+
+.report-client-info {
+  display: grid;
+  grid-template-columns: 40% 30% 30%;
+  align-items: start;
+  padding: 0.4rem 0 0.5rem;
 }
 
-.report-info-item {
+.report-client-info-col {
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
+  gap: 0.3rem;
+  padding: 0 1rem;
 }
 
-.report-info-label {
+.report-client-info-col:first-child {
+  padding-left: 0;
+}
+
+.report-client-info-col:last-child {
+  padding-right: 0;
+}
+
+.report-client-info-col + .report-client-info-col {
+  border-left: 1px solid #e5e7eb;
+}
+
+.report-client-info-col-right {
+  text-align: right;
+}
+
+.report-client-info-col-right .report-client-info-fields {
+  align-items: flex-end;
+}
+
+.report-client-info-heading {
   font-size: 0.65rem;
+  font-weight: 600;
   color: #9ca3af;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
-.report-info-value {
-  font-size: 0.8rem;
-  color: #374151;
-  font-weight: 500;
+.report-client-info-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
 }
 
-.report-info-value-accent {
-  color: #2d7a4f; /* Leadership Nexus green */
+.report-client-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1f2937;
+  line-height: 1.2;
+}
+
+.report-client-detail {
+  font-size: 0.8rem;
+  color: #4b5563;
+  line-height: 1.4;
+}
+
+.report-client-level {
+  font-weight: 600;
+  color: #2d7a4f;
+}
+
+.report-client-detail-label {
+  font-size: 0.65rem;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-right: 0.35rem;
+}
+
+.report-client-info-col-right .report-client-detail {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
 }
 
 /* ---- Leadership Alignment Snapshot ---- */
