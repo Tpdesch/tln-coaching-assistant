@@ -97,9 +97,6 @@ export default function MonthlyLeadershipReview() {
                   <span className="report-client-name">{brief.client_name}</span>
                   <span className="report-client-detail">{brief.client_title}</span>
                   <span className="report-client-detail">{brief.client_company}</span>
-                  <span className="report-client-detail">
-                    Leadership Nexus Level <span className="report-client-level">{brief.leadership_nexus_level}</span>
-                  </span>
                 </div>
               </div>
 
