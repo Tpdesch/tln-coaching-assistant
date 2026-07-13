@@ -6,10 +6,6 @@ function PracticeColumn({ label, practice }) {
       <span className="report-practices-col-label">{label}</span>
       <p className="report-practices-title">{practice.title}</p>
       <div className="report-practices-field">
-        <span className="report-practices-field-label">Purpose</span>
-        <p className="report-practices-field-text">{practice.purpose}</p>
-      </div>
-      <div className="report-practices-field">
         <span className="report-practices-field-label">Leadership Practice</span>
         <p className="report-practices-field-text">{practice.practice}</p>
       </div>
