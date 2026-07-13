@@ -2,8 +2,8 @@ import React from "react";
 
 export default function ReportWhatsWorking({ items }) {
   return (
-    <div className="col-span-12">
-      <h2 className="report-section-title">What's Working</h2>
+    <div className="report-insights-col">
+      <h2 className="report-insights-col-title">What's Working</h2>
       <ul className="report-insights-list">
         {items.map((observation, idx) => (
           <li key={idx} className="report-insights-item">
@@ -12,7 +12,6 @@ export default function ReportWhatsWorking({ items }) {
           </li>
         ))}
       </ul>
-      <div className="report-divider" />
     </div>
   );
 }

@@ -137,13 +137,16 @@ export default function MonthlyLeadershipReview() {
             actionAverages={brief.action_averages}
           />
 
-          {/* 3. What's Working — Which leadership behaviors should continue? */}
-          <ReportWhatsWorking items={brief.whats_working} />
+          {/* 3. What's Working & Watch Out For */}
+          <div className="col-span-12">
+            <div className="report-insights-grid">
+              <ReportWhatsWorking items={brief.whats_working} />
+              <ReportWatchOutFor items={brief.watch_out_for} />
+            </div>
+            <div className="report-divider" />
+          </div>
 
-          {/* 4. Watch Out For — Which behaviors or patterns deserve coaching attention? */}
-          <ReportWatchOutFor items={brief.watch_out_for} />
-
-          {/* 5. Recommended Focus — What should the client intentionally practice next month? */}
+          {/* 4. Recommended Focus — What should the client intentionally practice next month? */}
           <ReportRecommendedFocus
             primary={brief.leadership_practices.primary_practice}
             supporting={brief.leadership_practices.supporting_practice}
