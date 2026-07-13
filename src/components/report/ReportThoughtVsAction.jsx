@@ -2,42 +2,13 @@ import React from "react";
 
 const LEVELS = [1, 2, 3, 4, 5];
 
-const CLASSIFICATION_CLASS = {
-  Strength: "",
-  Emerging: "report-diagnostic-pattern-classification-emerging",
-  Watch: "report-diagnostic-pattern-classification-watch",
-};
-
-export default function ReportLeadershipDiagnostic({
-  leadershipPattern,
-  required,
-  actual,
-  leadershipMomentum,
-  primaryDevelopmentPattern,
-}) {
+export default function ReportThoughtVsAction({ required, actual, trend }) {
   return (
     <div className="col-span-12">
-      <h2 className="report-section-title">Leadership Diagnostic</h2>
-      <div className="report-diagnostic">
-        {/* LEFT COLUMN — Leadership Pattern */}
-        <div className="report-diagnostic-col">
-          <span className="report-diagnostic-col-label">Leadership Pattern</span>
-          <p className="report-diagnostic-pattern-title">{leadershipPattern.title}</p>
-          <p className="report-diagnostic-pattern-explanation">
-            {leadershipPattern.explanation}
-          </p>
-          <span
-            className={`report-diagnostic-pattern-classification ${
-              CLASSIFICATION_CLASS[leadershipPattern.classification] || ""
-            }`}
-          >
-            {leadershipPattern.classification}
-          </span>
-        </div>
-
-        {/* CENTER COLUMN — Thought vs Action Alignment */}
-        <div className="report-diagnostic-col">
-          <span className="report-diagnostic-col-label">Thought vs Action Alignment</span>
+      <h2 className="report-section-title">Thought vs. Action</h2>
+      <div className="report-tva-grid">
+        {/* LEFT — Thought vs Action Alignment bars */}
+        <div className="report-tva-col">
           <div className="report-diagnostic-tva-legend">
             <span className="report-diagnostic-tva-legend-item">
               <span className="report-diagnostic-tva-legend-dot report-diagnostic-tva-legend-dot-required" />
@@ -83,22 +54,26 @@ export default function ReportLeadershipDiagnostic({
           </div>
         </div>
 
-        {/* RIGHT COLUMN — Leadership Momentum + Primary Development Pattern */}
-        <div className="report-diagnostic-col">
-          <span className="report-diagnostic-col-label">Leadership Momentum</span>
-          <span className="report-diagnostic-momentum-indicator">
-            {leadershipMomentum.indicator}
-          </span>
-          <p className="report-diagnostic-momentum-interpretation">
-            {leadershipMomentum.interpretation}
-          </p>
-
-          <div className="report-diagnostic-pdp-divider" />
-          <span className="report-diagnostic-pdp-label">Primary Development Pattern</span>
-          <p className="report-diagnostic-pdp-title">{primaryDevelopmentPattern.title}</p>
-          <p className="report-diagnostic-pdp-explanation">
-            {primaryDevelopmentPattern.explanation}
-          </p>
+        {/* RIGHT — Weekly Alignment Trend */}
+        <div className="report-tva-col">
+          <table className="report-trend-table">
+            <thead>
+              <tr>
+                <th>Week</th>
+                <th className="report-trend-num">Alignment</th>
+                <th className="report-trend-num">Gap</th>
+              </tr>
+            </thead>
+            <tbody>
+              {trend.map((w) => (
+                <tr key={w.week_label}>
+                  <td>{w.week_label}</td>
+                  <td className="report-trend-num">{w.alignment_score}</td>
+                  <td className="report-trend-num">{w.thought_action_gap}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
       <div className="report-divider" />

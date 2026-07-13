@@ -23,10 +23,10 @@ function PracticeColumn({ label, practice }) {
   );
 }
 
-export default function ReportLeadershipPractices({ primary, supporting, growth }) {
+export default function ReportRecommendedFocus({ primary, supporting, growth }) {
   return (
     <div className="col-span-12">
-      <h2 className="report-section-title">Leadership Practices</h2>
+      <h2 className="report-section-title">Recommended Focus</h2>
       <div className="report-practices-grid">
         <PracticeColumn label="Primary Leadership Practice" practice={primary} />
         <PracticeColumn label="Supporting Leadership Practice" practice={supporting} />

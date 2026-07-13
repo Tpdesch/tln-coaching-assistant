@@ -608,6 +608,39 @@
   margin: 0;
 }
 
+/* ---- Patterns This Month (2-column) ---- */
+
+.report-patterns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 0.4rem 0;
+}
+
+/* ---- Thought vs. Action (TVA + Trend) ---- */
+
+.report-tva-grid {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  column-gap: 1.5rem;
+  padding: 0.3rem 0;
+}
+
+.report-tva-col {
+  padding: 0 1rem;
+}
+
+.report-tva-col:first-child {
+  padding-left: 0;
+}
+
+.report-tva-col:last-child {
+  padding-right: 0;
+}
+
+.report-tva-col + .report-tva-col {
+  border-left: 1px solid #e5e7eb;
+}
+
 /* ---- Leadership Profile Distribution ---- */
 
 .report-profile-grid {

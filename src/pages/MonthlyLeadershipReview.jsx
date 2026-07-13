@@ -4,11 +4,12 @@ import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import { Button } from "@/components/ui/button";
 import { monthlyLeadershipBrief as brief } from "@/data/monthlyReviewMock";
-import ReportExecutiveBrief from "@/components/report/ReportExecutiveBrief";
-import ReportLeadershipDiagnostic from "@/components/report/ReportLeadershipDiagnostic";
-import ReportMonthlyTrend from "@/components/report/ReportMonthlyTrend";
-import ReportCoachingInsights from "@/components/report/ReportCoachingInsights";
-import ReportLeadershipPractices from "@/components/report/ReportLeadershipPractices";
+import ReportExecutiveSummary from "@/components/report/ReportExecutiveSummary";
+import ReportPatternsThisMonth from "@/components/report/ReportPatternsThisMonth";
+import ReportThoughtVsAction from "@/components/report/ReportThoughtVsAction";
+import ReportWhatsWorking from "@/components/report/ReportWhatsWorking";
+import ReportWatchOutFor from "@/components/report/ReportWatchOutFor";
+import ReportRecommendedFocus from "@/components/report/ReportRecommendedFocus";
 
 export default function MonthlyLeadershipReview() {
   const reportRef = useRef(null);
@@ -126,29 +127,30 @@ export default function MonthlyLeadershipReview() {
             <div className="report-divider" />
           </div>
 
-          {/* CONTEXT → INSIGHT: Executive Brief */}
-          <ReportExecutiveBrief data={brief.executive_brief} />
+          {/* 1. Executive Summary — What changed this month? */}
+          <ReportExecutiveSummary data={brief.executive_summary} />
 
-          {/* INSIGHT: Leadership Diagnostic */}
-          <ReportLeadershipDiagnostic
+          {/* 2. Patterns This Month — What behaviors explain those changes? */}
+          <ReportPatternsThisMonth
             leadershipPattern={brief.leadership_pattern}
+            leadershipMomentum={brief.leadership_momentum}
+          />
+
+          {/* 3. Thought vs. Action — What evidence supports the observations? */}
+          <ReportThoughtVsAction
             required={brief.required_leadership_profile}
             actual={brief.actual_leadership_profile}
-            leadershipMomentum={brief.leadership_momentum}
-            primaryDevelopmentPattern={brief.primary_development_pattern}
+            trend={brief.monthly_trend}
           />
 
-          {/* EVIDENCE: Weekly Trend */}
-          <ReportMonthlyTrend trend={brief.monthly_trend} />
+          {/* 4. What's Working — Which leadership behaviors should continue? */}
+          <ReportWhatsWorking items={brief.whats_working} />
 
-          {/* COACHING INSIGHTS */}
-          <ReportCoachingInsights
-            strengthsToBuildOn={brief.coaching_insights.strengths_to_build_on}
-            emergingRisks={brief.coaching_insights.emerging_risks}
-          />
+          {/* 5. Watch Out For — Which behaviors or patterns deserve coaching attention? */}
+          <ReportWatchOutFor items={brief.watch_out_for} />
 
-          {/* LEADERSHIP PRACTICES */}
-          <ReportLeadershipPractices
+          {/* 6. Recommended Focus — What should the client intentionally practice next month? */}
+          <ReportRecommendedFocus
             primary={brief.leadership_practices.primary_practice}
             supporting={brief.leadership_practices.supporting_practice}
             growth={brief.leadership_practices.growth_practice}

@@ -5,34 +5,19 @@ export const monthlyLeadershipBrief = {
   client_name: "Sarah Mitchell",
   client_title: "Director of Operations",
   client_company: "Northwind Logistics",
-  leadership_nexus_level: 3,
   review_period: "June 2026",
   coach_name: "James Laggett",
   generated_date: "2026-07-01",
 
+  // 1. Executive Summary — What changed this month?
   executive_summary: {
-    headline: "Consistent Strategic Alignment with a Delegation Opportunity",
+    headline: "Alignment Strengthened; Delegation Gap Surfaced",
     narrative:
-      "Sarah demonstrated consistent leadership alignment throughout June, maintaining an ACI of 94 while navigating a significant customer escalation and preparing for a key executive meeting. Her strategic thinking remained ahead of her visible action, reflecting a leader in transition from tactical execution to strategic delegation. The month's data highlights a clear opportunity to shift customer-level issues to her direct reports, freeing capacity for higher-leverage work.",
+      "Sarah's alignment score rose three points over June, driven by strengthened strategic thinking ahead of executive engagements. The month surfaced a widening gap between her strategic capacity and tactical execution, identifying a clear opportunity to shift operational ownership downward.",
     confidence: "High",
   },
 
-  executive_brief: {
-    leadership_snapshot:
-      "Sarah maintained strong leadership alignment throughout June, holding an alignment score of 94 with strategic thinking consistently ahead of visible action. Her most significant developmental trend is a widening gap between strategic capacity and tactical execution — she is building anticipatory leadership faster than she is delegating operational ownership. The current state is one of a leader in transition: self-aware about the delegation gap, disciplined in preparation, and ready to reclaim capacity at the strategic level.",
-    coaching_priority:
-      "The single most important conversation this session is the delegation agreement with Jonathan. Customer escalations have routed directly to Sarah for two consecutive weeks, and the deferral is now drifting from scheduling conflict toward avoidance. This conversation is the fulcrum between continued tactical entrenchment and a measurable shift toward strategic leadership.",
-    desired_outcome:
-      "If Sarah intentionally practices the recommended Leadership Practices over the coming month, successful development would look like a documented escalation protocol with Jonathan, a measurable reduction in Level 1 activity, and at least one instance where she converts an operational win into a strategic narrative shared beyond her immediate function. The result is a leader whose visible action begins to match her strategic thinking.",
-  },
-
-  alignment_score: 94,
-  alignment_score_delta: 3,
-  alignment_trend_direction: "improving",
-
-  thought_action_gap: 2,
-  thought_action_gap_label: "Thought Ahead",
-
+  // 2. Patterns This Month — What behaviors explain those changes?
   leadership_pattern: {
     title: "Strategic Anticipation Before Executive Engagement",
     explanation:
@@ -46,12 +31,7 @@ export const monthlyLeadershipBrief = {
       "Alignment scores rose from 91 to 94 over the review period, with Thought consistently ahead of Action. Sarah is building strategic capacity faster than she is delegating tactical execution.",
   },
 
-  primary_development_pattern: {
-    title: "Delegation as Capacity Reclamation",
-    explanation:
-      "Customer escalations should flow through Jonathan, not Sarah. Reclaiming this capacity is the highest-leverage move for shifting her profile toward strategic levels.",
-  },
-
+  // 3. Thought vs. Action — What evidence supports the observations?
   required_leadership_profile: {
     level_1: 30,
     level_2: 25,
@@ -68,34 +48,28 @@ export const monthlyLeadershipBrief = {
     level_5: 6,
   },
 
-  coaching_insights: {
-    strengths_to_build_on: [
-      "Consistently elevates strategic thinking before executive meetings, preparing with intentionality rather than reacting in the moment.",
-      "Demonstrates growing self-awareness by naming the delegation gap in her own reflections without prompting from the coach.",
-      "Maintains alignment scores above 90 across all four weeks, showing sustained discipline even during high-pressure escalations.",
-    ],
-    emerging_risks: [
-      "Customer escalations continue to route directly to Sarah rather than her direct reports, reinforcing a tactical default under pressure.",
-      "The delegation conversation with Jonathan has been deferred for two consecutive weeks, suggesting avoidance rather than scheduling conflict.",
-      "Level 1 activity remains above target while Level 3–4 capacity is underutilized, indicating a profile drift toward tactical execution.",
-    ],
-  },
+  monthly_trend: [
+    { week_label: "Week 1", alignment_score: 91, thought_action_gap: 3 },
+    { week_label: "Week 2", alignment_score: 93, thought_action_gap: 2 },
+    { week_label: "Week 3", alignment_score: 95, thought_action_gap: 2 },
+    { week_label: "Week 4", alignment_score: 94, thought_action_gap: 1 },
+  ],
 
-  whats_working:
-    "Sarah's strategic thinking continues to strengthen, particularly in her preparation for executive-level engagements. She is self-aware about the delegation gap and has begun naming it explicitly in her reflections.",
+  // 4. What's Working — Which leadership behaviors should continue?
+  whats_working: [
+    "Consistently elevates strategic thinking before executive meetings, preparing with intentionality rather than reacting in the moment.",
+    "Demonstrates growing self-awareness by naming the delegation gap in her own reflections without prompting from the coach.",
+    "Maintains alignment scores above 90 across all four weeks, showing sustained discipline even during high-pressure escalations.",
+  ],
 
-  watch_out_for:
-    "Time spent in tactical, customer-level issues is pulling Sarah below her target Level 1 threshold. The delegation conversation with Jonathan has been deferred for two consecutive weeks and risks becoming a pattern.",
+  // 5. Watch Out For — Which behaviors or patterns deserve coaching attention?
+  watch_out_for: [
+    "Customer escalations continue to route directly to Sarah rather than her direct reports, reinforcing a tactical default under pressure.",
+    "The delegation conversation with Jonathan has been deferred for two consecutive weeks, suggesting avoidance rather than scheduling conflict.",
+    "Level 1 activity remains above target while Level 3-4 capacity is underutilized, indicating a profile drift toward tactical execution.",
+  ],
 
-  primary_focus: "Delegation & Managerial Presence",
-  primary_focus_explanation:
-    "Sarah identified that customer escalations should be handled by Jonathan, not herself. Reclaiming this capacity is the highest-leverage move for shifting her profile upward toward strategic levels.",
-
-  secondary_focus: "Executive Meeting Readiness",
-
-  growth_recommendation:
-    "By next month, Sarah should have a documented delegation agreement with Jonathan for tier-1 customer issues, and should track the hours reclaimed for Level 3-4 work. Target a 5-point reduction in Level 1 time allocation.",
-
+  // 6. Recommended Focus — What should the client intentionally practice next month?
   leadership_practices: {
     primary_practice: {
       title: "Delegation as Capacity Reclamation",
@@ -125,11 +99,4 @@ export const monthlyLeadershipBrief = {
         "What story am I currently telling about my leadership, and is it the story I want senior leaders to hear?",
     },
   },
-
-  monthly_trend: [
-    { week_label: "Week 1", alignment_score: 91, thought_action_gap: 3 },
-    { week_label: "Week 2", alignment_score: 93, thought_action_gap: 2 },
-    { week_label: "Week 3", alignment_score: 95, thought_action_gap: 2 },
-    { week_label: "Week 4", alignment_score: 94, thought_action_gap: 1 },
-  ],
 };
