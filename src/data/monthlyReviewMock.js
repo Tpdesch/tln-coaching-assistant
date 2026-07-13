@@ -13,7 +13,7 @@ export const monthlyLeadershipBrief = {
   executive_summary: {
     headline: "Ready to Delegate",
     narrative:
-      "Sarah's strategic thinking outpaced her willingness to let go of operational work this month. The coaching opportunity is a single delegation decision that would reclaim capacity for the strategic leadership she is already ready for.",
+      "Strategic thinking is outpacing her willingness to delegate. One decision — routing tier-1 escalations to Jonathan — would reclaim the capacity she needs for strategic leadership.",
     confidence: "High",
   },
 
@@ -21,14 +21,14 @@ export const monthlyLeadershipBrief = {
   leadership_pattern: {
     title: "Strategic Anticipation Before Executive Engagement",
     explanation:
-      "Prepares strategically before senior meetings but defaults to tactical execution under operational pressure.",
+      "Rises to strategic before senior meetings; falls back to tactical under pressure.",
     classification: "Strength",
   },
 
   leadership_momentum: {
     indicator: "Improving",
     interpretation:
-      "Strategic capacity is strengthening week-over-week while operational delegation has not yet moved.",
+      "Strategic capacity is strengthening; delegation has not moved.",
   },
 
   // 3. Thought vs. Action — What evidence supports the observations?
@@ -59,14 +59,14 @@ export const monthlyLeadershipBrief = {
   whats_working: [
     "Names the delegation gap unprompted in weekly reflections.",
     "Surfaced Jonathan as ready to absorb tier-1 escalations.",
-    "Holds strategic thinking steady under escalation pressure.",
+    "Holds strategic thinking under pressure.",
   ],
 
   // 5. Watch Out For — Which behaviors or patterns deserve coaching attention?
   watch_out_for: [
     "Tier-1 escalations still route directly to Sarah, not her reports.",
     "Delegation conversation with Jonathan deferred two weeks running.",
-    "Operational activity crowding out Level 3–4 strategic capacity.",
+    "Operational work crowding out strategic capacity.",
   ],
 
   // 6. Recommended Focus — What should the client intentionally practice next month?
@@ -74,29 +74,29 @@ export const monthlyLeadershipBrief = {
     primary_practice: {
       title: "Delegation as Capacity Reclamation",
       purpose:
-        "Redirect tier-1 customer escalations to Jonathan so Sarah's capacity shifts toward strategic-level work.",
+        "Route tier-1 escalations through Jonathan to free Sarah for strategic work.",
       practice:
-        "Establish a written escalation protocol with Jonathan by week two, then route all incoming tier-1 issues through him without exception for the remainder of the month.",
+        "Agree a written escalation protocol with Jonathan by week two. Route all tier-1 issues through him — no exceptions.",
       reflection_question:
-        "What is one specific decision this week that I chose to delegate rather than handle myself?",
+        "What did I delegate this week that I would have handled myself?",
     },
     supporting_practice: {
       title: "Holding the Delegation Line",
       purpose:
-        "Sustain the escalation protocol when operational pressure tempts Sarah to step back in.",
+        "Sustain the protocol when pressure tempts her to step back in.",
       practice:
-        "When a tier-1 escalation arrives, wait twenty-four hours before engaging. If Jonathan has not resolved it, coach him through the resolution rather than taking it back.",
+        "When a tier-1 escalation arrives, wait twenty-four hours before engaging. If unresolved, coach Jonathan through it rather than taking it back.",
       reflection_question:
         "Where did I step in when I could have coached instead?",
     },
     growth_practice: {
       title: "Activating Reclaimed Capacity",
       purpose:
-        "Channel the capacity reclaimed through delegation into the strategic-level work she is already prepared for.",
+        "Channel reclaimed capacity into strategic work.",
       practice:
-        "Each week, dedicate two hours of reclaimed time to a strategic initiative that would not have been possible before delegating tier-1 ownership.",
+        "Each week, dedicate two reclaimed hours to strategic work that delegation made possible.",
       reflection_question:
-        "What strategic work did I make space for this week that delegation enabled?",
+        "What strategic work did I make space for this week?",
     },
   },
 };
