@@ -28,7 +28,7 @@ export const monthlyLeadershipBrief = {
   leadership_momentum: {
     indicator: "Improving",
     interpretation:
-      "Strategic thinking is strengthening week-over-week while delegation remains stalled, widening the gap she can already name.",
+      "Strategic capacity is strengthening week-over-week while operational delegation has not yet moved.",
   },
 
   // 3. Thought vs. Action — What evidence supports the observations?
@@ -58,7 +58,7 @@ export const monthlyLeadershipBrief = {
   // 4. What's Working — Which leadership behaviors should continue?
   whats_working: [
     "Names the delegation gap unprompted in weekly reflections.",
-    "Prepares strategic frames before senior meetings.",
+    "Surfaced Jonathan as ready to absorb tier-1 escalations.",
     "Holds strategic thinking steady under escalation pressure.",
   ],
 
@@ -81,22 +81,22 @@ export const monthlyLeadershipBrief = {
         "What is one specific decision this week that I chose to delegate rather than handle myself?",
     },
     supporting_practice: {
-      title: "Executive Presence Preparation",
+      title: "Holding the Delegation Line",
       purpose:
-        "Deepen the anticipatory preparation habit that already differentiates Sarah's senior-stakeholder engagements.",
+        "Sustain the escalation protocol when operational pressure tempts Sarah to step back in.",
       practice:
-        "Before each executive meeting, spend fifteen minutes documenting the single strategic message you want to leave behind and one question you want the room to wrestle with.",
+        "When a tier-1 escalation arrives, wait twenty-four hours before engaging. If Jonathan has not resolved it, coach him through the resolution rather than taking it back.",
       reflection_question:
-        "Did I enter the room with a strategic frame, or did I react to the room's frame?",
+        "Where did I step in when I could have coached instead?",
     },
     growth_practice: {
-      title: "Strategic Visibility Through Narrative",
+      title: "Activating Reclaimed Capacity",
       purpose:
-        "Expand long-term leadership capacity by translating operational wins into strategic narratives for senior audiences.",
+        "Channel the capacity reclaimed through delegation into the strategic-level work she is already prepared for.",
       practice:
-        "Once this month, convert a recent operational outcome into a three-sentence strategic narrative and share it with a peer outside your immediate function.",
+        "Each week, dedicate two hours of reclaimed time to a strategic initiative that would not have been possible before delegating tier-1 ownership.",
       reflection_question:
-        "What story am I currently telling about my leadership, and is it the story I want senior leaders to hear?",
+        "What strategic work did I make space for this week that delegation enabled?",
     },
   },
 };
