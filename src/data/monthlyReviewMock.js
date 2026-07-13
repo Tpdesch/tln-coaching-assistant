@@ -11,9 +11,9 @@ export const monthlyLeadershipBrief = {
 
   // 1. Executive Summary — What changed this month?
   executive_summary: {
-    headline: "Alignment Strengthened; Delegation Gap Surfaced",
+    headline: "Ready to Delegate",
     narrative:
-      "Sarah's alignment score rose three points over June, driven by strengthened strategic thinking ahead of executive engagements. The month surfaced a widening gap between her strategic capacity and tactical execution, identifying a clear opportunity to shift operational ownership downward.",
+      "Sarah's strategic thinking outpaced her willingness to let go of operational work this month. The coaching opportunity is a single delegation decision that would reclaim capacity for the strategic leadership she is already ready for.",
     confidence: "High",
   },
 
