@@ -31,29 +31,22 @@ export const monthlyLeadershipBrief = {
       "Strategic capacity is strengthening; delegation has not moved.",
   },
 
-  // 3. Thought vs. Action — What evidence supports the observations?
-  required_leadership_profile: {
-    level_1: 30,
-    level_2: 25,
-    level_3: 25,
-    level_4: 15,
-    level_5: 5,
+  // 3. Thought vs. Action — 4-week average per level
+  thought_averages: {
+    level_1: 22,
+    level_2: 23,
+    level_3: 28,
+    level_4: 17,
+    level_5: 10,
   },
 
-  actual_leadership_profile: {
+  action_averages: {
     level_1: 28,
     level_2: 30,
     level_3: 22,
     level_4: 14,
     level_5: 6,
   },
-
-  monthly_trend: [
-    { week_label: "Week 1", alignment_score: 91, thought_action_gap: 3 },
-    { week_label: "Week 2", alignment_score: 93, thought_action_gap: 2 },
-    { week_label: "Week 3", alignment_score: 95, thought_action_gap: 2 },
-    { week_label: "Week 4", alignment_score: 94, thought_action_gap: 1 },
-  ],
 
   // 4. What's Working — Which leadership behaviors should continue?
   whats_working: [

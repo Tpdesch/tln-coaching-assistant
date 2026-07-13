@@ -138,9 +138,8 @@ export default function MonthlyLeadershipReview() {
 
           {/* 3. Thought vs. Action — What evidence supports the observations? */}
           <ReportThoughtVsAction
-            required={brief.required_leadership_profile}
-            actual={brief.actual_leadership_profile}
-            trend={brief.monthly_trend}
+            thoughtAverages={brief.thought_averages}
+            actionAverages={brief.action_averages}
           />
 
           {/* 4. What's Working — Which leadership behaviors should continue? */}
