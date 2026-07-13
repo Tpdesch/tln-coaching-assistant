@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { monthlyLeadershipBrief as brief } from "@/data/monthlyReviewMock";
 import ReportExecutiveSummary from "@/components/report/ReportExecutiveSummary";
 import ReportPatternsThisMonth from "@/components/report/ReportPatternsThisMonth";
-import ReportThoughtVsAction from "@/components/report/ReportThoughtVsAction";
 import ReportWhatsWorking from "@/components/report/ReportWhatsWorking";
 import ReportWatchOutFor from "@/components/report/ReportWatchOutFor";
 import ReportRecommendedFocus from "@/components/report/ReportRecommendedFocus";
@@ -134,21 +133,17 @@ export default function MonthlyLeadershipReview() {
           <ReportPatternsThisMonth
             leadershipPattern={brief.leadership_pattern}
             leadershipMomentum={brief.leadership_momentum}
-          />
-
-          {/* 3. Thought vs. Action — What evidence supports the observations? */}
-          <ReportThoughtVsAction
             thoughtAverages={brief.thought_averages}
             actionAverages={brief.action_averages}
           />
 
-          {/* 4. What's Working — Which leadership behaviors should continue? */}
+          {/* 3. What's Working — Which leadership behaviors should continue? */}
           <ReportWhatsWorking items={brief.whats_working} />
 
-          {/* 5. Watch Out For — Which behaviors or patterns deserve coaching attention? */}
+          {/* 4. Watch Out For — Which behaviors or patterns deserve coaching attention? */}
           <ReportWatchOutFor items={brief.watch_out_for} />
 
-          {/* 6. Recommended Focus — What should the client intentionally practice next month? */}
+          {/* 5. Recommended Focus — What should the client intentionally practice next month? */}
           <ReportRecommendedFocus
             primary={brief.leadership_practices.primary_practice}
             supporting={brief.leadership_practices.supporting_practice}

@@ -1,4 +1,5 @@
 import React from "react";
+import ReportThoughtVsAction from "@/components/report/ReportThoughtVsAction";
 
 const CLASSIFICATION_CLASS = {
   Strength: "",
@@ -6,7 +7,7 @@ const CLASSIFICATION_CLASS = {
   Watch: "report-diagnostic-pattern-classification-watch",
 };
 
-export default function ReportPatternsThisMonth({ leadershipPattern, leadershipMomentum }) {
+export default function ReportPatternsThisMonth({ leadershipPattern, leadershipMomentum, thoughtAverages, actionAverages }) {
   return (
     <div className="col-span-12">
       <h2 className="report-section-title">Patterns This Month</h2>
@@ -23,6 +24,7 @@ export default function ReportPatternsThisMonth({ leadershipPattern, leadershipM
             {leadershipPattern.classification}
           </span>
         </div>
+        <ReportThoughtVsAction thoughtAverages={thoughtAverages} actionAverages={actionAverages} />
         <div className="report-diagnostic-col">
           <span className="report-diagnostic-col-label">Leadership Momentum</span>
           <span className="report-diagnostic-momentum-indicator">{leadershipMomentum.indicator}</span>

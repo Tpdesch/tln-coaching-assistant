@@ -13,8 +13,8 @@ const LEVEL_COLORS = [
 
 export default function ReportThoughtVsAction({ thoughtAverages, actionAverages }) {
   return (
-    <div className="col-span-12">
-      <h2 className="report-section-title">Thought vs. Action</h2>
+    <div className="report-diagnostic-col">
+      <span className="report-diagnostic-col-label">Thought vs. Action</span>
       <div className="report-diagnostic-tva-legend">
         <span className="report-diagnostic-tva-legend-item">
           <span className="report-diagnostic-tva-legend-dot" style={{ background: "#1e3a5f" }} />
@@ -54,7 +54,6 @@ export default function ReportThoughtVsAction({ thoughtAverages, actionAverages 
           );
         })}
       </div>
-      <div className="report-divider" />
     </div>
   );
 }
