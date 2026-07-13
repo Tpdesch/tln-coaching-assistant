@@ -21,14 +21,14 @@ export const monthlyLeadershipBrief = {
   leadership_pattern: {
     title: "Strategic Anticipation Before Executive Engagement",
     explanation:
-      "Sarah consistently elevates her strategic thinking in advance of senior-stakeholder meetings, demonstrating strong anticipatory leadership and preparation discipline.",
+      "Prepares strategically before senior meetings but defaults to tactical execution under operational pressure.",
     classification: "Strength",
   },
 
   leadership_momentum: {
     indicator: "Improving",
     interpretation:
-      "Alignment scores rose from 91 to 94 over the review period, with Thought consistently ahead of Action. Sarah is building strategic capacity faster than she is delegating tactical execution.",
+      "Strategic thinking is strengthening week-over-week while delegation remains stalled, widening the gap she can already name.",
   },
 
   // 3. Thought vs. Action — What evidence supports the observations?
@@ -57,16 +57,16 @@ export const monthlyLeadershipBrief = {
 
   // 4. What's Working — Which leadership behaviors should continue?
   whats_working: [
-    "Consistently elevates strategic thinking before executive meetings, preparing with intentionality rather than reacting in the moment.",
-    "Demonstrates growing self-awareness by naming the delegation gap in her own reflections without prompting from the coach.",
-    "Maintains alignment scores above 90 across all four weeks, showing sustained discipline even during high-pressure escalations.",
+    "Names the delegation gap unprompted in weekly reflections.",
+    "Prepares strategic frames before senior meetings.",
+    "Holds strategic thinking steady under escalation pressure.",
   ],
 
   // 5. Watch Out For — Which behaviors or patterns deserve coaching attention?
   watch_out_for: [
-    "Customer escalations continue to route directly to Sarah rather than her direct reports, reinforcing a tactical default under pressure.",
-    "The delegation conversation with Jonathan has been deferred for two consecutive weeks, suggesting avoidance rather than scheduling conflict.",
-    "Level 1 activity remains above target while Level 3-4 capacity is underutilized, indicating a profile drift toward tactical execution.",
+    "Tier-1 escalations still route directly to Sarah, not her reports.",
+    "Delegation conversation with Jonathan deferred two weeks running.",
+    "Operational activity crowding out Level 3–4 strategic capacity.",
   ],
 
   // 6. Recommended Focus — What should the client intentionally practice next month?
