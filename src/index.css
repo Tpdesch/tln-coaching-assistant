@@ -116,7 +116,7 @@
   width: 8.5in;
   min-height: 11in;
   background-color: #ffffff;
-  padding: 0.5in;
+  padding: 0.5in 0.75in;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
 }
 
@@ -245,7 +245,7 @@
 
 .report-client-detail {
   font-size: 0.8rem;
-  color: #4b5563;
+  color: #000000;
   line-height: 1.4;
 }
 
@@ -352,7 +352,7 @@
 
 .report-summary-narrative {
   font-size: 0.8rem;
-  color: #4b5563;
+  color: #000000;
   line-height: 1.6;
 }
 
@@ -391,7 +391,7 @@
 
 .report-brief-field-text {
   font-size: 0.8rem;
-  color: #4b5563;
+  color: #000000;
   line-height: 1.6;
   margin: 0;
 }
@@ -443,7 +443,7 @@
 
 .report-diagnostic-pattern-explanation {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: #000000;
   line-height: 1.5;
   margin: 0;
 }
@@ -532,7 +532,7 @@
 .report-diagnostic-tva-pct {
   font-size: 0.65rem;
   font-weight: 600;
-  color: #374151;
+  color: #000000;
   width: 3rem;
   text-align: right;
   flex-shrink: 0;
@@ -554,7 +554,7 @@
 
 .report-diagnostic-momentum-interpretation {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: #000000;
   line-height: 1.5;
   margin: 0;
 }
@@ -584,7 +584,7 @@
 
 .report-diagnostic-pdp-explanation {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: #000000;
   line-height: 1.5;
   margin: 0;
 }
@@ -660,7 +660,7 @@
 
 .report-trend-table td {
   font-size: 0.8rem;
-  color: #374151;
+  color: #000000;
   padding: 0.35rem 0;
   border-bottom: 1px solid #f3f4f6;
 }
@@ -730,7 +730,7 @@
 
 .report-insights-text {
   font-size: 0.78rem;
-  color: #4b5563;
+  color: #000000;
   line-height: 1.5;
 }
 
@@ -766,7 +766,7 @@
 
 .report-focus-text {
   font-size: 0.8rem;
-  color: #4b5563;
+  color: #000000;
   line-height: 1.5;
 }
 
@@ -783,7 +783,7 @@
 
 .report-primary-focus-explanation {
   font-size: 0.8rem;
-  color: #4b5563;
+  color: #000000;
   line-height: 1.5;
 }
 
@@ -847,14 +847,14 @@
 
 .report-practices-field-text {
   font-size: 0.78rem;
-  color: #4b5563;
+  color: #000000;
   line-height: 1.5;
   margin: 0;
 }
 
 .report-practices-field-text-emphasis {
   font-style: italic;
-  color: #374151;
+  color: #000000;
 }
 
 /* ---- Development Actions ---- */
@@ -879,7 +879,7 @@
 
 .report-dev-action-text {
   font-size: 0.8rem;
-  color: #374151;
+  color: #000000;
   line-height: 1.6;
 }
 
