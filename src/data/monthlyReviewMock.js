@@ -13,7 +13,7 @@ export const monthlyLeadershipBrief = {
   executive_summary: {
     headline: "Ready to Delegate",
     narrative:
-      "Strategic thinking is outpacing her willingness to delegate. One decision — routing tier-1 escalations to Jonathan — would reclaim the capacity she needs for strategic leadership.",
+      "Strategic thinking is outpacing her willingness to delegate. One decision — routing tier-1 escalations to Jonathan — would reclaim the capacity she needs for strategic leadership. She has already named the gap unprompted and identified Jonathan as ready, but the delegation conversation has been deferred two weeks running, leaving operational work to crowd out the strategic capacity she is actively building.",
     confidence: "High",
   },
 
