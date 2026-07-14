@@ -224,8 +224,8 @@
 
 .report-client-info-heading {
   font-size: 0.65rem;
-  font-weight: 600;
-  color: #9ca3af;
+  font-weight: 700;
+  color: #1e3a5f;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -272,8 +272,8 @@
 
 .report-section-title {
   font-size: 0.7rem;
-  font-weight: 600;
-  color: #6b7280;
+  font-weight: 700;
+  color: #1e3a5f;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   margin-bottom: 0.4rem;
@@ -690,10 +690,10 @@
 
 .report-insights-col-title {
   font-size: 0.7rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: #6b7280;
+  color: #1e3a5f;
   margin-bottom: 0.4rem;
 }
 
