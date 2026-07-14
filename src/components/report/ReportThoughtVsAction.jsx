@@ -4,11 +4,11 @@ const LEVELS = [1, 2, 3, 4, 5];
 
 // The five Leadership Nexus report colors — one per level
 const LEVEL_COLORS = [
-  "hsl(12, 76%, 61%)",
-  "hsl(173, 58%, 39%)",
-  "hsl(197, 37%, 24%)",
-  "hsl(43, 74%, 66%)",
-  "hsl(27, 87%, 67%)",
+  "#c0392b", // L1 Transactional — red
+  "#f1c40f", // L2 Managerial — yellow/gold
+  "#27ae60", // L3 Tactical — green
+  "#2980b9", // L4 Strategic — blue
+  "#e67e22", // L5 Transformational — orange
 ];
 
 export default function ReportThoughtVsAction({ thoughtAverages, actionAverages }) {
