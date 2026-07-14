@@ -113,11 +113,11 @@ export default function MonthlyLeadershipReview() {
                 <span className="report-client-info-heading">Review Information</span>
                 <div className="report-client-info-fields">
                   <span className="report-client-detail">
-                    <span className="report-client-detail-label">Generated</span>
+                    <span className="report-client-detail-label report-client-detail-label-dark">Generated:</span>
                     <span>{brief.generated_date}</span>
                   </span>
                   <span className="report-client-detail">
-                    <span className="report-client-detail-label">Period</span>
+                    <span className="report-client-detail-label report-client-detail-label-dark">Period:</span>
                     <span>{brief.review_period}</span>
                   </span>
                 </div>
