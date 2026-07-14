@@ -271,6 +271,13 @@
   display: flex;
   justify-content: flex-end;
   align-items: baseline;
+  gap: 0.35rem;
+}
+
+.report-client-info-col-right .report-client-detail-label {
+  margin-right: 0;
+  width: 3.2rem;
+  text-align: right;
 }
 
 /* ---- Leadership Alignment Snapshot ---- */
