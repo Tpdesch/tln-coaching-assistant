@@ -37,18 +37,18 @@ export default function ReportThoughtVsAction({ thoughtAverages, actionAverages 
                 <div className="report-diagnostic-tva-bar">
                   <div
                     className="report-diagnostic-tva-bar-fill"
-                    style={{ width: `${thought}%`, background: color }}
+                    style={{ width: `${thought * 0.75}%`, background: color }}
                   />
                 </div>
                 <div className="report-diagnostic-tva-bar">
                   <div
                     className="report-diagnostic-tva-bar-fill"
-                    style={{ width: `${action}%`, background: color, opacity: 0.4 }}
+                    style={{ width: `${action * 0.75}%`, background: color, opacity: 0.4 }}
                   />
                 </div>
               </div>
               <span className="report-diagnostic-tva-pct">
-                {thought}%<span className="report-diagnostic-tva-pct-req"> / {action}%</span>
+                {thought}<span className="report-diagnostic-tva-pct-req"> / {action}%</span>
               </span>
             </div>
           );
