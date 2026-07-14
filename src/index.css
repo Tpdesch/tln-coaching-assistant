@@ -722,16 +722,16 @@
 
 .report-insights-item {
   display: block;
-  padding-left: 0.9rem;
-  text-indent: -0.9rem;
+  padding-left: 1.4rem;
+  text-indent: -1.4rem;
   line-height: 1.5;
 }
 
 .report-insights-marker {
   display: inline-block;
-  font-size: 0.65rem;
+  font-size: 1.3rem;
   line-height: 1.5;
-  width: 0.5rem;
+  width: 1rem;
   text-align: center;
   margin-right: 0.4rem;
   vertical-align: baseline;
