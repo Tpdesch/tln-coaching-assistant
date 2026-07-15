@@ -42,7 +42,8 @@ export default function ReportThoughtVsAction({ thoughtAverages, actionAverages 
                 </div>
               </div>
               <span className="report-diagnostic-tva-pct">
-                {thought}<span className="report-diagnostic-tva-pct-req"> / {action}%</span>
+                <span style={{ color: THOUGHT_COLOR, fontWeight: 700 }}>T {thought}</span>
+                <span style={{ color: ACTION_COLOR, fontWeight: 700 }}> A {action}</span>
               </span>
             </div>
           );
