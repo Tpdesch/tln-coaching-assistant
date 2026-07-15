@@ -997,6 +997,39 @@
   z-index: 1;
 }
 
+/* ---- Thought vs. Action: print-only SVG chart ---- */
+
+.report-tva-print-svg {
+  display: none;
+}
+
+.report-tva-svg-label {
+  font-size: 10px;
+  font-weight: 700;
+  fill: #1e3a5f;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.report-tva-svg-legend-text {
+  font-size: 9px;
+  font-weight: 700;
+  fill: #1e3a5f;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.report-tva-svg-level {
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.report-tva-svg-value {
+  font-size: 9px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 @media print {
   @page {
     size: letter portrait;
@@ -1026,54 +1059,18 @@
     display: none;
   }
 
-  /* ---- Thought vs. Action: print-safe fixed grid ---- */
+  /* Hide responsive HTML chart in print; show fixed SVG instead */
+  .report-diagnostic-tva-legend,
+  .report-diagnostic-tva-list {
+    display: none !important;
+  }
 
-  .report-diagnostic-tva-list,
-  .report-diagnostic-tva-row,
-  .report-diagnostic-tva-bars,
-  .report-diagnostic-tva-bar,
-  .report-diagnostic-tva-bar-fill,
-  .report-diagnostic-tva-level,
-  .report-diagnostic-tva-pct,
-  .report-diagnostic-tva-legend {
+  .report-tva-print-svg {
+    display: block !important;
+    break-inside: avoid;
     box-sizing: border-box;
     transform: none !important;
-  }
-
-  .report-diagnostic-tva-list {
-    break-inside: avoid;
-  }
-
-  .report-diagnostic-tva-row {
-    display: grid !important;
-    grid-template-columns: 28px minmax(0, 1fr) 72px !important;
-    column-gap: 8px;
-  }
-
-  .report-diagnostic-tva-level {
-    width: 28px;
-    min-width: 28px;
-    max-width: 28px;
-    flex-shrink: 0;
-  }
-
-  .report-diagnostic-tva-bars {
-    min-width: 0;
-    width: 100%;
-    overflow: hidden;
-  }
-
-  .report-diagnostic-tva-bar {
-    width: 100%;
-  }
-
-  .report-diagnostic-tva-pct {
-    width: 72px;
-    min-width: 72px;
-    max-width: 72px;
-    flex-shrink: 0;
-    text-align: right;
-    white-space: nowrap;
-    padding-right: 10px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 }

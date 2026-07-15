@@ -1,4 +1,5 @@
 import React from "react";
+import ReportThoughtVsActionPrint from "@/components/report/ReportThoughtVsActionPrint";
 
 const LEVELS = [1, 2, 3, 4, 5];
 
@@ -52,6 +53,7 @@ export default function ReportThoughtVsAction({ thoughtAverages, actionAverages 
           );
         })}
       </div>
+      <ReportThoughtVsActionPrint thoughtAverages={thoughtAverages} actionAverages={actionAverages} />
     </div>
   );
 }
