@@ -573,6 +573,7 @@
   text-align: right;
   white-space: nowrap;
   line-height: 1;
+  padding-right: 14px;
 }
 
 .report-diagnostic-tva-pct-req {
