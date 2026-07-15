@@ -263,8 +263,10 @@
 }
 
 .report-client-detail-label-dark {
+  font-size: 0.8rem;
   color: #000000;
   text-transform: none;
+  line-height: 1.4;
 }
 
 .report-client-info-col-right .report-client-detail {
