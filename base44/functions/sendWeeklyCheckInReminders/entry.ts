@@ -112,7 +112,8 @@ Deno.serve(async (req) => {
     const wouldSend = [];
     const errors = [];
 
-    const appUrl = Deno.env.get('APP_BASE_URL') || 'https://app.leadershipnexus.com';
+    const rawAppUrl = Deno.env.get('APP_BASE_URL') || '';
+    const appUrl = /^https?:\/\//.test(rawAppUrl) ? rawAppUrl.replace(/\/+$/, '') : 'https://app.leadershipnexus.com';
     const checkInLink = `${appUrl}/ClientCheckIn`;
 
     // For manual targeted sends, skip the Friday 8am timezone gate
