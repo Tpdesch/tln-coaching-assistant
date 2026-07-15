@@ -1025,4 +1025,55 @@
   .report-grid-guides {
     display: none;
   }
+
+  /* ---- Thought vs. Action: print-safe fixed grid ---- */
+
+  .report-diagnostic-tva-list,
+  .report-diagnostic-tva-row,
+  .report-diagnostic-tva-bars,
+  .report-diagnostic-tva-bar,
+  .report-diagnostic-tva-bar-fill,
+  .report-diagnostic-tva-level,
+  .report-diagnostic-tva-pct,
+  .report-diagnostic-tva-legend {
+    box-sizing: border-box;
+    transform: none !important;
+  }
+
+  .report-diagnostic-tva-list {
+    break-inside: avoid;
+  }
+
+  .report-diagnostic-tva-row {
+    display: grid !important;
+    grid-template-columns: 28px minmax(0, 1fr) 72px !important;
+    column-gap: 8px;
+  }
+
+  .report-diagnostic-tva-level {
+    width: 28px;
+    min-width: 28px;
+    max-width: 28px;
+    flex-shrink: 0;
+  }
+
+  .report-diagnostic-tva-bars {
+    min-width: 0;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .report-diagnostic-tva-bar {
+    width: 100%;
+  }
+
+  .report-diagnostic-tva-pct {
+    width: 72px;
+    min-width: 72px;
+    max-width: 72px;
+    flex-shrink: 0;
+    text-align: right;
+    white-space: nowrap;
+    padding-right: 10px;
+  }
 }
