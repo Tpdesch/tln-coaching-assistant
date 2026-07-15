@@ -756,6 +756,39 @@
   line-height: 1.6;
 }
 
+/* ---- Observation Rows (What's Working / Watch Out For) ---- */
+
+.report-observation-stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.report-observation-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+}
+
+.report-observation-stack .report-observation-row:first-child {
+  padding-top: 0;
+}
+
+.report-observation-stack .report-observation-row:last-child {
+  padding-bottom: 0;
+}
+
+.report-observation-text {
+  font-size: 0.8rem;
+  color: #000000;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.report-observation-divider {
+  border-top: 1px solid #e5e7eb;
+}
+
 /* ---- Coaching Priorities ---- */
 
 .report-focus-grid {
