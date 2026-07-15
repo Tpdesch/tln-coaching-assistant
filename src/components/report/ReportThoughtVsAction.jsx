@@ -2,14 +2,9 @@ import React from "react";
 
 const LEVELS = [1, 2, 3, 4, 5];
 
-// The five Leadership Nexus report colors — one per level
-const LEVEL_COLORS = [
-  "#e74c3c", // L1 — red
-  "#e67e22", // L2 — orange
-  "#f1c40f", // L3 — yellow
-  "#27ae60", // L4 — green
-  "#2980b9", // L5 — blue
-];
+// Standardized series colors — same for every level
+const THOUGHT_COLOR = "#1e3a5f"; // Leadership Nexus navy
+const ACTION_COLOR = "#27ae60";  // Leadership Nexus green
 
 export default function ReportThoughtVsAction({ thoughtAverages, actionAverages }) {
   return (
@@ -25,7 +20,6 @@ export default function ReportThoughtVsAction({ thoughtAverages, actionAverages 
         {LEVELS.map((lvl, idx) => {
           const thought = thoughtAverages[`level_${lvl}`];
           const action = actionAverages[`level_${lvl}`];
-          const color = LEVEL_COLORS[idx];
           return (
             <div key={lvl} className="report-diagnostic-tva-row">
               <span className="report-diagnostic-tva-level">L{lvl}</span>
@@ -33,13 +27,13 @@ export default function ReportThoughtVsAction({ thoughtAverages, actionAverages 
                 <div className="report-diagnostic-tva-bar">
                   <div
                     className="report-diagnostic-tva-bar-fill"
-                    style={{ width: `${thought * 0.95}%`, background: color }}
+                    style={{ width: `${thought * 0.95}%`, background: THOUGHT_COLOR }}
                   />
                 </div>
                 <div className="report-diagnostic-tva-bar">
                   <div
                     className="report-diagnostic-tva-bar-fill"
-                    style={{ width: `${action * 0.95}%`, background: color, opacity: 0.4 }}
+                    style={{ width: `${action * 0.95}%`, background: ACTION_COLOR, opacity: 0.4 }}
                   />
                 </div>
               </div>
