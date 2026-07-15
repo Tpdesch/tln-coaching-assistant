@@ -29,7 +29,7 @@ export default function ReportThoughtVsAction({ thoughtAverages, actionAverages 
           const action = actionAverages[`level_${lvl}`];
           return (
             <div key={lvl} className="report-diagnostic-tva-row">
-              <span className="report-diagnostic-tva-level" style={{ color: LEVEL_COLORS[idx] }}>L{lvl}</span>
+              <span className="report-diagnostic-tva-level" style={{ color: LEVEL_COLORS[idx], WebkitTextStroke: "0.5px rgba(0,0,0,0.35)" }}>L{lvl}</span>
               <div className="report-diagnostic-tva-bars">
                 <div className="report-diagnostic-tva-bar">
                   <div
