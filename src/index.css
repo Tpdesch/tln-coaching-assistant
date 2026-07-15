@@ -997,37 +997,105 @@
   z-index: 1;
 }
 
-/* ---- Thought vs. Action: print-only SVG chart ---- */
+/* ---- Thought vs. Action: fixed-pixel print chart (PDF + native print) ---- */
 
-.report-tva-print-svg {
+.report-tva-print {
   display: none;
 }
 
-.report-tva-svg-label {
+.report-tva-print-label {
   font-size: 10px;
   font-weight: 700;
-  fill: #1e3a5f;
+  color: #1e3a5f;
   text-transform: uppercase;
   letter-spacing: 0.06em;
+  margin-bottom: 6px;
 }
 
-.report-tva-svg-legend-text {
+.report-tva-print-legend {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.report-tva-print-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-size: 9px;
   font-weight: 700;
-  fill: #1e3a5f;
+  color: #1e3a5f;
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
 
-.report-tva-svg-level {
-  font-size: 9px;
-  font-weight: 600;
+.report-tva-print-swatch {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 1px;
+  flex-shrink: 0;
 }
 
-.report-tva-svg-value {
+.report-tva-print-row {
+  display: flex;
+  align-items: center;
+  height: 24px;
+}
+
+.report-tva-print-level {
+  width: 28px;
+  text-align: center;
+  font-size: 9px;
+  font-weight: 600;
+  flex-shrink: 0;
+  -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.35);
+}
+
+.report-tva-print-bars {
+  width: 180px;
+  flex-shrink: 0;
+}
+
+.report-tva-print-bar {
+  height: 3px;
+  background: #f3f4f6;
+  border-radius: 1.5px;
+  overflow: hidden;
+}
+
+.report-tva-print-bar + .report-tva-print-bar {
+  margin-top: 2px;
+}
+
+.report-tva-print-bar-fill {
+  height: 100%;
+  border-radius: 1.5px;
+}
+
+.report-tva-print-value {
+  width: 72px;
+  text-align: right;
+  white-space: nowrap;
   font-size: 9px;
   font-weight: 700;
-  white-space: nowrap;
+  flex-shrink: 0;
+  padding-right: 10px;
+}
+
+/* Show fixed chart during html2canvas PDF capture */
+.report-capturing .report-diagnostic-tva-legend,
+.report-capturing .report-diagnostic-tva-list {
+  display: none !important;
+}
+
+.report-capturing .report-tva-print {
+  display: block !important;
+  break-inside: avoid;
+  box-sizing: border-box;
+  transform: none !important;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 
 @media print {
@@ -1059,13 +1127,13 @@
     display: none;
   }
 
-  /* Hide responsive HTML chart in print; show fixed SVG instead */
+  /* Hide responsive HTML chart in print; show fixed-pixel chart instead */
   .report-diagnostic-tva-legend,
   .report-diagnostic-tva-list {
     display: none !important;
   }
 
-  .report-tva-print-svg {
+  .report-tva-print {
     display: block !important;
     break-inside: avoid;
     box-sizing: border-box;

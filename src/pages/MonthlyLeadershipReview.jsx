@@ -18,6 +18,7 @@ export default function MonthlyLeadershipReview() {
     if (!reportRef.current || downloading) return;
     setDownloading(true);
     try {
+      reportRef.current.classList.add("report-capturing");
       const canvas = await html2canvas(reportRef.current, {
         scale: 2,
         useCORS: true,
@@ -49,6 +50,7 @@ export default function MonthlyLeadershipReview() {
     } catch (e) {
       console.error("PDF generation failed:", e);
     } finally {
+      reportRef.current?.classList.remove("report-capturing");
       setDownloading(false);
     }
   };
