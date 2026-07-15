@@ -482,11 +482,30 @@
 
 /* Thought vs Action Alignment */
 
-.report-diagnostic-tva-headers {
+.report-diagnostic-tva-legend {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.25rem;
+  gap: 1rem;
+  margin-bottom: 0.3rem;
+}
+
+.report-diagnostic-tva-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #1e3a5f;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1;
+}
+
+.report-diagnostic-tva-legend-swatch {
+  display: inline-block;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 2px;
 }
 
 .report-diagnostic-tva-header-spacer {

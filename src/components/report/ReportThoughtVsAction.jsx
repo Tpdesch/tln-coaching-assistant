@@ -10,11 +10,15 @@ export default function ReportThoughtVsAction({ thoughtAverages, actionAverages 
   return (
     <div className="report-diagnostic-col">
       <span className="report-diagnostic-col-label">Thought vs. Action</span>
-      <div className="report-diagnostic-tva-headers">
-        <span className="report-diagnostic-tva-header-spacer" />
-        <span className="report-diagnostic-tva-header-label">Thought</span>
-        <span className="report-diagnostic-tva-header-label">Action</span>
-        <span className="report-diagnostic-tva-header-spacer" />
+      <div className="report-diagnostic-tva-legend">
+        <span className="report-diagnostic-tva-legend-item">
+          <span className="report-diagnostic-tva-legend-swatch" style={{ background: THOUGHT_COLOR }} />
+          Thought
+        </span>
+        <span className="report-diagnostic-tva-legend-item">
+          <span className="report-diagnostic-tva-legend-swatch" style={{ background: ACTION_COLOR, opacity: 0.4 }} />
+          Action
+        </span>
       </div>
       <div className="report-diagnostic-tva-list">
         {LEVELS.map((lvl, idx) => {
