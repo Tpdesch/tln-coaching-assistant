@@ -18,7 +18,27 @@ export default function MonthlyLeadershipReview() {
     if (!reportRef.current || downloading) return;
     setDownloading(true);
     try {
+      // Step 1: Rasterize the TVA chart body at 3x resolution
+      const chartBody = reportRef.current.querySelector(".report-tva-chart-body");
+      const printImg = reportRef.current.querySelector(".report-tva-print-img");
+      if (chartBody && printImg) {
+        const chartCanvas = await html2canvas(chartBody, {
+          scale: 3,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+        });
+        const dataUrl = chartCanvas.toDataURL("image/png");
+        printImg.src = dataUrl;
+        await new Promise(resolve => {
+          if (printImg.complete) return resolve();
+          printImg.onload = resolve;
+          printImg.onerror = resolve;
+        });
+      }
+
+      // Step 2: Switch to print layout and capture full report
       reportRef.current.classList.add("report-capturing");
+      await new Promise(r => setTimeout(r, 50));
       const canvas = await html2canvas(reportRef.current, {
         scale: 2,
         useCORS: true,
