@@ -34,6 +34,8 @@ export default function MonthlyLeadershipReview() {
           printImg.onload = resolve;
           printImg.onerror = resolve;
         });
+      } else {
+        console.warn("TVA chart body not found; proceeding without rasterized chart image.");
       }
 
       // Step 2: Switch to print layout and capture full report

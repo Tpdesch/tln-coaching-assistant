@@ -1016,12 +1016,19 @@
 
 .report-capturing .report-tva-print-img {
   display: block !important;
-  width: 250px;
-  height: 125px;
-  object-fit: contain;
-  object-position: left top;
+  width: 100%;
+  height: auto !important;
+  max-width: 100%;
+  object-fit: initial;
+  overflow: visible !important;
   margin: 0;
   padding: 0;
+}
+
+.report-capturing .report-diagnostic-col,
+.report-capturing .report-patterns,
+.report-capturing .report-grid {
+  overflow: visible !important;
 }
 
 @media print {
@@ -1060,11 +1067,19 @@
 
   .report-tva-print-img {
     display: block !important;
-    width: 250px;
-    height: 125px;
-    object-fit: contain;
-    object-position: left top;
+    width: 100%;
+    height: auto !important;
+    max-width: 100%;
+    object-fit: initial;
+    overflow: visible !important;
+    min-height: 145px;
     margin: 0;
     padding: 0;
+  }
+
+  .report-diagnostic-col,
+  .report-patterns,
+  .report-grid {
+    overflow: visible !important;
   }
 }
