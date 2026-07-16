@@ -1014,15 +1014,18 @@
   display: none !important;
 }
 
+.report-capturing .report-patterns > .report-diagnostic-col:nth-child(2) {
+  padding: 0;
+}
+
 .report-capturing .report-tva-print-img {
   display: block !important;
-  width: 100%;
+  width: calc(100% + 2rem);
+  margin-left: -1rem;
+  margin-right: -1rem;
   height: auto !important;
-  max-width: 100%;
   object-fit: initial;
   overflow: visible !important;
-  margin: 0;
-  padding: 0;
 }
 
 .report-capturing .report-diagnostic-col,
@@ -1065,16 +1068,18 @@
     display: none !important;
   }
 
+  .report-patterns > .report-diagnostic-col:nth-child(2) {
+    padding: 0;
+  }
+
   .report-tva-print-img {
     display: block !important;
-    width: 100%;
+    width: calc(100% + 2rem);
+    margin-left: -1rem;
+    margin-right: -1rem;
     height: auto !important;
-    max-width: 100%;
     object-fit: initial;
     overflow: visible !important;
-    min-height: 145px;
-    margin: 0;
-    padding: 0;
   }
 
   .report-diagnostic-col,
