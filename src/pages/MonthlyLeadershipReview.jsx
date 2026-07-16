@@ -4,6 +4,7 @@ import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import { Button } from "@/components/ui/button";
 import { monthlyLeadershipBrief as brief } from "@/data/monthlyReviewMock";
+import { createPdfChartDataURL } from "@/utils/tvaPdfCanvas";
 import ReportExecutiveSummary from "@/components/report/ReportExecutiveSummary";
 import ReportPatternsThisMonth from "@/components/report/ReportPatternsThisMonth";
 import ReportWhatsWorking from "@/components/report/ReportWhatsWorking";
@@ -18,16 +19,10 @@ export default function MonthlyLeadershipReview() {
     if (!reportRef.current || downloading) return;
     setDownloading(true);
     try {
-      // Step 1: Rasterize the TVA chart body at 3x resolution
-      const chartBody = reportRef.current.querySelector(".report-tva-chart-body");
+      // Step 1: Render TVA chart on the dedicated PDF canvas (no DOM capture)
       const printImg = reportRef.current.querySelector(".report-tva-print-img");
-      if (chartBody && printImg) {
-        const chartCanvas = await html2canvas(chartBody, {
-          scale: 3,
-          useCORS: true,
-          backgroundColor: "#ffffff",
-        });
-        const dataUrl = chartCanvas.toDataURL("image/png");
+      if (printImg) {
+        const dataUrl = createPdfChartDataURL(brief.thought_averages, brief.action_averages);
         printImg.src = dataUrl;
         await new Promise(resolve => {
           if (printImg.complete) return resolve();
