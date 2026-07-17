@@ -512,6 +512,7 @@
   display: flex;
   align-items: center;
   gap: 0.4rem;
+  width: 100%;
 }
 
 .report-tva-track-label {
@@ -523,6 +524,7 @@
 }
 
 .report-tva-track {
+  flex: 1;
   height: 5px;
   background: #f3f4f6;
   border-radius: 2.5px;
