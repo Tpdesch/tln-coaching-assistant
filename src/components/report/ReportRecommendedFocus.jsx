@@ -24,8 +24,8 @@ export default function ReportRecommendedFocus({ primary, supporting, growth }) 
     <div className="col-span-12">
       <h2 className="report-section-title">Recommended Focus</h2>
       <div className="report-practices-grid">
-        <PracticeColumn label="Primary Leadership Practice" practice={primary} />
-        <PracticeColumn label="Supporting Leadership Practice" practice={supporting} />
+        <PracticeColumn label="Leadership Practice #1" practice={primary} />
+        <PracticeColumn label="Leadership Practice #2" practice={supporting} />
         <PracticeColumn label="Growth Practice" practice={growth} />
       </div>
       <div className="report-divider" />

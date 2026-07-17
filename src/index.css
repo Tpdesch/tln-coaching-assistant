@@ -846,6 +846,7 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: #6b7280;
+  white-space: nowrap;
 }
 
 .report-practices-title {
