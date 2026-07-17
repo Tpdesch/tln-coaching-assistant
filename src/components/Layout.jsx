@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, Outlet } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { LayoutDashboard, Users, CalendarCheck, LogOut, Menu, X, Home, ClipboardList, ShieldCheck, RotateCcw } from "lucide-react";
+import { LayoutDashboard, Users, CalendarCheck, LogOut, Menu, X, Home, ClipboardList, ShieldCheck, RotateCcw, FileText } from "lucide-react";
 
 const coachNav = [
   { label: "Dashboard", path: "/Dashboard", icon: LayoutDashboard },
   { label: "Clients", path: "/Clients", icon: Users },
   { label: "Check-Ins", path: "/CheckIns", icon: CalendarCheck },
+  { label: "Leadership Brief", path: "/MonthlyLeadershipReview", icon: FileText },
 ];
 
 const clientNav = [

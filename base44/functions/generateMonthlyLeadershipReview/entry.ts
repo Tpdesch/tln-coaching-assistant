@@ -10,7 +10,7 @@ Deno.serve(async (req) => {
     try { body = await req.json(); } catch { /* no body */ }
 
     const clientProfileId = body.client_profile_id;
-    const monthInput = body.month; // expected "YYYY-MM"
+    const monthInput = body.month; // "YYYY-MM"
 
     if (!clientProfileId) {
       return Response.json({ error: 'client_profile_id is required' }, { status: 400 });
@@ -25,17 +25,45 @@ Deno.serve(async (req) => {
     const month = parseInt(monthStr, 10); // 1-based
     const monthStart = new Date(Date.UTC(year, month - 1, 1));
     const monthEnd = new Date(Date.UTC(year, month, 0, 23, 59, 59));
-
     const monthStartStr = monthStart.toISOString().slice(0, 10);
     const monthEndStr = monthEnd.toISOString().slice(0, 10);
 
-    // 1. Fetch all interactions and inference runs for this client
+    // 1. Fetch client profile
+    const clientProfile = await base44.asServiceRole.entities.Profiles.get(clientProfileId);
+    if (!clientProfile) {
+      return Response.json({ error: 'Client profile not found' }, { status: 404 });
+    }
+
+    // 2. Authorization: platform admin or the client's assigned coach
+    const callerProfiles = await base44.asServiceRole.entities.Profiles.filter({ base44_user_id: user.id });
+    const callerProfile = Array.isArray(callerProfiles) ? callerProfiles[0] : null;
+    const isPlatformAdmin = user.role === 'admin' || callerProfile?.role === 'admin' || callerProfile?.role === 'coach_admin';
+
+    // 3. Fetch client record + coach profile for metadata
+    let clientRecord = null;
+    let coachProfile = null;
+    if (clientProfile.base44_user_id) {
+      const clientRows = await base44.asServiceRole.entities.Client.filter({ base44_user_id: clientProfile.base44_user_id });
+      clientRecord = Array.isArray(clientRows) ? clientRows[0] : null;
+      if (clientRecord?.coach_id) {
+        coachProfile = await base44.asServiceRole.entities.Profiles.get(clientRecord.coach_id).catch(() => null);
+      }
+    }
+
+    if (!isPlatformAdmin) {
+      const isAssignedCoach = callerProfile?.id === clientRecord?.coach_id;
+      if (!isAssignedCoach) {
+        return Response.json({ error: 'Not authorized to view this client' }, { status: 403 });
+      }
+    }
+
+    // 4. Fetch all interactions and inference runs for this client
     const [allInteractions, allRuns] = await Promise.all([
       base44.asServiceRole.entities.Interactions.filter({ client_profile_id: clientProfileId }),
       base44.asServiceRole.entities.InferenceRuns.filter({ client_profile_id: clientProfileId }),
     ]);
 
-    // 2. Filter to the target month
+    // 5. Filter to the target month
     const inMonth = (d) => {
       if (!d) return false;
       const dateStr = typeof d === 'string' ? d.slice(0, 10) : new Date(d).toISOString().slice(0, 10);
@@ -45,18 +73,16 @@ Deno.serve(async (req) => {
     const monthlyInteractions = allInteractions.filter(i => inMonth(i.created_date) || inMonth(i.week_ending_date));
     const monthlyRuns = allRuns.filter(r => inMonth(r.created_date));
 
-    // 3. Sort chronologically
-    const sortByDate = (a, b) => new Date(a.created_date) - new Date(b.created_date);
-    monthlyInteractions.sort(sortByDate);
-    monthlyRuns.sort(sortByDate);
+    // 6. Sort chronologically
+    monthlyInteractions.sort((a, b) => new Date(a.created_date) - new Date(b.created_date));
+    monthlyRuns.sort((a, b) => new Date(a.created_date) - new Date(b.created_date));
 
-    // 4. Build raw metrics for the LLM prompt
+    // 7. Build raw metrics
     const aciValues = monthlyRuns.map(r => r.aci).filter(v => typeof v === 'number');
     const avgAci = aciValues.length > 0 ? aciValues.reduce((a, b) => a + b, 0) / aciValues.length : null;
     const highestAci = aciValues.length > 0 ? Math.max(...aciValues) : null;
     const lowestAci = aciValues.length > 0 ? Math.min(...aciValues) : null;
 
-    // Thought vs Action monthly averages (levels 1-5)
     const thoughtKeys = ['thought_l1', 'thought_l2', 'thought_l3', 'thought_l4', 'thought_l5'];
     const actionKeys = ['action_l1', 'action_l2', 'action_l3', 'action_l4', 'action_l5'];
     const avgLevel = (keys) => {
@@ -68,12 +94,21 @@ Deno.serve(async (req) => {
           if (typeof v === 'number') { sums[idx] += v; counts[idx]++; }
         });
       });
-      return sums.map((s, idx) => counts[idx] > 0 ? Math.round((s / counts[idx]) * 100) / 100 : null);
+      return sums.map((s, idx) => counts[idx] > 0 ? Math.round((s / counts[idx]) * 100) / 100 : 0);
     };
     const thoughtAvg = avgLevel(thoughtKeys);
     const actionAvg = avgLevel(actionKeys);
 
-    // Drift patterns (derailers) frequency
+    const thoughtAverages = {
+      level_1: thoughtAvg[0], level_2: thoughtAvg[1], level_3: thoughtAvg[2],
+      level_4: thoughtAvg[3], level_5: thoughtAvg[4],
+    };
+    const actionAverages = {
+      level_1: actionAvg[0], level_2: actionAvg[1], level_3: actionAvg[2],
+      level_4: actionAvg[3], level_5: actionAvg[4],
+    };
+
+    // Drift patterns frequency
     const derailerCounts = {};
     monthlyRuns.forEach(r => {
       const patterns = r.drift_patterns || [];
@@ -94,7 +129,7 @@ Deno.serve(async (req) => {
       if (dir) momentumDirections[dir] = (momentumDirections[dir] || 0) + 1;
     });
 
-    // Reflection themes (free text and commitment text)
+    // Reflection themes
     const reflections = monthlyInteractions
       .map(i => i.reflection_text || i.free_text || i.commitment_text)
       .filter(Boolean);
@@ -102,19 +137,15 @@ Deno.serve(async (req) => {
     // Gap analysis from runs
     const gapAnalysis = monthlyRuns.map(r => r.gap_analysis).filter(Boolean);
 
-    // Trend: latest ACI - oldest ACI
+    // ACI trend
     let aciTrend = null;
     if (aciValues.length >= 2) {
       aciTrend = Math.round((aciValues[aciValues.length - 1] - aciValues[0]) * 100) / 100;
     }
 
-    // Alignment trend 4wk from runs (if available)
-    const alignmentTrends = monthlyRuns.map(r => r.alignment_trend_4wk).filter(v => typeof v === 'number');
-
-    // 5. Build the LLM prompt
+    // 8. Build the LLM prompt
     const dataPacket = {
       month: monthInput,
-      client_profile_id: clientProfileId,
       total_interactions: monthlyInteractions.length,
       total_inference_runs: monthlyRuns.length,
       aci_summary: {
@@ -128,7 +159,6 @@ Deno.serve(async (req) => {
       action_monthly_averages: actionAvg,
       most_frequent_derailers: topDerailers,
       alignment_momentum_directions: momentumDirections,
-      alignment_trend_4wk_values: alignmentTrends,
       gap_analyses: gapAnalysis,
       reflection_texts: reflections,
       interactions: monthlyInteractions.map(i => ({
@@ -164,102 +194,122 @@ Deno.serve(async (req) => {
       })),
     };
 
-    const prompt = `You are a senior leadership development analyst. Analyze the following monthly coaching data for a participant and produce a structured leadership review.
+    const prompt = `You are a senior leadership development analyst at The Leadership Nexus. Analyze the following monthly coaching data for a participant and produce a structured Monthly Leadership Brief.
+
+The Leadership Nexus framework assesses leaders across 5 levels:
+- Level 1: Transactional (day-to-day operations, immediate tasks)
+- Level 2: Managerial (functional execution, specialized work)
+- Level 3: Tactical (cross-functional coordination, short-term planning)
+- Level 4: Strategic (long-term direction, organizational vision)
+- Level 5: Visionary (enterprise-wide transformation, industry influence)
+
+"Thought" = time spent thinking at each level. "Action" = time spent acting at each level.
+The goal is alignment between thought and action, with healthy progression toward higher levels.
 
 DATA:
 ${JSON.stringify(dataPacket, null, 2)}
 
-Produce a comprehensive monthly leadership review. Return ONLY a JSON object matching this schema:
+Produce a comprehensive Monthly Leadership Brief. Return ONLY a JSON object matching this exact schema:
 {
-  "executive_summary": "A concise 3-5 sentence overview of the participant's month, key themes, and overall trajectory.",
-  "alignment_metrics": {
-    "average_aci": number or null,
-    "highest_aci": number or null,
-    "lowest_aci": number or null,
-    "trend": "improving | declining | stable | insufficient_data",
-    "trend_description": "Brief explanation of the ACI trend across the month."
+  "executive_summary": {
+    "headline": "A short 2-5 word phrase capturing the key theme of the month",
+    "narrative": "3-5 sentences summarizing the participant's month, key themes, and overall trajectory. Be specific and reference actual patterns from the data.",
+    "confidence": "High, Medium, or Low — based on data volume and consistency"
   },
-  "most_frequent_derailers": [
-    { "pattern": "Name of the derailer/drift pattern", "frequency": number, "impact": "Brief description of impact on leadership alignment." }
-  ],
-  "thought_vs_action": {
-    "thought_monthly_averages": [5 numbers or nulls for levels 1-5],
-    "action_monthly_averages": [5 numbers or nulls for levels 1-5],
-    "analysis": "Brief interpretation of the gap between thought and action levels."
+  "leadership_pattern": {
+    "title": "A concise name for the dominant leadership pattern observed this month",
+    "explanation": "1-2 sentences explaining the pattern with specific reference to the data",
+    "classification": "Strength, Emerging, or Watch"
   },
-  "growth_momentum": {
-    "direction": "improving | declining | stable | emerging | insufficient_data",
-    "summary": "Summary of alignment momentum and growth trajectory."
+  "leadership_momentum": {
+    "indicator": "Improving, Declining, Stable, or Emerging",
+    "interpretation": "1-2 sentences interpreting the momentum direction and what it means"
   },
-  "reflection_themes": [
-    { "theme": "Theme name", "description": "Brief description of what the participant reflected on." }
-  ],
-  "suggested_coaching_conversation": "2-4 sentences with a suggested focus area and opening question for the next coaching session.",
-  "recommended_priorities": [
-    { "priority": "Priority title", "rationale": "Why this matters based on the data." }
-  ]
-}`;
+  "whats_working": ["2-4 specific leadership behaviors that are working well, each as a single sentence"],
+  "watch_out_for": ["2-4 specific behaviors or patterns that deserve coaching attention, each as a single sentence"],
+  "leadership_practices": {
+    "primary_practice": {
+      "title": "A concise name for the primary practice to focus on next month",
+      "purpose": "Why this practice matters now, based on the data",
+      "practice": "A specific, actionable description of what to do — concrete enough to act on",
+      "reflection_question": "A reflective question the participant should ask themselves weekly"
+    },
+    "supporting_practice": {
+      "title": "A concise name for a supporting practice",
+      "purpose": "Why this supporting practice matters",
+      "practice": "Specific, actionable description",
+      "reflection_question": "A weekly reflection question"
+    },
+    "growth_practice": {
+      "title": "A concise name for a growth-oriented practice",
+      "purpose": "Why this growth practice matters for development",
+      "practice": "Specific, actionable description",
+      "reflection_question": "A weekly reflection question"
+    }
+  }
+}
+
+If there is insufficient data (zero interactions or inference runs), still produce the structure. Use "Insufficient data for this period" as the narrative, "N/A" for headline/confidence, and empty arrays for whats_working and watch_out_for. For leadership_practices, use "Awaiting data" as titles and explanations.`;
 
     const llmResponse = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt,
       response_json_schema: {
         type: "object",
         properties: {
-          executive_summary: { type: "string" },
-          alignment_metrics: {
+          executive_summary: {
             type: "object",
             properties: {
-              average_aci: { type: ["number", "null"] },
-              highest_aci: { type: ["number", "null"] },
-              lowest_aci: { type: ["number", "null"] },
-              trend: { type: "string" },
-              trend_description: { type: "string" },
+              headline: { type: "string" },
+              narrative: { type: "string" },
+              confidence: { type: "string" },
             },
           },
-          most_frequent_derailers: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                pattern: { type: "string" },
-                frequency: { type: "number" },
-                impact: { type: "string" },
+          leadership_pattern: {
+            type: "object",
+            properties: {
+              title: { type: "string" },
+              explanation: { type: "string" },
+              classification: { type: "string" },
+            },
+          },
+          leadership_momentum: {
+            type: "object",
+            properties: {
+              indicator: { type: "string" },
+              interpretation: { type: "string" },
+            },
+          },
+          whats_working: { type: "array", items: { type: "string" } },
+          watch_out_for: { type: "array", items: { type: "string" } },
+          leadership_practices: {
+            type: "object",
+            properties: {
+              primary_practice: {
+                type: "object",
+                properties: {
+                  title: { type: "string" },
+                  purpose: { type: "string" },
+                  practice: { type: "string" },
+                  reflection_question: { type: "string" },
+                },
               },
-            },
-          },
-          thought_vs_action: {
-            type: "object",
-            properties: {
-              thought_monthly_averages: { type: "array", items: { type: ["number", "null"] } },
-              action_monthly_averages: { type: "array", items: { type: ["number", "null"] } },
-              analysis: { type: "string" },
-            },
-          },
-          growth_momentum: {
-            type: "object",
-            properties: {
-              direction: { type: "string" },
-              summary: { type: "string" },
-            },
-          },
-          reflection_themes: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                theme: { type: "string" },
-                description: { type: "string" },
+              supporting_practice: {
+                type: "object",
+                properties: {
+                  title: { type: "string" },
+                  purpose: { type: "string" },
+                  practice: { type: "string" },
+                  reflection_question: { type: "string" },
+                },
               },
-            },
-          },
-          suggested_coaching_conversation: { type: "string" },
-          recommended_priorities: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                priority: { type: "string" },
-                rationale: { type: "string" },
+              growth_practice: {
+                type: "object",
+                properties: {
+                  title: { type: "string" },
+                  purpose: { type: "string" },
+                  practice: { type: "string" },
+                  reflection_question: { type: "string" },
+                },
               },
             },
           },
@@ -268,22 +318,47 @@ Produce a comprehensive monthly leadership review. Return ONLY a JSON object mat
       model: "claude_sonnet_4_6",
     });
 
-    return Response.json({
-      client_profile_id: clientProfileId,
-      month: monthInput,
-      generated_at: new Date().toISOString(),
-      raw_metrics: {
-        total_interactions: monthlyInteractions.length,
-        total_inference_runs: monthlyRuns.length,
-        aci_summary: { average: avgAci, highest: highestAci, lowest: lowestAci, trend: aciTrend, all_values: aciValues },
-        thought_monthly_averages: thoughtAvg,
-        action_monthly_averages: actionAvg,
-        most_frequent_derailers: topDerailers,
-        alignment_momentum_directions: momentumDirections,
-      },
-      review: llmResponse,
-    });
+    // 9. Parse LLM response (may be string or object, possibly wrapped in "response")
+    let review;
+    if (typeof llmResponse === 'string') {
+      try {
+        review = JSON.parse(llmResponse);
+      } catch {
+        review = {};
+      }
+    } else {
+      review = llmResponse || {};
+    }
+    // Unwrap if nested under a "response" key
+    if (review.response && typeof review.response === 'object') {
+      review = review.response;
+    }
 
+    // 10. Build complete report matching the report UI structure
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"];
+
+    const clientName = clientProfile.display_name || clientProfile.full_name || clientRecord?.full_name || "Participant";
+    const coachName = coachProfile?.display_name || coachProfile?.full_name || "Coach";
+
+    const report = {
+      client_name: clientName,
+      client_title: clientRecord?.role || "",
+      client_company: clientRecord?.company || "",
+      review_period: `${monthNames[month - 1]} ${year}`,
+      coach_name: coachName,
+      generated_date: new Date().toISOString().slice(0, 10),
+      executive_summary: review.executive_summary,
+      leadership_pattern: review.leadership_pattern,
+      leadership_momentum: review.leadership_momentum,
+      thought_averages: thoughtAverages,
+      action_averages: actionAverages,
+      whats_working: review.whats_working || [],
+      watch_out_for: review.watch_out_for || [],
+      leadership_practices: review.leadership_practices,
+    };
+
+    return Response.json(report);
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }
