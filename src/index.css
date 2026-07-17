@@ -482,6 +482,44 @@
 
 /* Thought vs Action Alignment */
 
+.report-tva-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.25rem 0;
+}
+
+.report-tva-group {
+  display: grid;
+  grid-template-columns: 1.5rem 1fr;
+  align-items: center;
+  column-gap: 0.6rem;
+}
+
+.report-tva-level {
+  font-size: 0.7rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.report-tva-tracks {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.report-tva-track {
+  height: 5px;
+  background: #f3f4f6;
+  border-radius: 2.5px;
+  overflow: hidden;
+}
+
+.report-tva-track-fill {
+  height: 100%;
+  border-radius: 2.5px;
+}
+
 /* Leadership Momentum */
 
 .report-diagnostic-momentum-indicator {
