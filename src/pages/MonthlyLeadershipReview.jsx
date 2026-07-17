@@ -107,7 +107,8 @@ export default function MonthlyLeadershipReview() {
     setDownloading(true);
     try {
       reportRef.current.classList.add("report-capturing");
-      await new Promise((r) => setTimeout(r, 50));
+      await document.fonts.ready;
+      await new Promise(requestAnimationFrame);
       const canvas = await html2canvas(reportRef.current, {
         scale: 2,
         useCORS: true,
