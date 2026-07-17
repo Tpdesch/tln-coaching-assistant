@@ -258,41 +258,52 @@ Instead write:
 If a data signal is important, name the behavioral reality it points to — not the number, not the metric name, not how it was calculated.
 
 Return ONLY a JSON object matching this exact schema:
+
+HARD WORD-COUNT LIMITS — treat as maximums. If any generated content exceeds its limit, shorten it before returning the final JSON. Count every word including articles and prepositions.
+- executive_summary.narrative: 45 words maximum
+- leadership_pattern.explanation: 20 words maximum
+- leadership_momentum.interpretation: 18 words maximum
+- whats_working: exactly 3 observations, maximum 8 words each
+- watch_out_for: exactly 3 observations, maximum 8 words each
+- Each leadership_practices title (primary, supporting, growth): 8 words maximum
+- Each leadership_practices practice field: 22 words maximum
+- Each leadership_practices reflection_question: 14 words maximum
+
 {
   "executive_summary": {
     "headline": "A 2-5 word phrase naming the single most important shift this month — what changed for this leader. Not a theme; a change.",
-    "narrative": "2-4 sentences answering: What changed this month? Reference the specific delta — ACI trend, level shifts, momentum direction, or pattern emergence. If nothing changed, say so and name what held steady.",
+    "narrative": "MAX 45 WORDS. What changed this month? If nothing changed, name what held steady. Translate data into behavioral reality, not metrics.",
     "confidence": "High, Medium, or Low — based on data volume and consistency"
   },
   "leadership_pattern": {
-    "title": "A concise name for the single pattern that matters most for this coaching session",
-    "explanation": "1-2 sentences answering: Why does this matter most right now? Reference the specific data that makes this the priority over everything else.",
+    "title": "A concise name for the single pattern that matters most for this coaching session (max 8 words)",
+    "explanation": "MAX 20 WORDS. Why does this matter most right now? Ground in data, but as coaching language not metrics.",
     "classification": "Strength, Emerging, or Watch"
   },
   "leadership_momentum": {
     "indicator": "Improving, Declining, Stable, or Emerging",
-    "interpretation": "1-2 sentences answering: What should the coach discuss? Name the conversation the coach should open with, grounded in the momentum data."
+    "interpretation": "MAX 18 WORDS. What should the coach discuss? Name the conversation to open with."
   },
-  "whats_working": ["1-3 specific, data-backed behaviors the coach should reinforce in session. Each is a single sentence referencing a concrete data point."],
-  "watch_out_for": ["1-3 specific risks that deserve attention this session. Each is a single sentence naming the risk, the data signal behind it, and why it matters now."],
+  "whats_working": ["EXACTLY 3 items. Each MAX 8 WORDS. One behavior to reinforce per item."],
+  "watch_out_for": ["EXACTLY 3 items. Each MAX 8 WORDS. One risk per item."],
   "leadership_practices": {
     "primary_practice": {
-      "title": "A concise name for the #1 practice the client should focus on before the next session",
-      "purpose": "1 sentence answering: Why this practice, based on this month's data specifically?",
-      "practice": "A specific, actionable instruction the client can execute this week — concrete enough that they know exactly what to do.",
-      "reflection_question": "A single sharp question the client should sit with weekly"
+      "title": "MAX 8 WORDS. Name of the #1 practice to focus on.",
+      "purpose": "1 sentence: why this practice, based on this month's data.",
+      "practice": "MAX 22 WORDS. Specific, actionable instruction the client can execute this week.",
+      "reflection_question": "MAX 14 WORDS. One sharp question to sit with weekly."
     },
     "supporting_practice": {
-      "title": "A concise name for a supporting practice",
-      "purpose": "1 sentence: why this supports the primary practice",
-      "practice": "Specific, actionable instruction",
-      "reflection_question": "A weekly reflection question"
+      "title": "MAX 8 WORDS. Name of a supporting practice.",
+      "purpose": "1 sentence: why this supports the primary practice.",
+      "practice": "MAX 22 WORDS. Specific, actionable instruction.",
+      "reflection_question": "MAX 14 WORDS. A weekly reflection question."
     },
     "growth_practice": {
-      "title": "A concise name for a growth-oriented practice",
-      "purpose": "1 sentence: why this stretches the client beyond their comfort zone right now",
-      "practice": "Specific, actionable instruction",
-      "reflection_question": "A weekly reflection question"
+      "title": "MAX 8 WORDS. Name of a growth-oriented practice.",
+      "purpose": "1 sentence: why this stretches the client now.",
+      "practice": "MAX 22 WORDS. Specific, actionable instruction.",
+      "reflection_question": "MAX 14 WORDS. A weekly reflection question."
     }
   }
 }
