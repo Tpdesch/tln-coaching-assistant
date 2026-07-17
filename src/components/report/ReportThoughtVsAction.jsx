@@ -16,20 +16,27 @@ const normalizeLikertToPercent = (score) => {
 
 // Fixed canvas layout coordinates (CSS display units)
 const DISPLAY_WIDTH = 250;
-const DISPLAY_HEIGHT = 145;
+const DISPLAY_HEIGHT = 120;
 const PIXEL_RATIO = 2;
 
 const LEVEL_LABEL_X = 4;
-const LEVEL_LABEL_WIDTH = 18;
 const TEXT_LABEL_X = 24;
-const TEXT_LABEL_WIDTH = 42;
 const TRACK_X = 70;
 const TRACK_WIDTH = DISPLAY_WIDTH - TRACK_X - 5; // ends ~5px from right edge
 const BAR_HEIGHT = 5;
 const TOP_PAD = 7;
 const BOTTOM_PAD = 4;
-const ROW_COUNT = LEVELS.length * 2; // Thought + Action per level
-const ROW_HEIGHT = (DISPLAY_HEIGHT - TOP_PAD - BOTTOM_PAD) / ROW_COUNT;
+
+// Spacing hierarchy: small gap within a level, larger gap between levels
+const INTRA_GAP = 4.5;  // gap between Thought bar bottom and Action bar top (within a level)
+const INTER_GAP = 9;     // gap between Action bar bottom and next level's Thought bar top
+
+// Midpoint-to-midpoint distances derived from bar height + gap
+const THOUGHT_TO_ACTION_MID = BAR_HEIGHT + INTRA_GAP;   // 9.5px
+const LEVEL_TO_LEVEL_MID = THOUGHT_TO_ACTION_MID + BAR_HEIGHT + INTER_GAP; // 23.5px
+
+// First row midpoint
+const FIRST_THOUGHT_MID = TOP_PAD + BAR_HEIGHT / 2;
 
 export default function ReportThoughtVsAction({ thoughtAverages, actionAverages }) {
   const canvasRef = useRef(null);
@@ -54,9 +61,9 @@ export default function ReportThoughtVsAction({ thoughtAverages, actionAverages 
     LEVELS.forEach((lvl, levelIdx) => {
       const levelColor = LEVEL_COLORS[levelIdx];
 
-      // Level label spans both rows — midpoint of the level's two rows
-      const thoughtRowMid = TOP_PAD + (levelIdx * 2) * ROW_HEIGHT + ROW_HEIGHT / 2;
-      const actionRowMid = TOP_PAD + (levelIdx * 2 + 1) * ROW_HEIGHT + ROW_HEIGHT / 2;
+      // Fixed vertical midpoints using spacing hierarchy
+      const thoughtRowMid = FIRST_THOUGHT_MID + levelIdx * LEVEL_TO_LEVEL_MID;
+      const actionRowMid = thoughtRowMid + THOUGHT_TO_ACTION_MID;
       const levelMid = (thoughtRowMid + actionRowMid) / 2;
 
       // --- Level label (L1–L5) ---
