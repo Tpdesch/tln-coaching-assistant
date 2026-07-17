@@ -993,4 +993,9 @@
   .report-grid {
     overflow: visible !important;
   }
+
+  .report-tva-track-label {
+    position: relative;
+    top: -2px;
+  }
 }
