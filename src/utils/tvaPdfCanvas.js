@@ -1,8 +1,8 @@
 // PDF-only Thought vs. Action score-track chart canvas.
 // Fixed internal dimensions: 750 × 390 pixels.
-// Five levels × two horizontal tracks (Thought, Action).
+// Column headings (Thought / Action) + five level rows × two side-by-side tracks.
 // Each track: light-gray background (max score) + colored fill (actual score).
-// No legend, no numeric values.
+// No legend, no numeric values, no axis, no tick marks.
 
 export const PDF_CHART_WIDTH = 750;
 export const PDF_CHART_HEIGHT = 390;
@@ -11,7 +11,8 @@ const THOUGHT_COLOR = "#1e3a5f";
 const ACTION_COLOR = "#27ae60";
 const TRACK_BG = "#f3f4f6";
 
-const LEVEL_COLORS = ["#C00000", "#E6A800", "#B8B800", "#008A3D", "#0080B0"];
+// Official Leadership Nexus assessment level colors (L1–L5)
+const LEVEL_COLORS = ["#C00000", "#FFC000", "#FFFF00", "#00B050", "#00B0F0"];
 const LEVELS = [1, 2, 3, 4, 5];
 
 const PAD_LEFT = 30;
@@ -24,17 +25,23 @@ const LEVEL_LABEL_W = 44;
 
 const TRACK_START_X = LEVEL_LABEL_X + LEVEL_LABEL_W + 12;
 const TRACK_AREA_W = PDF_CHART_WIDTH - PAD_RIGHT - TRACK_START_X;
+const TRACK_COL_GAP = 18;
+const TRACK_W = (TRACK_AREA_W - TRACK_COL_GAP) / 2;
 
-const ROW_AREA_TOP = 40;
+const THOUGHT_TRACK_X = TRACK_START_X;
+const ACTION_TRACK_X = TRACK_START_X + TRACK_W + TRACK_COL_GAP;
+
+const HEADING_Y = 30;
+const ROW_AREA_TOP = 54;
 const ROW_AREA_BOTTOM = PDF_CHART_HEIGHT - PAD_BOTTOM;
 const ROW_AREA_H = ROW_AREA_BOTTOM - ROW_AREA_TOP;
 const ROW_H = ROW_AREA_H / LEVELS.length;
 
-const TRACK_HEIGHT = 8;
-const TRACK_GAP = 4;
+const TRACK_HEIGHT = 9;
 
 const STROKE_COLOR = "rgba(0,0,0,0.4)";
-const FONT = "bold 18px Arial, sans-serif";
+const HEADING_FONT = "bold 13px Arial, sans-serif";
+const LEVEL_FONT = "bold 18px Arial, sans-serif";
 
 /**
  * Renders the Thought vs. Action score-track chart onto a fixed 750 × 390 canvas.
@@ -52,6 +59,14 @@ export function createPdfChartCanvas(thoughtAverages, actionAverages) {
 
   ctx.textBaseline = "middle";
 
+  // ---- Column headings ----
+  ctx.font = HEADING_FONT;
+  ctx.textAlign = "left";
+  ctx.fillStyle = "#1e3a5f";
+  ctx.fillText("Thought", THOUGHT_TRACK_X, HEADING_Y);
+  ctx.fillText("Action", ACTION_TRACK_X, HEADING_Y);
+
+  // ---- Level rows ----
   for (let i = 0; i < LEVELS.length; i++) {
     const lvl = LEVELS[i];
     const thought = thoughtAverages[`level_${lvl}`];
@@ -61,7 +76,7 @@ export function createPdfChartCanvas(thoughtAverages, actionAverages) {
     const rowCenter = rowTop + ROW_H / 2;
 
     // Level label
-    ctx.font = FONT;
+    ctx.font = LEVEL_FONT;
     ctx.textAlign = "left";
     ctx.lineJoin = "round";
     ctx.lineWidth = 0.6;
@@ -71,20 +86,18 @@ export function createPdfChartCanvas(thoughtAverages, actionAverages) {
     ctx.fillText(`L${lvl}`, LEVEL_LABEL_X, rowCenter);
 
     // Thought track: gray background + navy fill
-    const thoughtW = (thought / 100) * TRACK_AREA_W;
-    const thoughtY = rowCenter - TRACK_GAP / 2 - TRACK_HEIGHT;
+    const thoughtW = (thought / 100) * TRACK_W;
     ctx.fillStyle = TRACK_BG;
-    ctx.fillRect(TRACK_START_X, thoughtY, TRACK_AREA_W, TRACK_HEIGHT);
+    ctx.fillRect(THOUGHT_TRACK_X, rowCenter - TRACK_HEIGHT / 2, TRACK_W, TRACK_HEIGHT);
     ctx.fillStyle = THOUGHT_COLOR;
-    ctx.fillRect(TRACK_START_X, thoughtY, thoughtW, TRACK_HEIGHT);
+    ctx.fillRect(THOUGHT_TRACK_X, rowCenter - TRACK_HEIGHT / 2, thoughtW, TRACK_HEIGHT);
 
     // Action track: gray background + green fill
-    const actionW = (action / 100) * TRACK_AREA_W;
-    const actionY = rowCenter + TRACK_GAP / 2;
+    const actionW = (action / 100) * TRACK_W;
     ctx.fillStyle = TRACK_BG;
-    ctx.fillRect(TRACK_START_X, actionY, TRACK_AREA_W, TRACK_HEIGHT);
+    ctx.fillRect(ACTION_TRACK_X, rowCenter - TRACK_HEIGHT / 2, TRACK_W, TRACK_HEIGHT);
     ctx.fillStyle = ACTION_COLOR;
-    ctx.fillRect(TRACK_START_X, actionY, actionW, TRACK_HEIGHT);
+    ctx.fillRect(ACTION_TRACK_X, rowCenter - TRACK_HEIGHT / 2, actionW, TRACK_HEIGHT);
   }
 
   return canvas;
