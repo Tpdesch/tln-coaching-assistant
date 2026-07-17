@@ -284,6 +284,14 @@ Instead write:
 
 If a data signal is important, name the behavioral reality it points to — not the number, not the metric name, not how it was calculated.
 
+FINAL EDITORIAL PASS — before returning the JSON, review every sentence and observation. For each, ask: "Does this materially improve the coach's preparation for the next conversation?" If no: remove it, shorten it, or combine it with a stronger statement. Then verify:
+- All section word limits are met.
+- No scoring logic is exposed (no ACI, deltas, percentages, or metric names).
+- No developmental theme is repeated unnecessarily across sections.
+- The report can be read in under 90 seconds.
+- The content fits comfortably on one page.
+Return only the final compressed content.
+
 Return ONLY a JSON object matching this exact schema:
 
 HARD WORD-COUNT LIMITS — treat as maximums. If any generated content exceeds its limit, shorten it before returning the final JSON. Count every word including articles and prepositions.
