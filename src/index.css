@@ -482,112 +482,6 @@
 
 /* Thought vs Action Alignment */
 
-.report-diagnostic-tva-legend {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 0.3rem;
-}
-
-.report-diagnostic-tva-legend-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.6rem;
-  font-weight: 700;
-  color: #1e3a5f;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  line-height: 1;
-}
-
-.report-diagnostic-tva-legend-swatch {
-  display: inline-block;
-  width: 0.6rem;
-  height: 0.6rem;
-  border-radius: 2px;
-}
-
-.report-diagnostic-tva-header-spacer {
-  width: 1.2rem;
-  flex-shrink: 0;
-}
-
-.report-diagnostic-tva-header-spacer:last-child {
-  width: 3rem;
-}
-
-.report-diagnostic-tva-header-label {
-  font-size: 0.6rem;
-  font-weight: 700;
-  color: #1e3a5f;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  line-height: 1;
-}
-
-
-
-.report-diagnostic-tva-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
-.report-tva-headings {
-  display: grid;
-  grid-template-columns: 1.5rem 1fr 1fr;
-  column-gap: 0.75rem;
-  margin-bottom: 0.35rem;
-}
-
-.report-diagnostic-tva-row {
-  display: grid;
-  grid-template-columns: 1.5rem 1fr 1fr;
-  align-items: center;
-  column-gap: 0.75rem;
-}
-
-.report-diagnostic-tva-level {
-  font-size: 0.65rem;
-  color: #9ca3af;
-  line-height: 1;
-}
-
-.report-diagnostic-tva-bars {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  overflow: hidden;
-}
-
-.report-diagnostic-tva-bar {
-  height: 5px;
-  background: #f3f4f6;
-  border-radius: 2.5px;
-  overflow: hidden;
-}
-
-.report-diagnostic-tva-bar-fill {
-  height: 100%;
-  border-radius: 2.5px;
-}
-
-.report-diagnostic-tva-pct {
-  font-size: 0.65rem;
-  font-weight: 600;
-  color: #000000;
-  text-align: right;
-  white-space: nowrap;
-  line-height: 1;
-  padding-right: 14px;
-}
-
-.report-diagnostic-tva-pct-req {
-  font-weight: 400;
-  color: #9ca3af;
-}
-
 /* Leadership Momentum */
 
 .report-diagnostic-momentum-indicator {
@@ -1004,37 +898,6 @@
   z-index: 1;
 }
 
-/* ---- Thought vs. Action: rasterized print chart (PDF + native print) ---- */
-
-.report-tva-chart-body {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.report-tva-print-img {
-  display: none;
-}
-
-/* Show rasterized chart during html2canvas PDF capture */
-.report-capturing .report-tva-chart-body {
-  display: none !important;
-}
-
-.report-capturing .report-patterns > .report-diagnostic-col:nth-child(2) {
-  padding: 0;
-}
-
-.report-capturing .report-tva-print-img {
-  display: block !important;
-  width: calc(100% + 2rem);
-  margin-left: -1rem;
-  margin-right: -1rem;
-  height: auto !important;
-  object-fit: initial;
-  overflow: visible !important;
-}
-
 .report-capturing .report-diagnostic-col,
 .report-capturing .report-patterns,
 .report-capturing .report-grid {
@@ -1068,25 +931,6 @@
 
   .report-grid-guides {
     display: none;
-  }
-
-  /* Hide responsive chart in print; show rasterized image instead */
-  .report-tva-chart-body {
-    display: none !important;
-  }
-
-  .report-patterns > .report-diagnostic-col:nth-child(2) {
-    padding: 0;
-  }
-
-  .report-tva-print-img {
-    display: block !important;
-    width: calc(100% + 2rem);
-    margin-left: -1rem;
-    margin-right: -1rem;
-    height: auto !important;
-    object-fit: initial;
-    overflow: visible !important;
   }
 
   .report-diagnostic-col,
