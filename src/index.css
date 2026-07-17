@@ -495,7 +495,7 @@
 
 .report-tva-group {
   display: grid;
-  grid-template-columns: 1.5rem 2.6rem 1fr;
+  grid-template-columns: 1.5rem 1fr;
   grid-template-rows: auto auto;
   align-items: center;
   column-gap: 0.4rem;
@@ -509,7 +509,14 @@
   line-height: 1;
 }
 
+.report-tva-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
 .report-tva-track-label {
+  flex: 0 0 2.6rem;
   font-size: 0.65rem;
   font-weight: 400;
   color: #374151;
@@ -517,6 +524,7 @@
 }
 
 .report-tva-track {
+  flex: 1 1 auto;
   height: 5px;
   background: #d1d5db;
   border-radius: 2.5px;

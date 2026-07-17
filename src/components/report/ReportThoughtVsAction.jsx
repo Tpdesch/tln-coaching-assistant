@@ -24,13 +24,17 @@ export default function ReportThoughtVsAction({ thoughtAverages, actionAverages 
               >
                 L{lvl}
               </span>
-              <span className="report-tva-track-label">Thought</span>
-              <div className="report-tva-track">
-                <div className="report-tva-track-fill" style={{ width: `${thought}%`, background: THOUGHT_COLOR }} />
+              <div className="report-tva-row">
+                <span className="report-tva-track-label">Thought</span>
+                <div className="report-tva-track">
+                  <div className="report-tva-track-fill" style={{ width: `${thought}%`, background: THOUGHT_COLOR }} />
+                </div>
               </div>
-              <span className="report-tva-track-label">Action</span>
-              <div className="report-tva-track">
-                <div className="report-tva-track-fill" style={{ width: `${action}%`, background: ACTION_COLOR }} />
+              <div className="report-tva-row">
+                <span className="report-tva-track-label">Action</span>
+                <div className="report-tva-track">
+                  <div className="report-tva-track-fill" style={{ width: `${action}%`, background: ACTION_COLOR }} />
+                </div>
               </div>
             </div>
           );
