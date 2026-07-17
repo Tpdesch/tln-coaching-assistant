@@ -20,7 +20,7 @@ export default function ReportThoughtVsAction({ thoughtAverages, actionAverages 
             <div key={lvl} className="report-tva-group">
               <span
                 className="report-tva-level"
-                style={{ color: LEVEL_COLORS[idx], WebkitTextStroke: "0.5px rgba(0,0,0,0.35)" }}
+                style={{ color: LEVEL_COLORS[idx], WebkitTextStroke: "0.6px rgba(0,0,0,0.45)" }}
               >
                 L{lvl}
               </span>
