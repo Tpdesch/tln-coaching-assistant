@@ -1,6 +1,13 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef } from "react";
 import { base44 } from "@/api/base44Client";
-import { FileText, Loader2, Play } from "lucide-react";
+import { FileText, Loader2, Play, Download } from "lucide-react";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
+import ReportExecutiveSummary from "@/components/report/ReportExecutiveSummary";
+import ReportPatternsThisMonth from "@/components/report/ReportPatternsThisMonth";
+import ReportWhatsWorking from "@/components/report/ReportWhatsWorking";
+import ReportWatchOutFor from "@/components/report/ReportWatchOutFor";
+import ReportRecommendedFocus from "@/components/report/ReportRecommendedFocus";
 
 export default function AdminMonthlyReviewTest({ allProfiles, allClients }) {
   const [selectedProfileId, setSelectedProfileId] = useState("");
@@ -9,8 +16,10 @@ export default function AdminMonthlyReviewTest({ allProfiles, allClients }) {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
   });
   const [loading, setLoading] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const reportRef = useRef(null);
 
   // Build participant options — clients with profile IDs
   const participants = useMemo(() => {
@@ -42,6 +51,48 @@ export default function AdminMonthlyReviewTest({ allProfiles, allClients }) {
       setError(e?.message || "Something went wrong.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDownloadPDF = async () => {
+    if (!reportRef.current || downloading) return;
+    setDownloading(true);
+    try {
+      reportRef.current.classList.add("report-capturing");
+      await new Promise((r) => setTimeout(r, 50));
+      const canvas = await html2canvas(reportRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+      });
+
+      const pdf = new jsPDF({ orientation: "portrait", unit: "pt", format: "letter" });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = pageWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      let position = 0;
+      let heightLeft = imgHeight;
+      const imgData = canvas.toDataURL("image/png");
+
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft > 0) {
+        position -= pageHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      const fileName = `${(result.client_name || "Client").replace(/\s+/g, "_")}_Monthly_Leadership_Brief_${(result.review_period || "").replace(/\s+/g, "_")}.pdf`;
+      pdf.save(fileName);
+    } catch (e) {
+      console.error("PDF generation failed:", e);
+    } finally {
+      reportRef.current?.classList.remove("report-capturing");
+      setDownloading(false);
     }
   };
 
@@ -97,14 +148,100 @@ export default function AdminMonthlyReviewTest({ allProfiles, allClients }) {
       {result && (
         <div className="mt-5">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-semibold text-gray-700">Raw JSON Output</h3>
-            <span className="text-xs text-gray-400">
-              Generated {new Date(result.generated_at).toLocaleString()}
-            </span>
+            <h3 className="text-sm font-semibold text-gray-700">Monthly Leadership Brief</h3>
+            <button
+              onClick={handleDownloadPDF}
+              disabled={downloading}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#1e3a5f] text-white text-xs font-semibold hover:bg-[#15294a] disabled:opacity-40 transition"
+            >
+              {downloading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
+              {downloading ? "Generating PDF..." : "Download PDF"}
+            </button>
           </div>
-          <pre className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-xs text-gray-800 overflow-x-auto max-h-[600px] overflow-y-auto whitespace-pre-wrap break-words">
-{JSON.stringify(result, null, 2)}
-          </pre>
+          <div className="report-viewport" style={{ minHeight: "auto", padding: 0 }}>
+            <div className="report-page" ref={reportRef}>
+              <div className="report-grid">
+                <div className="col-span-12">
+                  <div className="report-header">
+                    <div className="report-header-left">
+                      <img
+                        src="https://media.base44.com/images/public/69f3a039374ef274bec2c0fa/8584c9c6a_LeadershipNexusLogoResized.jpg"
+                        alt="The Leadership Nexus"
+                        className="report-logo"
+                      />
+                    </div>
+                    <div className="report-header-center">
+                      <h1 className="report-title">Monthly Leadership Brief</h1>
+                    </div>
+                    <div className="report-header-right">
+                      <img
+                        src="https://media.base44.com/images/public/69f3a039374ef274bec2c0fa/f853dc255_JSLogo.png"
+                        alt="Jamesson Solutions"
+                        className="report-logo report-logo-js"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-span-12">
+                  <div className="report-divider" />
+                  <div className="report-client-info">
+                    <div className="report-client-info-col report-client-info-col-left">
+                      <span className="report-client-info-heading">Client Information</span>
+                      <div className="report-client-info-fields">
+                        <span className="report-client-name">{result.client_name}</span>
+                        <span className="report-client-detail">{result.client_title}</span>
+                        <span className="report-client-detail">{result.client_company}</span>
+                      </div>
+                    </div>
+                    <div className="report-client-info-col report-client-info-col-center">
+                      <span className="report-client-info-heading">Coach</span>
+                      <div className="report-client-info-fields">
+                        <span className="report-client-detail">{result.coach_name}</span>
+                      </div>
+                    </div>
+                    <div className="report-client-info-col report-client-info-col-right">
+                      <span className="report-client-info-heading">Review Information</span>
+                      <div className="report-client-info-fields">
+                        <span className="report-client-detail">
+                          <span className="report-client-detail-label report-client-detail-label-dark">Generated:</span>
+                          <span>{result.generated_date}</span>
+                        </span>
+                        <span className="report-client-detail">
+                          <span className="report-client-detail-label report-client-detail-label-dark">Period:</span>
+                          <span>{result.review_period}</span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="report-divider" />
+                </div>
+
+                <ReportExecutiveSummary data={result.executive_summary} />
+
+                <ReportPatternsThisMonth
+                  leadershipPattern={result.leadership_pattern}
+                  leadershipMomentum={result.leadership_momentum}
+                  thoughtAverages={result.thought_averages}
+                  actionAverages={result.action_averages}
+                />
+
+                <div className="col-span-12">
+                  <div className="report-insights-grid">
+                    <ReportWhatsWorking items={result.whats_working} />
+                    <ReportWatchOutFor items={result.watch_out_for} />
+                  </div>
+                  <div className="report-divider" />
+                </div>
+
+                <ReportRecommendedFocus
+                  primary={result.leadership_practices?.primary_practice}
+                  supporting={result.leadership_practices?.supporting_practice}
+                  growth={result.leadership_practices?.growth_practice}
+                />
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
