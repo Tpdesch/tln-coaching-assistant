@@ -194,7 +194,11 @@ Deno.serve(async (req) => {
       })),
     };
 
-    const prompt = `You are a senior leadership development analyst at The Leadership Nexus. Analyze the following monthly coaching data for a participant and produce a structured Monthly Leadership Brief.
+    const prompt = `You are a senior leadership development analyst at The Leadership Nexus.
+
+Your task: produce a pre-session executive coaching brief — NOT a narrative report or an explanation of the assessment.
+
+CRITICAL CONTEXT: The coach will read this brief in approximately 90 seconds immediately before stepping into a coaching session with the client. Every word must serve the coach's preparation. Do not explain the framework. Do not describe what the data measures. Do not write a general leadership narrative. Be direct, specific, and actionable.
 
 The Leadership Nexus framework assesses leaders across 5 levels:
 - Level 1: Transactional (day-to-day operations, immediate tasks)
@@ -204,46 +208,61 @@ The Leadership Nexus framework assesses leaders across 5 levels:
 - Level 5: Visionary (enterprise-wide transformation, industry influence)
 
 "Thought" = time spent thinking at each level. "Action" = time spent acting at each level.
-The goal is alignment between thought and action, with healthy progression toward higher levels.
 
 DATA:
 ${JSON.stringify(dataPacket, null, 2)}
 
-Produce a comprehensive Monthly Leadership Brief. Return ONLY a JSON object matching this exact schema:
+Your brief must answer — and only answer — these five questions:
+
+1. WHAT CHANGED? (executive_summary)
+2. WHAT MATTERS MOST? (leadership_pattern)
+3. WHAT RISK DESERVES ATTENTION? (watch_out_for)
+4. WHAT SHOULD THE COACH DISCUSS? (whats_working + leadership_momentum)
+5. WHAT SHOULD THE CLIENT PRACTICE NEXT? (leadership_practices)
+
+WRITING RULES:
+- Write as if speaking to a peer coach, not as if writing a report for a file.
+- No filler phrases ("This month the participant...", "Overall the data suggests..."). Get straight to the point.
+- Every claim must reference specific data points from the DATA section — numbers, levels, dates, or quoted reflections.
+- Prefer shorter, punchier sentences over compound sentences.
+- If something is uncertain or data is thin, say so plainly rather than hedging.
+- Do not repeat information across fields. Each field must add new information.
+
+Return ONLY a JSON object matching this exact schema:
 {
   "executive_summary": {
-    "headline": "A short 2-5 word phrase capturing the key theme of the month",
-    "narrative": "3-5 sentences summarizing the participant's month, key themes, and overall trajectory. Be specific and reference actual patterns from the data.",
+    "headline": "A 2-5 word phrase naming the single most important shift this month — what changed for this leader. Not a theme; a change.",
+    "narrative": "2-4 sentences answering: What changed this month? Reference the specific delta — ACI trend, level shifts, momentum direction, or pattern emergence. If nothing changed, say so and name what held steady.",
     "confidence": "High, Medium, or Low — based on data volume and consistency"
   },
   "leadership_pattern": {
-    "title": "A concise name for the dominant leadership pattern observed this month",
-    "explanation": "1-2 sentences explaining the pattern with specific reference to the data",
+    "title": "A concise name for the single pattern that matters most for this coaching session",
+    "explanation": "1-2 sentences answering: Why does this matter most right now? Reference the specific data that makes this the priority over everything else.",
     "classification": "Strength, Emerging, or Watch"
   },
   "leadership_momentum": {
     "indicator": "Improving, Declining, Stable, or Emerging",
-    "interpretation": "1-2 sentences interpreting the momentum direction and what it means"
+    "interpretation": "1-2 sentences answering: What should the coach discuss? Name the conversation the coach should open with, grounded in the momentum data."
   },
-  "whats_working": ["2-4 specific leadership behaviors that are working well, each as a single sentence"],
-  "watch_out_for": ["2-4 specific behaviors or patterns that deserve coaching attention, each as a single sentence"],
+  "whats_working": ["1-3 specific, data-backed behaviors the coach should reinforce in session. Each is a single sentence referencing a concrete data point."],
+  "watch_out_for": ["1-3 specific risks that deserve attention this session. Each is a single sentence naming the risk, the data signal behind it, and why it matters now."],
   "leadership_practices": {
     "primary_practice": {
-      "title": "A concise name for the primary practice to focus on next month",
-      "purpose": "Why this practice matters now, based on the data",
-      "practice": "A specific, actionable description of what to do — concrete enough to act on",
-      "reflection_question": "A reflective question the participant should ask themselves weekly"
+      "title": "A concise name for the #1 practice the client should focus on before the next session",
+      "purpose": "1 sentence answering: Why this practice, based on this month's data specifically?",
+      "practice": "A specific, actionable instruction the client can execute this week — concrete enough that they know exactly what to do.",
+      "reflection_question": "A single sharp question the client should sit with weekly"
     },
     "supporting_practice": {
       "title": "A concise name for a supporting practice",
-      "purpose": "Why this supporting practice matters",
-      "practice": "Specific, actionable description",
+      "purpose": "1 sentence: why this supports the primary practice",
+      "practice": "Specific, actionable instruction",
       "reflection_question": "A weekly reflection question"
     },
     "growth_practice": {
       "title": "A concise name for a growth-oriented practice",
-      "purpose": "Why this growth practice matters for development",
-      "practice": "Specific, actionable description",
+      "purpose": "1 sentence: why this stretches the client beyond their comfort zone right now",
+      "practice": "Specific, actionable instruction",
       "reflection_question": "A weekly reflection question"
     }
   }
