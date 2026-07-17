@@ -11,7 +11,7 @@ const LEVEL_COLORS = ["#C00000", "#FFC000", "#FFFF00", "#00B050", "#00B0F0"];
 export default function ReportThoughtVsAction({ thoughtAverages, actionAverages }) {
   return (
     <div className="report-diagnostic-col">
-      <span className="report-diagnostic-col-label">Thought vs. Action</span>
+      <span className="report-diagnostic-col-label report-tva-title">Thought vs. Action</span>
       <div className="report-tva-chart">
         {LEVELS.map((lvl, idx) => {
           const thought = thoughtAverages[`level_${lvl}`];
