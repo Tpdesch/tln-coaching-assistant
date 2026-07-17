@@ -485,38 +485,27 @@
 .report-tva-chart {
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
+  gap: 0.6rem;
   padding: 0.25rem 0;
 }
 
 .report-tva-group {
   display: grid;
-  grid-template-columns: 1.5rem 1fr;
+  grid-template-columns: 1.5rem 2.6rem 1fr;
+  grid-template-rows: auto auto;
   align-items: center;
-  column-gap: 0.6rem;
+  column-gap: 0.4rem;
+  row-gap: 3px;
 }
 
 .report-tva-level {
+  grid-row: 1 / 3;
   font-size: 0.7rem;
   font-weight: 700;
   line-height: 1;
 }
 
-.report-tva-tracks {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.report-tva-track-row {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  width: 100%;
-}
-
 .report-tva-track-label {
-  flex: 0 0 2.6rem;
   font-size: 0.65rem;
   font-weight: 400;
   color: #374151;
@@ -524,7 +513,6 @@
 }
 
 .report-tva-track {
-  flex: 1;
   height: 5px;
   background: #f3f4f6;
   border-radius: 2.5px;
