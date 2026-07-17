@@ -493,6 +493,12 @@
   padding: 0.25rem 0;
 }
 
+.report-tva-canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
 .report-tva-group {
   display: grid;
   grid-template-columns: 24px 48px minmax(0, 1fr);
