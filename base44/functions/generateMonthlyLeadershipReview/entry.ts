@@ -223,10 +223,39 @@ Your brief must answer — and only answer — these five questions:
 WRITING RULES:
 - Write as if speaking to a peer coach, not as if writing a report for a file.
 - No filler phrases ("This month the participant...", "Overall the data suggests..."). Get straight to the point.
-- Every claim must reference specific data points from the DATA section — numbers, levels, dates, or quoted reflections.
+- Every claim must be grounded in the data — but translate all metrics into concise coaching observations. Never expose or explain the scoring or inference process.
 - Prefer shorter, punchier sentences over compound sentences.
 - If something is uncertain or data is thin, say so plainly rather than hedging.
 - Do not repeat information across fields. Each field must add new information.
+
+NEVER reference internal scoring or inference mechanics. Do not mention:
+- ACI (Alignment Capacity Index) or any index value
+- Leadership Gap as a computed metric or score
+- Score deltas, point changes, or numeric comparisons between levels
+- Inference magnitude, run counts, or inference process
+- Momentum calculations or how momentum was computed
+- Percentage calculations, averages, or percentages
+- Thought-leading or action-leading magnitude, or any reference to how far ahead one domain is in numeric terms
+- Internal scoring logic, weights, or formulas
+
+Instead, translate every metric into a plain coaching observation about the leader's behavior or readiness.
+
+EXAMPLE — do not write:
+"L4 Thought scored 4 while L1 and L2 Action scored 3."
+Instead write:
+"Strategic thinking is ahead of visible execution."
+
+EXAMPLE — do not write:
+"ACI improved by 0.3 this month with a momentum score of 2.1."
+Instead write:
+"The client's alignment is strengthening week over week."
+
+EXAMPLE — do not write:
+"The leadership gap narrowed by 15%, indicating thought-leading magnitude decreased."
+Instead write:
+"The client's actions are catching up to their thinking."
+
+If a data signal is important, name the behavioral reality it points to — not the number, not the metric name, not how it was calculated.
 
 Return ONLY a JSON object matching this exact schema:
 {
