@@ -149,11 +149,11 @@
 }
 
 .report-header-left {
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .report-header-right {
-  justify-content: center;
+  justify-content: flex-end;
 }
 
 .report-header-center {
