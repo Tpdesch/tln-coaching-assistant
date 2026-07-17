@@ -226,7 +226,19 @@ WRITING RULES:
 - Every claim must be grounded in the data — but translate all metrics into concise coaching observations. Never expose or explain the scoring or inference process.
 - Prefer shorter, punchier sentences over compound sentences.
 - If something is uncertain or data is thin, say so plainly rather than hedging.
-- Do not repeat information across fields. Each field must add new information.
+
+NO REPEATED THEMES ACROSS SECTIONS:
+Each section must contribute a distinct insight. Do not repeat the same point using different language. If a theme is named in one section, it must not reappear in another section unless the second section adds genuinely new information about it.
+
+Section roles:
+- Executive Summary: states the overall developmental story — the arc of the month.
+- Leadership Pattern: identifies the primary recurring behavior — one specific pattern, not the same story retold.
+- Leadership Momentum: describes direction only — improving, declining, stable, or emerging. Do not restate the pattern or the summary here.
+- What's Working: strengths not already stated in the Executive Summary or Leadership Pattern.
+- Watch Out For: risks not already stated in any other section.
+- Recommended Focus: converts the single most important insight into practice. It may reference a theme from one other section (since it is the action layer), but must add a new angle — the practice itself — not just restate the insight.
+
+Example of what NOT to do: if delegation is named in the Executive Summary, do not restate "delegation needs attention" in Leadership Pattern, Watch Out For, and Recommended Focus. Each section must surface a different facet or a different issue entirely.
 
 NEVER reference internal scoring or inference mechanics. Do not mention:
 - ACI (Alignment Capacity Index) or any index value
