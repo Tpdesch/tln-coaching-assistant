@@ -311,8 +311,8 @@ HARD WORD-COUNT LIMITS — treat as maximums. If any generated content exceeds i
     "indicator": "Improving, Declining, Stable, or Emerging",
     "interpretation": "MAX 18 WORDS. What should the coach discuss? Name the conversation to open with."
   },
-  "whats_working": ["EXACTLY 3 items. Each MAX 8 WORDS. One behavior to reinforce per item."],
-  "watch_out_for": ["EXACTLY 3 items. Each MAX 8 WORDS. One risk per item."],
+  "whats_working": ["EXACTLY 3 items. Each is a phrase or short sentence, MAX 8 WORDS. One strength or behavior to reinforce per item. No explanation, no evidence, no metrics. No repetition across items or other sections. Style example: 'Recognizes delegation opportunities.' / 'Maintains strategic perspective under pressure.' / 'Prepares intentionally for executive conversations.'"],
+  "watch_out_for": ["EXACTLY 3 items. Each is a phrase or short sentence, MAX 8 WORDS. One risk or behavior to watch per item. No explanation, no evidence, no metrics. No repetition across items or other sections. Style example: 'Escalations continue bypassing direct reports.' / 'Tactical work crowds strategic capacity.' / 'Delegation decisions remain incomplete.'"],
   "leadership_practices": {
     "primary_practice": {
       "title": "MAX 8 WORDS. Name of the #1 practice to focus on.",
