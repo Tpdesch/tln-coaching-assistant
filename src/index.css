@@ -510,13 +510,15 @@
 }
 
 .report-tva-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
   align-items: center;
-  gap: 0.4rem;
+  height: 0.65rem;
 }
 
 .report-tva-track-label {
-  flex: 0 0 2.6rem;
+  margin: 0;
+  padding: 0;
   font-size: 0.65rem;
   font-weight: 400;
   color: #374151;
@@ -524,7 +526,6 @@
 }
 
 .report-tva-track {
-  flex: 1 1 auto;
   height: 5px;
   background: #d1d5db;
   border-radius: 2.5px;
