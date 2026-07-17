@@ -536,7 +536,7 @@
 
 .report-diagnostic-tva-row {
   display: grid;
-  grid-template-columns: 14% 56% 30%;
+  grid-template-columns: auto 1fr;
   align-items: center;
   column-gap: 0.5rem;
 }
@@ -550,20 +550,20 @@
 .report-diagnostic-tva-bars {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   overflow: hidden;
 }
 
 .report-diagnostic-tva-bar {
-  height: 3px;
+  height: 5px;
   background: #f3f4f6;
-  border-radius: 1.5px;
+  border-radius: 2.5px;
   overflow: hidden;
 }
 
 .report-diagnostic-tva-bar-fill {
   height: 100%;
-  border-radius: 1.5px;
+  border-radius: 2.5px;
 }
 
 .report-diagnostic-tva-pct {
