@@ -315,22 +315,19 @@ HARD WORD-COUNT LIMITS — treat as maximums. If any generated content exceeds i
   "watch_out_for": ["EXACTLY 3 items. Each is a phrase or short sentence, MAX 8 WORDS. One risk or behavior to watch per item. No explanation, no evidence, no metrics. No repetition across items or other sections. Style example: 'Escalations continue bypassing direct reports.' / 'Tactical work crowds strategic capacity.' / 'Delegation decisions remain incomplete.'"],
   "leadership_practices": {
     "primary_practice": {
-      "title": "MAX 8 WORDS. Name of the #1 practice to focus on.",
-      "purpose": "1 sentence: why this practice, based on this month's data.",
-      "practice": "MAX 22 WORDS. Specific, actionable instruction the client can execute this week.",
-      "reflection_question": "MAX 14 WORDS. One sharp question to sit with weekly."
+      "title": "MAX 8 WORDS. Concise name for the #1 practice.",
+      "practice": "MAX 22 WORDS. One specific, observable practice the client can execute this week. No purpose paragraph, no background explanation, no multiple steps unless essential. Style example: 'Define Jonathan's escalation authority before the next customer issue.'",
+      "reflection_question": "MAX 14 WORDS. One sharp question to sit with weekly. Style example: 'What decision will I intentionally not make next week?'"
     },
     "supporting_practice": {
-      "title": "MAX 8 WORDS. Name of a supporting practice.",
-      "purpose": "1 sentence: why this supports the primary practice.",
-      "practice": "MAX 22 WORDS. Specific, actionable instruction.",
-      "reflection_question": "MAX 14 WORDS. A weekly reflection question."
+      "title": "MAX 8 WORDS. Concise name for a supporting practice.",
+      "practice": "MAX 22 WORDS. One specific, observable practice. No purpose, no background, no multi-step unless essential.",
+      "reflection_question": "MAX 14 WORDS. One weekly reflection question."
     },
     "growth_practice": {
-      "title": "MAX 8 WORDS. Name of a growth-oriented practice.",
-      "purpose": "1 sentence: why this stretches the client now.",
-      "practice": "MAX 22 WORDS. Specific, actionable instruction.",
-      "reflection_question": "MAX 14 WORDS. A weekly reflection question."
+      "title": "MAX 8 WORDS. Concise name for a growth-oriented practice.",
+      "practice": "MAX 22 WORDS. One specific, observable practice. No purpose, no background, no multi-step unless essential.",
+      "reflection_question": "MAX 14 WORDS. One weekly reflection question."
     }
   }
 }
@@ -374,7 +371,6 @@ If there is insufficient data (zero interactions or inference runs), still produ
                 type: "object",
                 properties: {
                   title: { type: "string" },
-                  purpose: { type: "string" },
                   practice: { type: "string" },
                   reflection_question: { type: "string" },
                 },
@@ -383,7 +379,6 @@ If there is insufficient data (zero interactions or inference runs), still produ
                 type: "object",
                 properties: {
                   title: { type: "string" },
-                  purpose: { type: "string" },
                   practice: { type: "string" },
                   reflection_question: { type: "string" },
                 },
@@ -392,7 +387,6 @@ If there is insufficient data (zero interactions or inference runs), still produ
                 type: "object",
                 properties: {
                   title: { type: "string" },
-                  purpose: { type: "string" },
                   practice: { type: "string" },
                   reflection_question: { type: "string" },
                 },
