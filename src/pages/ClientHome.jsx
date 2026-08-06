@@ -19,8 +19,14 @@ export default function ClientHome() {
       try {
         setLoading(true);
         setError(null);
-        const me = await base44.auth.me();
-        if (!me) { setError("Not authenticated."); return; }
+        let me;
+        try {
+          me = await base44.auth.me();
+        } catch (authErr) {
+          base44.auth.redirectToLogin("/ClientHome");
+          return;
+        }
+        if (!me) { base44.auth.redirectToLogin("/ClientHome"); return; }
 
         const rows = await base44.entities.Profiles.filter({ base44_user_id: me.id });
         const p = Array.isArray(rows) ? rows[0] : null;
