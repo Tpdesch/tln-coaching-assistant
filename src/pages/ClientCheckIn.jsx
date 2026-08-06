@@ -33,8 +33,14 @@ export default function ClientCheckIn() {
   useEffect(() => {
     (async () => {
       try {
-        const me = await base44.auth.me();
-        if (!me) { setError("Not authenticated."); setLoading(false); return; }
+        let me;
+        try {
+          me = await base44.auth.me();
+        } catch (authErr) {
+          base44.auth.redirectToLogin("/ClientCheckIn");
+          return;
+        }
+        if (!me) { base44.auth.redirectToLogin("/ClientCheckIn"); return; }
         const rows = await base44.entities.Profiles.filter({ base44_user_id: me.id });
         const p = Array.isArray(rows) ? rows[0] : null;
         if (!p) { setError("Profile not found. Please contact your coach."); setLoading(false); return; }
