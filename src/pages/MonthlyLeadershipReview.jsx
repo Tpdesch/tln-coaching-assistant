@@ -5,11 +5,7 @@ import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import { Button } from "@/components/ui/button";
 import ReportSelector from "@/components/report/ReportSelector";
-import ReportExecutiveSummary from "@/components/report/ReportExecutiveSummary";
-import ReportPatternsThisMonth from "@/components/report/ReportPatternsThisMonth";
-import ReportWhatsWorking from "@/components/report/ReportWhatsWorking";
-import ReportWatchOutFor from "@/components/report/ReportWatchOutFor";
-import ReportRecommendedFocus from "@/components/report/ReportRecommendedFocus";
+import ReportBrief from "@/components/report/ReportBrief";
 
 export default function MonthlyLeadershipReview() {
   const reportRef = useRef(null);
@@ -25,6 +21,11 @@ export default function MonthlyLeadershipReview() {
   });
   const [brief, setBrief] = useState(null);
   const [generating, setGenerating] = useState(false);
+  const [compareMode, setCompareMode] = useState(false);
+  const [gptModel, setGptModel] = useState("gpt_5_4");
+  const [claudeModel, setClaudeModel] = useState("claude_sonnet_4_6");
+  const [briefs, setBriefs] = useState(null);
+  const [activeTab, setActiveTab] = useState("gpt");
 
   useEffect(() => {
     (async () => {
@@ -87,12 +88,29 @@ export default function MonthlyLeadershipReview() {
     setGenerating(true);
     setError(null);
     setBrief(null);
+    setBriefs(null);
     try {
-      const res = await base44.functions.invoke("generateMonthlyLeadershipReview", {
-        client_profile_id: selectedClient,
-        month,
-      });
-      setBrief(res.data);
+      if (compareMode) {
+        const [gptRes, claudeRes] = await Promise.all([
+          base44.functions.invoke("generateMonthlyLeadershipReview", {
+            client_profile_id: selectedClient,
+            month,
+            model: gptModel,
+          }),
+          base44.functions.invoke("generateMonthlyLeadershipReview", {
+            client_profile_id: selectedClient,
+            month,
+            model: claudeModel,
+          }),
+        ]);
+        setBriefs({ gpt: gptRes.data, claude: claudeRes.data });
+      } else {
+        const res = await base44.functions.invoke("generateMonthlyLeadershipReview", {
+          client_profile_id: selectedClient,
+          month,
+        });
+        setBrief(res.data);
+      }
     } catch (e) {
       setError(
         e?.response?.data?.error || e?.message || "Failed to generate report."
@@ -102,8 +120,16 @@ export default function MonthlyLeadershipReview() {
     }
   };
 
+  const handleToggleCompare = (checked) => {
+    setCompareMode(checked);
+    setBrief(null);
+    setBriefs(null);
+    setError(null);
+  };
+
   const handleDownloadPDF = async () => {
-    if (!reportRef.current || downloading) return;
+    const activeBrief = compareMode ? briefs?.[activeTab] : brief;
+    if (!reportRef.current || downloading || !activeBrief) return;
     setDownloading(true);
     try {
       reportRef.current.classList.add("report-capturing");
@@ -139,7 +165,7 @@ export default function MonthlyLeadershipReview() {
         heightLeft -= pageHeight;
       }
 
-      const fileName = `${brief.client_name.replace(/\s+/g, "_")}_Monthly_Leadership_Brief_${brief.review_period.replace(/\s+/g, "_")}.pdf`;
+      const fileName = `${activeBrief.client_name.replace(/\s+/g, "_")}_Monthly_Leadership_Brief_${activeBrief.review_period.replace(/\s+/g, "_")}${compareMode ? `_${activeTab}` : ""}.pdf`;
       pdf.save(fileName);
     } catch (e) {
       console.error("PDF generation failed:", e);
@@ -177,6 +203,12 @@ export default function MonthlyLeadershipReview() {
         setMonth={setMonth}
         onGenerate={handleGenerate}
         generating={generating}
+        compareMode={compareMode}
+        onToggleCompare={handleToggleCompare}
+        gptModel={gptModel}
+        setGptModel={setGptModel}
+        claudeModel={claudeModel}
+        setClaudeModel={setClaudeModel}
       />
 
       {error && (
@@ -190,11 +222,50 @@ export default function MonthlyLeadershipReview() {
       {generating && (
         <div className="w-full text-center py-16">
           <Loader2 className="w-8 h-8 animate-spin text-[#1e3a5f] mx-auto mb-4" />
-          <p className="text-gray-500">Generating leadership brief...</p>
+          <p className="text-gray-500">{compareMode ? "Generating both briefs in parallel..." : "Generating leadership brief..."}</p>
         </div>
       )}
 
-      {brief && !generating && (
+      {compareMode && briefs && !generating && (
+        <>
+          <div className="w-[8.5in] max-w-full mb-3 flex items-center gap-2">
+            {["gpt", "claude"].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 py-1.5 text-sm font-medium rounded-lg border transition ${
+                  activeTab === tab
+                    ? "bg-[#1e3a5f] text-white border-[#1e3a5f]"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-gray-300"
+                }`}
+              >
+                {tab === "gpt" ? "ChatGPT" : "Claude"}
+              </button>
+            ))}
+            <Button
+              onClick={handleDownloadPDF}
+              disabled={downloading}
+              variant="default"
+              size="sm"
+              className="ml-auto"
+            >
+              {downloading ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <Download className="w-4 h-4 mr-2" />
+              )}
+              {downloading
+                ? "Generating PDF..."
+                : `Download ${activeTab === "gpt" ? "ChatGPT" : "Claude"} PDF`}
+            </Button>
+          </div>
+          {briefs[activeTab] && (
+            <ReportBrief brief={briefs[activeTab]} innerRef={reportRef} />
+          )}
+        </>
+      )}
+
+      {!compareMode && brief && !generating && (
         <>
           <div className="report-pdf-toolbar">
             <Button
@@ -211,120 +282,15 @@ export default function MonthlyLeadershipReview() {
               {downloading ? "Generating PDF..." : "Download PDF"}
             </Button>
           </div>
-          <div className="report-page" ref={reportRef}>
-            <div className="report-grid">
-              {/* Three-column header */}
-              <div className="col-span-12">
-                <div className="report-header">
-                  <div className="report-header-left">
-                    <img
-                      src="https://media.base44.com/images/public/69f3a039374ef274bec2c0fa/8584c9c6a_LeadershipNexusLogoResized.jpg"
-                      alt="The Leadership Nexus"
-                      className="report-logo"
-                    />
-                  </div>
-                  <div className="report-header-center">
-                    <h1 className="report-title">Monthly Leadership Brief</h1>
-                  </div>
-                  <div className="report-header-right">
-                    <img
-                      src="https://media.base44.com/images/public/69f3a039374ef274bec2c0fa/f853dc255_JSLogo.png"
-                      alt="Jamesson Solutions"
-                      className="report-logo report-logo-js"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Client Information */}
-              <div className="col-span-12">
-                <div className="report-divider" />
-                <div className="report-client-info">
-                  <div className="report-client-info-col report-client-info-col-left">
-                    <span className="report-client-info-heading">
-                      Client Information
-                    </span>
-                    <div className="report-client-info-fields">
-                      <span className="report-client-name">
-                        {brief.client_name}
-                      </span>
-                      <span className="report-client-detail">
-                        {brief.client_title}
-                      </span>
-                      <span className="report-client-detail">
-                        {brief.client_company}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="report-client-info-col report-client-info-col-center">
-                    <span className="report-client-info-heading">Coach</span>
-                    <div className="report-client-info-fields">
-                      <span className="report-client-detail">
-                        {brief.coach_name}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="report-client-info-col report-client-info-col-right">
-                    <span className="report-client-info-heading">
-                      Review Information
-                    </span>
-                    <div className="report-client-info-fields">
-                      <span className="report-client-detail">
-                        <span className="report-client-detail-label report-client-detail-label-dark">
-                          Generated:
-                        </span>
-                        <span>{brief.generated_date}</span>
-                      </span>
-                      <span className="report-client-detail">
-                        <span className="report-client-detail-label report-client-detail-label-dark">
-                          Period:
-                        </span>
-                        <span>{brief.review_period}</span>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div className="report-divider" />
-              </div>
-
-              {/* 1. Executive Summary */}
-              <ReportExecutiveSummary data={brief.executive_summary} />
-
-              {/* 2. Patterns This Month */}
-              <ReportPatternsThisMonth
-                leadershipPattern={brief.leadership_pattern}
-                leadershipMomentum={brief.leadership_momentum}
-                thoughtAverages={brief.thought_averages}
-                actionAverages={brief.action_averages}
-              />
-
-              {/* 3. What's Working & Watch Out For */}
-              <div className="col-span-12">
-                <div className="report-insights-grid">
-                  <ReportWhatsWorking items={brief.whats_working} />
-                  <ReportWatchOutFor items={brief.watch_out_for} />
-                </div>
-                <div className="report-divider" />
-              </div>
-
-              {/* 4. Recommended Focus */}
-              <ReportRecommendedFocus
-                primary={brief.leadership_practices.primary_practice}
-                supporting={brief.leadership_practices.supporting_practice}
-                growth={brief.leadership_practices.growth_practice}
-              />
-            </div>
-          </div>
+          <ReportBrief brief={brief} innerRef={reportRef} />
         </>
       )}
 
-      {!brief && !generating && !error && (
+      {!brief && !briefs && !generating && !error && (
         <div className="w-full text-center py-16">
           <FileText className="w-12 h-12 text-gray-300 mx-auto mb-4" />
           <p className="text-gray-500">
-            Select a client and month, then click Generate to view the Monthly
+            Select a client and month{compareMode ? ", choose your models" : ""}, then click Generate to view the Monthly
             Leadership Brief.
           </p>
         </div>

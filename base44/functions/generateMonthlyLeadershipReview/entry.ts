@@ -11,6 +11,7 @@ Deno.serve(async (req) => {
 
     const clientProfileId = body.client_profile_id;
     const monthInput = body.month; // "YYYY-MM"
+    const model = body.model || "claude_sonnet_4_6";
 
     if (!clientProfileId) {
       return Response.json({ error: 'client_profile_id is required' }, { status: 400 });
@@ -403,7 +404,7 @@ If there is insufficient data (zero interactions or inference runs), still produ
           },
         },
       },
-      model: "claude_sonnet_4_6",
+      model,
     });
 
     // 9. Parse LLM response (may be string or object, possibly wrapped in "response")
