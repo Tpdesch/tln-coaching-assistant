@@ -8,6 +8,7 @@ import AdminPatternSummary from "@/components/admin/AdminPatternSummary";
 import AdminDataQuality from "@/components/admin/AdminDataQuality";
 import AdminReminderPanel from "@/components/admin/AdminReminderPanel";
 import AdminCoachRoster from "@/components/admin/AdminCoachRoster";
+import AdminInviteCoach from "@/components/admin/AdminInviteCoach";
 import AdminReminderLog from "@/components/admin/AdminReminderLog";
 import AdminCheckInFeed from "@/components/admin/AdminCheckInFeed";
 import AdminMonthlyReviewTest from "@/components/admin/AdminMonthlyReviewTest";
@@ -86,6 +87,7 @@ export default function AdminDashboard() {
       </div>
 
       <AdminOverviewCards {...data} />
+      <AdminInviteCoach />
       <AdminCheckInFeed {...data} />
       <AdminCoachTable {...data} />
       <AdminCoachRoster {...data} />
