@@ -89,7 +89,7 @@ Deno.serve(async (req) => {
 
   // Send invitation email
   try {
-    const coachName = user.full_name || 'Your Coach';
+    const coachName = callerProfile?.full_name || callerProfile?.display_name || user.full_name || 'Your Coach';
     const coachFirstName = coachName.trim().split(/\s+/)[0];
     const firstName = participantName ? participantName.trim().split(/\s+/)[0] : '';
     const greeting = firstName || 'there';
