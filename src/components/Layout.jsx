@@ -44,11 +44,12 @@ export default function Layout({ children }) {
 
   const navItems = role === "admin" ? adminNav : role === "COACH" ? coachNav : role === "CLIENT" ? clientNav : [];
   const currentPath = location.pathname;
+  const isAdminRoute = currentPath === "/AdminDashboard" || currentPath === "/BetaReset";
 
   return (
     <div className="min-h-screen bg-[#F7F8FA] flex">
       {/* Sidebar — desktop */}
-      <aside className="hidden md:flex flex-col w-56 bg-[#1E3A5F] border-r border-gray-100 shrink-0">
+      <aside className={`hidden md:flex flex-col ${isAdminRoute ? "w-48" : "w-56"} bg-[#1E3A5F] border-r border-gray-100 shrink-0`}>
         <div className="px-5 py-5 border-b border-[#0F1F35]">
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6985f79ad4f5b634677bf810/16ea238ca_LeadershipNexusLogoResized.jpg"
@@ -122,7 +123,7 @@ export default function Layout({ children }) {
       {/* Main content */}
       <main className="flex-1 min-w-0 md:overflow-auto">
         <div className="md:hidden h-14" /> {/* mobile header spacer */}
-        <div className="px-4 sm:px-6 lg:px-8 py-6">
+        <div className={`${isAdminRoute ? "px-2 sm:px-2 lg:px-3" : "px-4 sm:px-6 lg:px-8"} py-6`}>
           {children || <Outlet />}
         </div>
       </main>
