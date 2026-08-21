@@ -26,6 +26,7 @@ export default function Clients() {
   const [editingClient, setEditingClient] = useState(null);
   const [removingClient, setRemovingClient] = useState(null);
   const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteName, setInviteName] = useState("");
   const [inviting, setInviting] = useState(false);
   const [inviteMessage, setInviteMessage] = useState(null);
   const [search, setSearch] = useState("");
@@ -72,7 +73,7 @@ export default function Clients() {
       }
       const response = await base44.functions.invoke("inviteParticipant", {
         participantEmail: inviteEmail,
-        participantName: inviteEmail.split("@")[0],
+        participantName: inviteName,
         coachProfileId: myProfileId,
       });
       if (response.data.ok) {
@@ -192,11 +193,12 @@ export default function Clients() {
       )}
 
       {/* Invite Dialog */}
-      <Dialog open={showInvite} onOpenChange={(open) => { setShowInvite(open); if (!open) { setInviteMessage(null); setInviteEmail(""); } }}>
+      <Dialog open={showInvite} onOpenChange={(open) => { setShowInvite(open); if (!open) { setInviteMessage(null); setInviteEmail(""); setInviteName(""); } }}>
         <DialogContent className="max-w-md">
           <DialogHeader><DialogTitle>Invite Participant</DialogTitle></DialogHeader>
           <p className="text-sm text-gray-500">Send an invitation to a new participant. They'll be linked to you as their coach once they join.</p>
           <div className="space-y-3 mt-2">
+            <Input type="text" value={inviteName} onChange={e => setInviteName(e.target.value)} placeholder="Participant full name" />
             <Input type="email" value={inviteEmail} onChange={e => setInviteEmail(e.target.value)} placeholder="participant@example.com" />
             {inviteMessage && (
               <div className={`text-sm p-3 rounded-lg ${inviteMessage.type === "success" ? "bg-green-50 text-green-700" : inviteMessage.type === "info" ? "bg-blue-50 text-blue-700" : "bg-red-50 text-red-700"}`}>
@@ -212,7 +214,7 @@ export default function Clients() {
                 )}
               </div>
             )}
-            <Button onClick={handleInviteParticipant} disabled={inviting || !inviteEmail || inviteMessage?.type === "info"} className="w-full bg-[#102A43] hover:bg-[#243B53]">
+            <Button onClick={handleInviteParticipant} disabled={inviting || !inviteEmail || !inviteName || inviteMessage?.type === "info"} className="w-full bg-[#102A43] hover:bg-[#243B53]">
               {inviting ? "Checking…" : "Send Invitation"}
             </Button>
           </div>
