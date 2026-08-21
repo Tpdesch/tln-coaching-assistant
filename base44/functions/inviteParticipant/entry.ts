@@ -90,6 +90,7 @@ Deno.serve(async (req) => {
   // Send invitation email
   try {
     const coachName = user.full_name || 'Your Coach';
+    const coachFirstName = coachName.trim().split(/\s+/)[0];
     const firstName = participantName ? participantName.trim().split(/\s+/)[0] : '';
     const greeting = firstName || 'there';
     await base44.integrations.Core.SendEmail({
@@ -97,7 +98,7 @@ Deno.serve(async (req) => {
       subject: `You've been invited to TLN Coaching Assistant`,
       body: `Hi ${greeting},
 
-${coachName} has invited you to join TLN Coaching Assistant — a space for weekly leadership alignment check-ins.
+${coachFirstName} has invited you to join TLN Coaching Assistant — a space for weekly leadership alignment check-ins.
 
 Click the link below to get started:
 ${invitation_url}
